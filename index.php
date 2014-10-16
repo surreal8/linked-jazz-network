@@ -57,7 +57,7 @@ if ($handle = opendir('../image/round/')) {
 <script src="js/jquery.history.js"></script>
 <script src="js/jquery.rdfquery.core.min-1.0.js"></script>
 <script src="js/dragdealer.js"></script>
-<script src="js/d3.v2.min.js"></script> 
+<script src="js/d3.v2.js"></script> 
 <script src="js/vex.min.js"></script> 
 <script src="js/network.js"></script> 
 
