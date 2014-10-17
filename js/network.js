@@ -6,65 +6,62 @@ if(!document.createElementNS || !document.createElementNS('http://www.w3.org/200
 vex.defaultOptions.className = 'vex-theme-os';
 
 
-var visMode = 'wave';			//the type of network to render, each has it own settings
+var visMode = 'wave';           //the type of network to render, each has it own settings
 
-var tripleStore = null;			//holds the triple data bank created by te rdfquery plugin
-var tripleObject = null;		//holds the javascript seralized object of the triple store
-var descStore = null;			//holds the triple data bank created by te rdfquery plugin for the description
-var descObject = null;			//holds the javascript seralized object of the triple store for the description
-var nameObject = null;			//holds the foaf names of the people
-var largestNodes = [];			//holds a list of the N largest nodes/people (most connections) in order to place/lock them properly on render
-var hidePopupTimer = null;		//holds the timer to close the popup
+var tripleStore = null;         //holds the triple data bank created by the rdfquery plugin
+var tripleObject = null;        //holds the javascript seralized object of the triple store
+var descStore = null;           //holds the triple data bank created by the rdfquery plugin for the description
+var descObject = null;          //holds the javascript seralized object of the triple store for the description
+var nameObject = null;          //holds the foaf names of the people
+var largestNodes = [];          //holds a list of the N largest nodes/people (most connections) in order to place/lock them properly on render
+var hidePopupTimer = null;      //holds the timer to close the popup
 var showPopupTimer = null;
-var currentNode = null;			//the current node we are highligting
-var usePerson = null;			//the person in person mode
-var usePersonIndex = 0;			//the index pos of the usePerson in the nodes array, so we dont have to loop through the whole thing everytime
+var currentNode = null;         //the current node we are highligting
+var usePerson = null;           //the person in person mode
+var usePersonIndex = 0;         //the index pos of the usePerson in the nodes array, so we dont have to loop through the whole thing everytime
 var edgesAvg = 0;
-var edgesInterval = 0			//the steps between the avg and largest # edges
+var edgesInterval = 0           //the steps between the avg and largest # edges
 var trans=[0,0];
 var scale=0.99;
-var dynamicPeople = [];			//holds who is added in the dynamic mode
-var rendering = false;			//global to keep track if we are rendering from a click or a history pushstate change
+var dynamicPeople = [];         //holds who is added in the dynamic mode
+var rendering = false;          //global to keep track if we are rendering from a click or a history pushstate change
 
-var idLookup = {}				//holds nice names to uri conversion
+var idLookup = {}               //holds nice names to uri conversion
 
-var zoom = null;				//the d3.js zoom object
-var baseNodes = [];				//stores the base (all) of the nodes and
-var baseLinks = [];				// links
+var zoom = null;                //the d3.js zoom object
+var baseNodes = [];             //stores the base (all) of the nodes and
+var baseLinks = [];             // links
 
-var force = null;				//the d3 force object
-var vis = null					//the visualization
-var visWidth = 1000;			//width and height of the network canvas, in px
+var force = null;               //the d3 force object
+var vis = null                  //the visualization
+var visWidth = 1000;            //width and height of the network canvas, in px
 var visHeight = 500;
 
-var connectionCounter = {};		//holds each  id as a property name w/ the value = # of connections they have
+var connectionCounter = {};     //holds each id as a property name w/ the value = # of connections they have
 
-var connectionIndex = {};		//a object with properties as id names, with values an array of strings of ids that person has connections to.
-var largestConnection = 0;		//
+var connectionIndex = {};       //an object with properties as id names, with values an array of strings of ids that person has connections to.
+var largestConnection = 0;
 
+var simlarityIndex = {}         //properties are id names, with the value being an array of objects with other ids and their # of matching connections
+var largestSimilarity = 0;      //holds the max number of similar connections any two nodes share in the network
 
-var simlarityIndex = {}			//properties are id names, with the value being an array of objects with other ids and their # of matching connections
-var largestSimilarity = 0;		//holds the max number of similar connections any two nodes share in the network
+var strokeWidth = 0.3;          //the defult width to make the stroke
 
-var strokeWidth = 0.3;			//the defult width to make the stroke
-
-                //the settings that vary for each diff type of network
+                                //the settings that vary for each diff type of network
 var networkGravity =  0;
 var netwokrLinkLength = 35;
 var networkLargeNodeLimit = 20;	//the number of top nodes to fix/lock to a patterend spot on the network
 var netwokrCharge = -800;
-var networkStopTick = true;		//when the alpha value drops to display the graph, do we stop the nodes from animating?
-var networkNodeDrag = false;	//can you drag the nodes about?
+var networkStopTick = true;     //when the alpha value drops to display the graph, do we stop the nodes from animating?
+var networkNodeDrag = false;    //can you drag the nodes about?
 
-var networkMinEdges = 2;		//the min number of edges to have a node be rendered
+var networkMinEdges = 2;        //the min number of edges to have a node be rendered
 
 var cssSafe = new RegExp(/%|\(|\)|\.|\,|'|"/g);	//the regex to remove non css viable chars
 
 var youTubeObject = '<object style="height=130px; width=200px; position: absolute; bottom: 0px;"> <param name="movie" value="https://www.youtube.com/v/<id>?version=3&feature=player_embedded&controls=1&enablejsapi=1&modestbranding=1&rel=0&showinfo=1&autoplay=1"><param name="allowFullScreen" value="true"><param name="wmode" value="transparent"><param name="allowScriptAccess" value="always"><embed src="https://www.youtube.com/v/<id>?version=3&feature=player_embedded&controls=1&enablejsapi=1&modestbranding=1&rel=0&showinfo=1&autoplay=1" type="application/x-shockwave-flash" allowfullscreen="true" allowScriptAccess="always" width="200" height="130" wmode="transparent"></object>';
-var zoomWidgetObj = null;			//the zoom widget draghandeler object
+var zoomWidgetObj = null;       //the zoom widget draghandeler object
 var zoomWidgetObjDoZoom = true;
-
-
 
 var oldzoom = 0;
 
@@ -72,18 +69,13 @@ var fill = d3.scale.category10();
 var lineColor = d3.scale.category20c();
 
 
-
 jQuery(document).ready(function($) {
 
-
-
-    // Bind to StateChange Event
-    History.Adapter.bind(window,'statechange',function(){ // Note: We are using statechange instead of popstate
-        var State = History.getState(); // Note: We are using History.getState() instead of event.state
-        parseStateChangeVis();
-    });
-
-
+  // Bind to StateChange Event
+  History.Adapter.bind(window,'statechange',function(){ // Note: We are using statechange instead of popstate
+    var State = History.getState(); // Note: We are using History.getState() instead of event.state
+    parseStateChangeVis();
+  });
 
   if(!document.createElementNS || !document.createElementNS('http://www.w3.org/2000/svg','svg').createSVGRect){
     jQuery("#network").html(
@@ -144,32 +136,32 @@ jQuery(document).ready(function($) {
     $.get('data/relationships.txt', function(data) {
 
 
-       buildTripleStore(data);
+      buildTripleStore(data);
 
-       dataAnalysis();
-
-
-       //we need the description data ready because it has the names in it
-       var interval = window.setInterval(function checkDescriptionStore(){
-          if (window.descObject){
-            window.clearTimeout(interval);
-            buildBase();
-
-            parseStateChangeVis();
+      dataAnalysis();
 
 
+      //we need the description data ready because it has the names in it
+      var interval = window.setInterval(function checkDescriptionStore(){
+        if (window.descObject){
+          window.clearTimeout(interval);
+          buildBase();
+
+          parseStateChangeVis();
 
 
-          }
-       },500);
+
+
+        }
+      },500);
 
 
 
 
     })
-    .error(function() { alert("There was an error in accessing the data file. Please try again."); });
+      .error(function() { alert("There was an error in accessing the data file. Please try again."); });
 
-   }, 200, []);
+  }, 200, []);
 
 
   //add the zoom widget
@@ -216,34 +208,34 @@ jQuery(document).ready(function($) {
 
 
   zoomWidgetObj = new Dragdealer('zoomWidget',
-  {
-    horizontal: false,
-    vertical: true,
-    y: 0.255555555,
-    animationCallback: function(x, y)
-    {
-      //if the value is the same as the intial value exit, to prevent a zoom even being called onload
-      if (y==0.255555555){return false;}
-      //prevent too muuch zooooom
-      if (y<0.05){return false;}
+                                 {
+                                   horizontal: false,
+                                   vertical: true,
+                                   y: 0.255555555,
+                                   animationCallback: function(x, y)
+                                   {
+                                     //if the value is the same as the intial value exit, to prevent a zoom even being called onload
+                                     if (y==0.255555555){return false;}
+                                     //prevent too muuch zooooom
+                                     if (y<0.05){return false;}
 
 
-      //are we  zooming based on a call from interaction with the slider, or is this callback being triggerd by the mouse event updating the slider position.
-      if (zoomWidgetObjDoZoom == true){
+                                     //are we  zooming based on a call from interaction with the slider, or is this callback being triggerd by the mouse event updating the slider position.
+                                     if (zoomWidgetObjDoZoom == true){
 
-        y =y *4;
+                                       y =y *4;
 
-        //this is how it works now until i figure out how to handle this better.
-        //translate to the middle of the vis and apply the zoom level
-        vis.attr("transform", "translate(" + [(visWidth/2)-(visWidth*y/2),(visHeight/2)-(visHeight*y/2)] + ")"  + " scale(" + y+ ")");
-        //store the new data into the zoom object so it is ready for mouse events
-        zoom.translate([(visWidth/2)-(visWidth*y/2),(visHeight/2)-(visHeight*y/2)]).scale(y);
-      }
+                                       //this is how it works now until i figure out how to handle this better.
+                                       //translate to the middle of the vis and apply the zoom level
+                                       vis.attr("transform", "translate(" + [(visWidth/2)-(visWidth*y/2),(visHeight/2)-(visHeight*y/2)] + ")"  + " scale(" + y+ ")");
+                                       //store the new data into the zoom object so it is ready for mouse events
+                                       zoom.translate([(visWidth/2)-(visWidth*y/2),(visHeight/2)-(visHeight*y/2)]).scale(y);
+                                     }
 
 
 
-    }
-  });
+                                   }
+                                 });
 
 
 
@@ -267,11 +259,11 @@ function parseStateChangeVis(){
       person = person.split('&_suid=')[0]
     }
 
-      //lookup that nice name for the uri
+    //lookup that nice name for the uri
     usePerson = jQuery.map(idLookup, function(obj,index) {
-        if(obj === person)
-             return index;
-  })[0];
+      if(obj === person)
+        return index;
+    })[0];
 
 
     changeVisMode("person");
@@ -301,7 +293,7 @@ function initalizeNetwork(){
 
   $("#dynamicListHolder, #dynamicSearchHolder, #dynamicClear").css("display","none")
 
-   $("#video").css("left","0px");
+  $("#video").css("left","0px");
 
 
 
@@ -361,7 +353,7 @@ function initalizeNetwork(){
       buildDynamicList();
     }
 
-     $("#video").css("left","225px");
+    $("#video").css("left","225px");
 
 
     $("#dynamicListHolder, #dynamicSearchHolder").css("display","block")
@@ -388,7 +380,7 @@ function initalizeNetwork(){
   //if it has already been defined
   if (force == null){
     force = d3.layout.force()
-    .size([$("#network").width() - 5, $("#network").height() - 5]);
+      .size([$("#network").width() - 5, $("#network").height() - 5]);
 
   }
 
@@ -442,73 +434,73 @@ function initalizeNetwork(){
   }
 
   vis.attr("transform",
-    "translate(" + trans + ")"
-    + " scale(" + scale + ")");
+           "translate(" + trans + ")"
+           + " scale(" + scale + ")");
 
 }
 
 //process the triple data through the RDF jquery plugin to create an object
 function buildTripleStore(data){
 
-    tripleStore = $.rdf.databank([],
-      { base: 'http://www.dbpedia.org/',
-      namespaces: {
-        dc: 'http://purl.org/dc/elements/1.1/',
-        foaf: 'http://xmlns.com/foaf/0.1/',
-        lj: 'http://www.linkedjazz.org/lj/' } });
+  tripleStore = $.rdf.databank([],
+                               { base: 'http://www.dbpedia.org/',
+                                 namespaces: {
+                                   dc: 'http://purl.org/dc/elements/1.1/',
+                                   foaf: 'http://xmlns.com/foaf/0.1/',
+                                   lj: 'http://www.linkedjazz.org/lj/' } });
 
 
-    //I'm only intrested in the knowsOf right now before we work more on verifying the 52nd street stuff, so just make all relationships knowsof
-    var alreadyKnows = [];
+  //I'm only intrested in the knowsOf right now before we work more on verifying the 52nd street stuff, so just make all relationships knowsof
+  var alreadyKnows = [];
 
 
-    /***********
-    *   The file we are loading is expected to be a triple store in the format '<object> <predicate> <object> .\n'
-    *   Note the space after the final object and the '.' and the \n only
-    ************/
-    var triples = data.split("\n");
-    for (x in triples){
-      if (triples[x].length > 0){
-        try{
+  /***********
+   *   The file we are loading is expected to be a triple store in the format '<object> <predicate> <object> .\n'
+   *   Note the space after the final object and the '.' and the \n only
+   ************/
+  var triples = data.split("\n");
+  for (x in triples){
+    if (triples[x].length > 0){
+      try{
 
-          //I'm only intrested in the knowsOf right now before we work more on verifying the 52nd street stuff, so just make all relationships knowsof
-          var hash = triples[x].split("> <")[0] + triples[x].split("> <")[2];
-
-
-
-          //only add it once
-          if (alreadyKnows.indexOf(hash) === -1){
-
-            var newKnowsOf = triples[x].split("> <")[0] + "> <http://purl.org/vocab/relationship/knowsOf> <" + triples[x].split("> <")[2];
-            alreadyKnows.push(hash);
-
-            //console.log(newKnowsOf);
-            tripleStore.add(newKnowsOf);
-            //tripleStore.add(triples[x]);
+        //I'm only intrested in the knowsOf right now before we work more on verifying the 52nd street stuff, so just make all relationships knowsof
+        var hash = triples[x].split("> <")[0] + triples[x].split("> <")[2];
 
 
 
-          }
+        //only add it once
+        if (alreadyKnows.indexOf(hash) === -1){
 
+          var newKnowsOf = triples[x].split("> <")[0] + "> <http://purl.org/vocab/relationship/knowsOf> <" + triples[x].split("> <")[2];
+          alreadyKnows.push(hash);
+
+          //console.log(newKnowsOf);
+          tripleStore.add(newKnowsOf);
+          //tripleStore.add(triples[x]);
 
 
 
         }
 
 
-        catch(err){
-          //if it cannot load one of the triples it is not a total failure, keep going
-          console.log('There was an error processing the data file:');
-          console.log(err);
-        }
+
+
+      }
+
+
+      catch(err){
+        //if it cannot load one of the triples it is not a total failure, keep going
+        console.log('There was an error processing the data file:');
+        console.log(err);
       }
     }
+  }
 
 
-    tripleObject = tripleStore.dump()
+  tripleObject = tripleStore.dump()
 
 
-    console.log(alreadyKnows.length);
+  console.log(alreadyKnows.length);
 
 
 }
@@ -516,34 +508,34 @@ function buildTripleStore(data){
 //process the triple data through the RDF jquery plugin to create an object
 function buildDescriptionStore(data){
 
-    var descStore = $.rdf.databank([],
-      { base: 'http://www.dbpedia.org/',
-      namespaces: {
-        dc: 'http://purl.org/dc/elements/1.1/',
-        wc: 'http://www.w3.org/2000/01/rdf-schema',
-        lj: 'http://www.linkedjazz.org/lj/' } });
+  var descStore = $.rdf.databank([],
+                                 { base: 'http://www.dbpedia.org/',
+                                   namespaces: {
+                                     dc: 'http://purl.org/dc/elements/1.1/',
+                                     wc: 'http://www.w3.org/2000/01/rdf-schema',
+                                     lj: 'http://www.linkedjazz.org/lj/' } });
 
 
-    /***********
-    *   The file we are loading is expected to be a triple dump in the format '<object> <predicate> <object> .\n'
-    *   Note the space after the final object and the '.' and the \n only
-    ************/
-    var triples = data.split("\n");
-    for (x in triples){
-      if (triples[x].length > 0){
-        try{
-          descStore.add(triples[x]);
-        }
-        catch(err){
-          //if it cannot load one of the triples it is not a total failure, keep going
-          console.log('There was an error processing the data file:');
-          console.log(err);
-        }
+  /***********
+   *   The file we are loading is expected to be a triple dump in the format '<object> <predicate> <object> .\n'
+   *   Note the space after the final object and the '.' and the \n only
+   ************/
+  var triples = data.split("\n");
+  for (x in triples){
+    if (triples[x].length > 0){
+      try{
+        descStore.add(triples[x]);
+      }
+      catch(err){
+        //if it cannot load one of the triples it is not a total failure, keep going
+        console.log('There was an error processing the data file:');
+        console.log(err);
       }
     }
+  }
 
 
-    descObject = descStore.dump()
+  descObject = descStore.dump()
 
 
 
@@ -552,34 +544,34 @@ function buildDescriptionStore(data){
 //process the triple data through the RDF jquery plugin to create an object
 function buildNameStore(data){
 
-    var nameStore = $.rdf.databank([],
-      { base: 'http://www.dbpedia.org/',
-      namespaces: {
-        dc: 'http://purl.org/dc/elements/1.1/',
-        wc: 'http://www.w3.org/2000/01/rdf-schema',
-        lj: 'http://www.linkedjazz.org/lj/' } });
+  var nameStore = $.rdf.databank([],
+                                 { base: 'http://www.dbpedia.org/',
+                                   namespaces: {
+                                     dc: 'http://purl.org/dc/elements/1.1/',
+                                     wc: 'http://www.w3.org/2000/01/rdf-schema',
+                                     lj: 'http://www.linkedjazz.org/lj/' } });
 
 
-    /***********
-    *   The file we are loading is expected to be a triple dump in the format '<object> <predicate> <object> .\n'
-    *   Note the space after the final object and the '.' and the \n only
-    ************/
-    var triples = data.split("\n");
-    for (x in triples){
-      if (triples[x].length > 0){
-        try{
-          nameStore.add(triples[x]);
-        }
-        catch(err){
-          //if it cannot load one of the triples it is not a total failure, keep going
-          console.log('There was an error processing the data file:');
-          console.log(err);
-        }
+  /***********
+   *   The file we are loading is expected to be a triple dump in the format '<object> <predicate> <object> .\n'
+   *   Note the space after the final object and the '.' and the \n only
+   ************/
+  var triples = data.split("\n");
+  for (x in triples){
+    if (triples[x].length > 0){
+      try{
+        nameStore.add(triples[x]);
+      }
+      catch(err){
+        //if it cannot load one of the triples it is not a total failure, keep going
+        console.log('There was an error processing the data file:');
+        console.log(err);
       }
     }
+  }
 
 
-    nameObject = nameStore.dump();
+  nameObject = nameStore.dump();
 
 
 
@@ -636,28 +628,28 @@ function dataAnalysis(){
 
     //we want to pin some of the larger nodes to the outside in order to keep things readable, so figure our where to put them and store it in this obj array
     for (n in largestNodes){
-        var nudge = 0;
-        var r = visHeight/2.5;
-        var a = (186 / largestNodes.length) * n;
+      var nudge = 0;
+      var r = visHeight/2.5;
+      var a = (186 / largestNodes.length) * n;
 
-        if (n==0){nudge = 50;}
-        if (n==1){nudge = -50;}
+      if (n==0){nudge = 50;}
+      if (n==1){nudge = -50;}
 
-        largestNodes[n].x = (visWidth/2) + (r+visWidth/4) * Math.cos(a);
-        largestNodes[n].y = (visHeight/2) + nudge - 10 + r * Math.sin(a);
+      largestNodes[n].x = (visWidth/2) + (r+visWidth/4) * Math.cos(a);
+      largestNodes[n].y = (visHeight/2) + nudge - 10 + r * Math.sin(a);
 
       /*
 
         vis.append("circle")
-            .attr("class", "node")
-            .attr("cx", largestNodes[n].x)
-            .attr("cy", largestNodes[n].y)
-            .attr("r", 8)
-            .style("fill", function(d, i) { return fill(i & 3); })
-            .style("stroke", function(d, i) { return d3.rgb(fill(i & 3)).darker(2); })
-            .style("stroke-width", 1.5);
+        .attr("class", "node")
+        .attr("cx", largestNodes[n].x)
+        .attr("cy", largestNodes[n].y)
+        .attr("r", 8)
+        .style("fill", function(d, i) { return fill(i & 3); })
+        .style("stroke", function(d, i) { return d3.rgb(fill(i & 3)).darker(2); })
+        .style("stroke-width", 1.5);
 
-        */
+      */
 
     }
   }
@@ -819,7 +811,7 @@ function buildBase(){
     if (quickLookup[id1]>-1 && quickLookup[id2]>-1){
       obj1 = quickLookup[id1];
       obj2 = quickLookup[id2];
-      }else{
+    }else{
       //not yet in the quicklookup object, it will be added here
       for (q in baseNodes){
         if (baseNodes[q].id == id1){obj1 = q;}
@@ -934,7 +926,7 @@ function filter(clear){
 
       //add everyones connections
       for (y in connectionIndex[dynamicPeople[x]]){
-          connected.push(connectionIndex[dynamicPeople[x]][y]);
+        connected.push(connectionIndex[dynamicPeople[x]][y]);
       }
 
     }
@@ -999,9 +991,9 @@ function filter(clear){
     //filter out people with too little number of conenctions. we use the connectionCounter from the buildBase function
     for (var key in connectionCounter) {
       if (connectionCounter.hasOwnProperty(key)) {
-      if (connectionCounter[key] < networkMinEdges){
-        nodesRemove[key]=true;
-      }
+        if (connectionCounter[key] < networkMinEdges){
+          nodesRemove[key]=true;
+        }
       }
     }
 
@@ -1044,12 +1036,12 @@ function filter(clear){
 
   /*
 
-  for (var i = nodesRemove.length - 1; i >= 0; i--) {
+    for (var i = nodesRemove.length - 1; i >= 0; i--) {
     nodes.splice(nodesRemove[i],1);
-  }
-  for (var i = linksRemove.length - 1; i >= 0; i--) {
+    }
+    for (var i = linksRemove.length - 1; i >= 0; i--) {
     links.splice(linksRemove[i],1);
-  }
+    }
   */
 
 
@@ -1093,33 +1085,33 @@ function filter(clear){
 
 
   /*
-  if(visMode == 'dynamic'){
+    if(visMode == 'dynamic'){
     //we also dont want to double add nodes, we needed to leave them in up to this point so the new links could be drawn, but, now take them out
     var temp = [];
     for (r in nodes){
 
-      var add=true;
+    var add=true;
 
-      //is it already in there?
-      for (n in temp){
-        if (nodes[r].id == temp[n].id){
-          add=false;
-        }
-      }
+    //is it already in there?
+    for (n in temp){
+    if (nodes[r].id == temp[n].id){
+    add=false;
+    }
+    }
 
-      if (add){
-        temp.push(nodes[r]);
-      }
+    if (add){
+    temp.push(nodes[r]);
+    }
 
     }
     nodes = temp;
 
 
 
-  }
+    }
 
 
-  console.log(nodes);
+    console.log(nodes);
   */
 
 
@@ -1136,25 +1128,25 @@ function filter(clear){
 function restart(){
 
 
-   vis.append("svg:defs").selectAll("marker")
-  .data(["FOAFknows"])
-  .enter().append("svg:marker")
-  .attr("id", String)
-  .attr("class","marker")
-  .attr("viewBox", "0 -5 10 10")
-  .attr("refX", 10)
-  .attr("refY", 0)
-  .attr("markerWidth", 10)
-  .attr("markerHeight", 10)
-  .attr("orient", "auto")
-  .append("svg:path")
-  .attr("d", "M0,-5L10,0L0,5")
-  .style("fill","#666")
-  .style("stroke-width",0);
+  vis.append("svg:defs").selectAll("marker")
+    .data(["FOAFknows"])
+    .enter().append("svg:marker")
+    .attr("id", String)
+    .attr("class","marker")
+    .attr("viewBox", "0 -5 10 10")
+    .attr("refX", 10)
+    .attr("refY", 0)
+    .attr("markerWidth", 10)
+    .attr("markerHeight", 10)
+    .attr("orient", "auto")
+    .append("svg:path")
+    .attr("d", "M0,-5L10,0L0,5")
+    .style("fill","#666")
+    .style("stroke-width",0);
 
   vis.selectAll("line.link")
     .data(links)
-  .enter().insert("line", "circle.node")
+    .enter().insert("line", "circle.node")
     .style("stroke",function(d){return edgeColor(d);})
     .style("stroke-width",function(d){return edgeStrokeWidth(d);})
     .attr("class", function(d){return "link " + d.customClass})
@@ -1177,11 +1169,11 @@ function restart(){
     .on("mouseover",function(d){
 
 
-        //showPopupTimer = setTimeout(function(){
-        //clearTimeout(showPopupTimer);
+      //showPopupTimer = setTimeout(function(){
+      //clearTimeout(showPopupTimer);
 
-        currentNode = d;
-        showPopup(d);
+      currentNode = d;
+      showPopup(d);
 
       //}, 200, [d]);
 
@@ -1196,15 +1188,15 @@ function restart(){
       hidePopup();
 
 
-       $("#network").fadeOut('fast',
-         function() {
+      $("#network").fadeOut('fast',
+                            function() {
 
 
-           usePerson = d.id;
-           changeVisMode("person");
+                              usePerson = d.id;
+                              changeVisMode("person");
 
-         }
-       );
+                            }
+                           );
 
     });
 
@@ -1231,9 +1223,9 @@ function restart(){
 
 
   nodeEnter.append("svg:image")
-      .attr("id", function(d){  return "imageCircle_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
-      .attr("class","imageCircle")
-      .attr("xlink:href", function(d){
+    .attr("id", function(d){  return "imageCircle_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
+    .attr("class","imageCircle")
+    .attr("xlink:href", function(d){
 
       var useId = $.trim(decodeURI(d.id).split("\/")[decodeURI(d.id).split("\/").length-1]);
       if (fileNames.indexOf(useId+'.png')==-1){
@@ -1244,15 +1236,15 @@ function restart(){
 
 
 
-      })
-        .attr("x", function(d) { return  (returnNodeSize(d)*-1); })
-      .attr("y", function(d) { return  (returnNodeSize(d)*-1); })
-      .attr("width", function(d) { return  (returnNodeSize(d)*2); })
-      .attr("height", function(d) { return  (returnNodeSize(d)*2); });
+    })
+    .attr("x", function(d) { return  (returnNodeSize(d)*-1); })
+    .attr("y", function(d) { return  (returnNodeSize(d)*-1); })
+    .attr("width", function(d) { return  (returnNodeSize(d)*2); })
+    .attr("height", function(d) { return  (returnNodeSize(d)*2); });
 
   nodeEnter.append("svg:text")
-      .attr("id", function(d){  return "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
-      .attr("font-size", function(d){return returnNodeSize(d) / 2})
+    .attr("id", function(d){  return "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
+    .attr("font-size", function(d){return returnNodeSize(d) / 2})
     .attr("class",  function(d){return "circleText"})
     .attr("font-family", "helvetica, sans-serif")
     .attr("text-anchor","middle")
@@ -1260,7 +1252,7 @@ function restart(){
     .attr("x", function(d) { return  (returnNodeSize(d)*-0.1); })
     .attr("y", function(d) { return returnNodeSize(d)+returnNodeSize(d)/1.8; })
 
-     .text(function(d){ return d.label; });
+    .text(function(d){ return d.label; });
 
 
   force.start();
@@ -1357,86 +1349,86 @@ function restart(){
 
 }
 
-  function displayLabel(d){
+function displayLabel(d){
 
-    if (visMode=="person" || visMode == "dynamic"){
-      return "block";
+  if (visMode=="person" || visMode == "dynamic"){
+    return "block";
+  }else{
+    return (d.connections >= edgesInterval/1.5) ? "block" : "none";
+  }
+
+}
+
+function returnNodeStrokeWidth(d){
+
+  if (visMode == "person" || visMode == "dynamic"){
+
+    if (dynamicPeople.indexOf(d.id) != -1 || usePerson == d.id){
+
+      return 5;
+    }
+
+
+  }
+
+  return 1.5
+
+}
+
+function returnNodeColor(d){
+
+  if (visMode == "person" || visMode == "dynamic"){
+
+    if (dynamicPeople.indexOf(d.id) != -1 || usePerson == d.id){
+
+      return "#FC0";
+    }
+
+
+  }
+
+  return "#666"
+
+}
+
+function returnNodeSize(d){
+
+  if (visMode=="person"){
+
+    if (d.id == usePerson){
+      return 50;
     }else{
-      return (d.connections >= edgesInterval/1.5) ? "block" : "none";
+      return 15 + Math.round(d.connections/15);
     }
 
-  }
+  }else if (visMode == "dynamic"){
 
-  function returnNodeStrokeWidth(d){
-
-    if (visMode == "person" || visMode == "dynamic"){
-
-      if (dynamicPeople.indexOf(d.id) != -1 || usePerson == d.id){
-
-        return 5;
-      }
-
-
-    }
-
-    return 1.5
-
-  }
-
-  function returnNodeColor(d){
-
-    if (visMode == "person" || visMode == "dynamic"){
-
-      if (dynamicPeople.indexOf(d.id) != -1 || usePerson == d.id){
-
-        return "#FC0";
-      }
-
-
-    }
-
-    return "#666"
-
-  }
-
-  function returnNodeSize(d){
-
-    if (visMode=="person"){
-
-      if (d.id == usePerson){
-        return 50;
-      }else{
-        return 15 + Math.round(d.connections/15);
-      }
-
-    }else if (visMode == "dynamic"){
-
-      if (dynamicPeople.indexOf(d.id)==-1){
-        return 20;
-      }else{
-        return 35;
-      }
-
-
-
+    if (dynamicPeople.indexOf(d.id)==-1){
+      return 20;
     }else{
-
-      return Math.round(Math.sqrt(d.connections) + (d.connections/6));
-
+      return 35;
     }
 
 
+
+  }else{
+
+    return Math.round(Math.sqrt(d.connections) + (d.connections/6));
+
   }
+
+
+}
 
 
 
 //wooo!, from https://groups.google.com/forum/?fromgroups#!topic/d3-js/ndyvibO7wDA
 function pointsBetween(circle1,circle2,standOff1,standOff2){
   var x1=circle1.x, y1=circle1.y,
-      x2=circle2.x, y2=circle2.y,
-      dx=x2-x1,                    dy=y2-y1,
-      r1=returnNodeSize(circle1) + (standOff1||0),
-      r2=returnNodeSize(circle2) + (standOff2||0);
+  x2=circle2.x, y2=circle2.y,
+  dx=x2-x1,                    dy=y2-y1,
+  r1=returnNodeSize(circle1) + (standOff1||0),
+  r2=returnNodeSize(circle2) + (standOff2||0);
   if ( (r1+r2)*(r1+r2) >= dx*dx+dy*dy ) return [[0,0],[0,0]];
   var a=Math.atan2(dy,dx), c=Math.cos(a), s=Math.sin(a);
   return [
@@ -2060,7 +2052,7 @@ function changeVisMode(changeTo){
 
 
     //we need to rest the zoom/pan
-      zoom.translate([0,0]).scale(1);
+    zoom.translate([0,0]).scale(1);
     vis.attr("transform", "translate(" + [0,0] + ")"  + " scale(" + 1 + ")");
 
     zoomWidgetObjDoZoom = false;
@@ -2088,12 +2080,12 @@ function buildDynamicList(){
 
   var listNodes = baseNodes;
   listNodes.sort(function(a,b) {
-     var nameA=a.labelLast.toLowerCase(), nameB=b.labelLast.toLowerCase()
-     if (nameA < nameB) //sort string ascending
+    var nameA=a.labelLast.toLowerCase(), nameB=b.labelLast.toLowerCase()
+    if (nameA < nameB) //sort string ascending
       return -1
-     if (nameA > nameB)
+    if (nameA > nameB)
       return 1
-     return 0 //default return value (no sorting)
+    return 0 //default return value (no sorting)
   });
 
   var domFragment = $("<div>");
@@ -2149,34 +2141,34 @@ function buildDynamicList(){
         .data("id",listNodes[x].id)
         .click(function(){ if (dynamicPeople.indexOf($(this).data("id"))==-1){$("#dynamicClear").fadeIn(5000); $("#dynamicHelp").css("display","none"); usePerson = $(this).data("id"); dynamicPeople.push(usePerson); filter();}})
         .append
-        (
-          $("<img>")
-            .attr("src",function()
-            {
+      (
+        $("<img>")
+          .attr("src",function()
+                {
 
-              if (fileNames.indexOf(id_img+'.png')!=-1){
-                return "/image/round/" + id_img+'.png';
-              }else{
-                return "";
-              }
-            })
-            .css("visibility",function()
-            {
-              if (fileNames.indexOf(id_img+'.png')!=-1){
-                return "visible"
-              }else{
-                return "hidden"
-              }
-            })
+                  if (fileNames.indexOf(id_img+'.png')!=-1){
+                    return "/image/round/" + id_img+'.png';
+                  }else{
+                    return "";
+                  }
+                })
+          .css("visibility",function()
+               {
+                 if (fileNames.indexOf(id_img+'.png')!=-1){
+                   return "visible"
+                 }else{
+                   return "hidden"
+                 }
+               })
 
-        )
+      )
         .append
-        (
-          $("<div>")
-            .text(listNodes[x].labelLast)
-            .attr("title", descText)
+      (
+        $("<div>")
+          .text(listNodes[x].labelLast)
+          .attr("title", descText)
 
-        )
+      )
 
     )
   }
@@ -2220,9 +2212,9 @@ function redraw(useScale) {
 
 
   //transform the vis
-   vis.attr("transform",
-      "translate(" + trans + ")"
-      + " scale(" + scale + ")");
+  vis.attr("transform",
+           "translate(" + trans + ")"
+           + " scale(" + scale + ")");
 
   //we need to update the zoom slider, set the boolean to false so the slider change does not trigger a zoom change in the vis (from the slider callback function)
   zoomWidgetObjDoZoom = false;
@@ -2384,5 +2376,3 @@ function windowResize(){
 
 
 }
-
-

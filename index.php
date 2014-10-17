@@ -1,24 +1,22 @@
-<?
+<?php
 
 /*
   This is a simple php snipt it scrape the image directory for images that are available and their metadata (youtube videos)
   TODO: Script to put all images into a css style sheet as base64 data
 */
-if ($handle = opendir('../image/round/')) {
+if ($handle = opendir('image/round/')) {
 	$jsFileNames='';
 	$jsMetaNames='';
-    while (false !== ($entry = readdir($handle))) {
-        if ($entry != "." && $entry != "..") {
+  while (false !== ($entry = readdir($handle))) {
+    if ($entry != "." && $entry != "..") {
 			if (strpos($entry,'.png')!==false){
 				$jsFileNames .= '"' . $entry . '",';
 			}
 			if (strpos($entry,'.meta')!==false){
 				$jsMetaNames .= "'" . $entry . "',";
-			}			
-        }
-		
-		
+			}
     }
+  }
 
   //these get put out to the html render as JS vars.
 	$jsFileNames = substr($jsFileNames,0,strlen($jsFileNames)-1);
@@ -26,7 +24,7 @@ if ($handle = opendir('../image/round/')) {
 	$jsMetaNames = substr($jsMetaNames,0,strlen($jsMetaNames)-1);
 	$jsMetaNames = "var metaNames = [" . $jsMetaNames . "];";
 	
-    closedir($handle);
+  closedir($handle);
 }
 
 
@@ -101,8 +99,8 @@ if ($handle = opendir('../image/round/')) {
 </div>
 <div id="video"></div>
 
-<a id="gephi" href="#" title="Downalod this network as a Gephi file.">
-  <img src="img/icon-gephi.png" title="Downalod this network as a Gephi file."> 
+<a id="gephi" href="#" title="Download this network as a Gephi file.">
+  <img src="img/icon-gephi.png" title="Download this network as a Gephi file."> 
 </a>
 
 
