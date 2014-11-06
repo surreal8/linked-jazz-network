@@ -71,6 +71,8 @@ var lineColor = d3.scale.category20c();
 
 jQuery(document).ready(function($) {
 
+  $("#gephi").hide();
+
   // Bind to StateChange Event
   History.Adapter.bind(window,'statechange',function(){ // Note: We are using statechange instead of popstate
     var State = History.getState(); // Note: We are using History.getState() instead of event.state
@@ -447,7 +449,13 @@ function buildTripleStore(data){
                                  namespaces: {
                                    dc: 'http://purl.org/dc/elements/1.1/',
                                    foaf: 'http://xmlns.com/foaf/0.1/',
-                                   lj: 'http://www.linkedjazz.org/lj/' } });
+                                   lj: 'http://www.linkedjazz.org/lj/',
+                                   aic: 'http://lv.artic.edu/ns#',
+                                   rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+                                   rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
+                                   xml: 'http://www.w3.org/XML/1998/namespace',
+                                   xsd: 'http://www.w3.org/2001/XMLSchema#'
+ } });
 
 
   //I'm only intrested in the knowsOf right now before we work more on verifying the 52nd street stuff, so just make all relationships knowsof
@@ -608,7 +616,7 @@ function dataAnalysis(){
   //find out the range of number of connections to color our edges
   edgesAvg = Math.floor(totalConnections/largestNodes.length);
   edgesInterval = (largestNodes[0].size - edgesAvg) / 3;
-  console.log(edgesInterval);
+  console.log("edgesInterval: " + edgesInterval);
 
 
   var flipFlop = 0;
@@ -629,7 +637,7 @@ function dataAnalysis(){
     //we want to pin some of the larger nodes to the outside in order to keep things readable, so figure our where to put them and store it in this obj array
     for (n in largestNodes){
       var nudge = 0;
-      var r = visHeight/2.5;
+      var r = visHeight/3;
       var a = (186 / largestNodes.length) * n;
 
       if (n==0){nudge = 50;}
@@ -1246,7 +1254,7 @@ function restart(){
     .attr("id", function(d){  return "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
     .attr("font-size", function(d){return returnNodeSize(d) / 2})
     .attr("class",  function(d){return "circleText"})
-    .attr("font-family", "helvetica, sans-serif")
+    /*.attr("font-family", "helvetica, sans-serif")*/
     .attr("text-anchor","middle")
     .attr("display",function(d){ return displayLabel(d);})
     .attr("x", function(d) { return  (returnNodeSize(d)*-0.1); })
@@ -1270,8 +1278,7 @@ function restart(){
         }else{
           if (e.alpha<=.08){
             if  (nodes[aNode].y <= 0){ nodes[aNode].y = Math.floor((Math.random()*20)+8); nodes[aNode].lock = true; nodes[aNode].lockY = nodes[aNode].y; nodes[aNode].lockX = nodes[aNode].x; }
-            else if  (nodes[aNode].y >= visHeight){nodes[aNode].y = visHeight- Math.floor((Math.random()*60)+20); nodes[aNode].lock = true; nodes[aNode].lockY = nodes[aNode].y; nodes[aNode].lockX = nodes[aNode].x; }
-            else { console.log(nodes[aNode].y); }
+            if  (nodes[aNode].y >= visHeight){nodes[aNode].y = visHeight- Math.floor((Math.random()*60)+20); nodes[aNode].lock = true; nodes[aNode].lockY = nodes[aNode].y; nodes[aNode].lockX = nodes[aNode].x; }
           }
         }
       }
@@ -1413,7 +1420,7 @@ function returnNodeSize(d){
 
   }else{
 
-    return Math.round(Math.sqrt(d.connections) + (d.connections/6));
+    return Math.round(Math.sqrt(d.connections)*3 + (d.connections/6));
 
   }
 
@@ -1558,8 +1565,14 @@ function showPopup(d,cords){
 
   if (fileNames.indexOf(useId+'.png')==-1){
     var useImage = 'menu/no_image.png';
+    var useHeight = '0px';
+    var useWidth = '0px';
+    var spanLeft = '5px';
   }else{
     var useImage = '/image/round/' + useId+'.png'
+    var useHeight = '75px';
+    var useWidth = '75px';
+    var spanLeft = '80px';
   }
 
 
@@ -1567,10 +1580,10 @@ function showPopup(d,cords){
 
     $("<img>")
       .attr("src", function(){return useImage;})
-      .css("height","75px")
-      .css("width","75px")
-      .css("min-height","75px")
-      .css("min-width","75px")
+      .css("height",function(){return useHeight;})
+      .css("width",function(){return useWidth;})
+      .css("min-height",function(){return useHeight;})
+      .css("min-width",function(){return useWidth;})
       .css("position","absolute")
       .css("left","0px")
       .css("top","0px")
@@ -1580,8 +1593,9 @@ function showPopup(d,cords){
       .css("color","#fff")
       .text(d.label)
       .css("position","absolute")
-      .css("left","80px")
-      .css("top","0px")
+      .css("left",function(){return useImage;})
+      .css("top","5px")
+      .css("padding","5px")
 
   ).append(
     $("<div>")

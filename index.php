@@ -44,7 +44,7 @@ if ($handle = opendir('image/round/')) {
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Linked Jazz</title>
+<title>Linked Visions</title>
 
  
 	
@@ -66,11 +66,11 @@ if ($handle = opendir('image/round/')) {
 <link rel="stylesheet" href="css/network.css">
 <link rel="stylesheet" href="css/vex.css">
 <link rel="stylesheet" href="css/vex-theme-os.css">
-
+<link rel="stylesheet" type="text/css" href="//www.artic.edu/sites/all/themes/aic_base/fonts/201687/DE1CD028D2131BE18.css" media="screen, projection, print">
 </head>
 
 <body>
-<a href="/"><img src="menu/logo.png"   id="logo"></a>
+<a href="/linked-visions"><img src="menu/logo.png" id="logo"><h1>Linked Visions</h1></a>
 
 <div id="network" style="background-color:#fff">
     <div id="popUp">

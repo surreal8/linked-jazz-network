@@ -1,10 +1,21 @@
 body{
 	margin: 0;
 	padding: 0;
-	font-family:Helvetica, Arial, sans-serif;
 	background-color:#fff;
+	font-family: 'Ideal Sans 3r','Ideal Sans SSm A','Ideal Sans SSm B',sans-serif !important; 
 }
 
+h1 {
+    margin: 0;
+    padding: .25em .25em .25em 1.75em ;
+}
+
+a {
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
 
 #network{
 	-webkit-touch-callout: none;
@@ -37,7 +48,9 @@ body{
 	color:#FFF;
 	overflow:visible;
 	z-index:2000;
-	
+	font-size: 20px;
+  margin: 10px;
+  padding: 10px;
 }
 
 .popup-transcript-link-holder{
@@ -79,14 +92,15 @@ body{
 }
  
  #logo{
+/*
 	 position:absolute; 
 	 top:0px;
 	 left:0px;
-	 width:300px;
+*/
+	 width:48x;
 	 height:auto;
 	 z-index:1000;
-
-	 
+   float: left;
  }
  
  #playButton {
@@ -117,11 +131,11 @@ body{
 #spinner span{
 	font-size:29px;
 	font-weight:bold;
-	font-family:Helvetica, Arial, sans-serif;
 	position:absolute;
 	top:25px;
 	left:0px;
 	text-align:center;
+	width:132px;
 	 
 }
 #video{
