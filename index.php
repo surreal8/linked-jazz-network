@@ -70,16 +70,24 @@ if ($handle = opendir('image/round/')) {
 </head>
 
 <body>
-<a href="/linked-visions"><img src="menu/logo.png" id="logo"><h1>Linked Visions</h1></a>
+<a href="/linked-visions"><img src="menu/logo.png" id="logo"></a> <h1>Linked Visions</h1>
 
 <div id="network" style="background-color:#fff">
     <div id="popUp">
     </div>
 	
-    <div style="cursor: pointer; position:absolute; right:5px; height:65px; width:65px; top:0px; opacity:0.15" id="menu_dynamic"><img alt="Dynamic mode allows you to add individuals and view their shared connections." title="Dynamic mode allows you to add individuals and view their shared connections." src="menu/menu_dynamic.png"/></div> 
-    <div style="cursor: pointer; position:absolute; right:80px; height:65px; width:65px; top:0px; opacity:0.15" id="menu_similar"><img alt="Similar mode groups individuals together by their number of shared connections." title="Similar mode groups individuals together by their number of shared connections." src="menu/menu_similar.png"/></div> 
-    <div style="cursor: pointer; position:absolute; right:150px; height:65px; width:65px; top:0px; opacity:0.15" id="menu_free"><img alt="Free mode groups individuals together based on their number of connections." title="Free mode groups individuals together based on their number of connections." src="menu/menu_free.png"/></div> 
-	<div style="cursor: pointer; position:absolute; right:225px; height:65px; width:65px; top:0px; opacity:0.15" id="menu_fixed"><img alt="Fixed mode pins the individuals with the most connections to the outside allowing clearer presentation."  title="Fixed mode pins the individuals with the most connections to the outside allowing clearer presentation." src="menu/menu_fixed.png"/></div>     
+	<div style="cursor: pointer; position:absolute; right:720px; height:50px; top:10px; opacity:0.15" id="filter_all">All</div>     
+	<div style="cursor: pointer; position:absolute; right:635px; height:50px; top:10px; opacity:0.15" id="filter_family">Family</div>     
+	<div style="cursor: pointer; position:absolute; right:545px; height:50px; top:10px; opacity:0.15" id="filter_friends">Friends</div>     
+	<div style="cursor: pointer; position:absolute; right:425px; height:50px; top:10px; opacity:0.15" id="filter_colleagues">Colleagues</div>     
+	<div style="cursor: pointer; position:absolute; right:225px; height:50px; top:10px; opacity:0.15" id="filter_mentors">Mentors and Followers</div>     
+	<div style="cursor: pointer; position:absolute; right:10px; height:50px; top:10px; opacity:0.15" id="filter_employers">Employers and Employees</div>     
+
+    <div style="cursor: pointer; position:absolute; right:5px; height:65px; width:65px; top:65px; opacity:0.15" id="menu_dynamic"><img alt="Dynamic mode allows you to add individuals and view their shared connections." title="Dynamic mode allows you to add individuals and view their shared connections." src="menu/menu_dynamic.png"/></div> 
+    <div style="cursor: pointer; position:absolute; right:80px; height:65px; width:65px; top:65px; opacity:0.15" id="menu_similar"><img alt="Similar mode groups individuals together by their number of shared connections." title="Similar mode groups individuals together by their number of shared connections." src="menu/menu_similar.png"/></div> 
+    <div style="cursor: pointer; position:absolute; right:150px; height:65px; width:65px; top:65px; opacity:0.15" id="menu_free"><img alt="Free mode groups individuals together based on their number of connections." title="Free mode groups individuals together based on their number of connections." src="menu/menu_free.png"/></div> 
+	  <div style="cursor: pointer; position:absolute; right:225px; height:65px; width:65px; top:65px; opacity:0.15" id="menu_fixed"><img alt="Fixed mode pins the individuals with the most connections to the outside allowing clearer presentation."  title="Fixed mode pins the individuals with the most connections to the outside allowing clearer presentation." src="menu/menu_fixed.png"/></div>     
+
 
 
 	<div id="dynamicSearchHolder">

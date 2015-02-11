@@ -40,6 +40,7 @@ var connectionCounter = {};     //holds each id as a property name w/ the value 
 
 var connectionIndex = {};       //an object with properties as id names, with values an array of strings of ids that person has connections to.
 var largestConnection = 0;
+var relationIndex = {};         //an object with properties as relationship ids, with values an array of strings of ids that have that relation.
 
 var simlarityIndex = {}         //properties are id names, with the value being an array of objects with other ids and their # of matching connections
 var largestSimilarity = 0;      //holds the max number of similar connections any two nodes share in the network
@@ -94,6 +95,13 @@ jQuery(document).ready(function($) {
   jQuery("#menu_free").mouseenter(function() {$(this).css("opacity",1); }).mouseleave(function() {$(this).css("opacity",0.15); }).click(function() {changeVisMode("free"); });
   jQuery("#menu_dynamic").mouseenter(function() {$(this).css("opacity",1); }).mouseleave(function() {$(this).css("opacity",0.15); }).click(function() {changeVisMode("dynamic"); });
 
+  jQuery("#filter_all").mouseenter(function() {$(this).css("opacity",1); }).mouseleave(function() {$(this).css("opacity",0.15); }).click(function() {hideRelations(); });
+  jQuery("#filter_family").mouseenter(function() {$(this).css("opacity",1); }).mouseleave(function() {$(this).css("opacity",0.15); }).click(function() {showRelations("family"); });
+  jQuery("#filter_friends").mouseenter(function() {$(this).css("opacity",1); }).mouseleave(function() {$(this).css("opacity",0.15); }).click(function() {showRelations("friends"); });
+  jQuery("#filter_colleagues").mouseenter(function() {$(this).css("opacity",1); }).mouseleave(function() {$(this).css("opacity",0.15); }).click(function() {showRelations("colleagues"); });
+  jQuery("#filter_mentors").mouseenter(function() {$(this).css("opacity",1); }).mouseleave(function() {$(this).css("opacity",0.15); }).click(function() {showRelations("mentors"); });
+  jQuery("#filter_employers").mouseenter(function() {$(this).css("opacity",1); }).mouseleave(function() {$(this).css("opacity",0.15); }).click(function() {showRelations("employers"); });
+
   $("#dynamicSearchInput").keyup(function() {dynamicFilterList(); });
   $("#dynamicSearchClear").click(function() {$("#dynamicSearchInput").val(''); dynamicFilterList(); });
   $("#dynamicClear").click(function() {dynamicPeople = []; filter(); });
@@ -120,7 +128,7 @@ jQuery(document).ready(function($) {
       buildDescriptionStore(data);
     });
 
-    $.get('data/relationships2.txt', function(data) {
+    $.get('data/relationships.txt', function(data) {
 
       buildTripleStore(data);
 
@@ -408,20 +416,7 @@ function buildTripleStore(data) {
   for (x in triples) {
     if (triples[x].length > 0) {
       try{
-
-        //I'm only intrested in the knowsOf right now before we work more on verifying the 52nd street stuff, so just make all relationships knowsof
-        var hash = triples[x].split("> <")[0] + triples[x].split("> <")[2];
-
-        //only add it once
-        if (alreadyKnows.indexOf(hash) === -1) {
-
-          var newKnowsOf = triples[x].split("> <")[0] + "> <http://purl.org/vocab/relationship/knowsOf> <" + triples[x].split("> <")[2];
-          alreadyKnows.push(hash);
-
-          //console.log(newKnowsOf);
-          tripleStore.add(newKnowsOf);
-          //tripleStore.add(triples[x]);
-        }
+        tripleStore.add(triples[x]);
       }
       catch (err) {
         //if it cannot load one of the triples it is not a total failure, keep going
@@ -586,8 +581,9 @@ function buildBase() {
       baseNodes.push({id: String(x)});
     }
 
-    for (y in tripleObject[x]) {		//this level is the types of relations, mentions, knows, etc. each y here is a realtion bundle
-      for (z in tripleObject[x][y]) {	//here each z is a relation
+    for (y in tripleObject[x])
+    { //this level is the types of relations, mentions, knows, etc. each y here is a realtion bundle
+      for (z in tripleObject[x][y]) { //here each z is a relation
         if (allObjects.indexOf(tripleObject[x][y][z].value) == -1) {
 
           baseNodes.push({id: tripleObject[x][y][z].value});
@@ -605,7 +601,7 @@ function buildBase() {
           }
 
         }
-        createLink(String(x),tripleObject[x][y][z].value);
+        createLink(String(x),tripleObject[x][y][z].value,String(y));
       }
     }
   }
@@ -686,7 +682,7 @@ function buildBase() {
     }
   }
 
-  function createLink(id1, id2) {
+  function createLink(id1, id2, pred) {
     var obj1 = null, obj2 = null;
 
     //in an effor to speed this lookup a little is to see if we have indexed the pos of the requested ids already, if so do not loop
@@ -739,6 +735,20 @@ function buildBase() {
     }
     if (connectionIndex[id2].indexOf(id1) == -1) {
       connectionIndex[id2].push(id1);
+    }
+
+    //add this relationship to the relationIndex object
+    //has propery yet?
+    if (!relationIndex.hasOwnProperty(pred)) {
+      relationIndex[pred] = [];
+    }
+
+    //does it have this relationship already?
+    if (relationIndex[pred].indexOf(id1) == -1) {
+      relationIndex[pred].push(id1);
+    }
+    if (relationIndex[pred].indexOf(id2) == -1) {
+      relationIndex[pred].push(id2);
     }
   }
 }
@@ -971,6 +981,7 @@ function restart() {
     .attr("class", "node")
     .style("cursor","pointer")
     .attr("id", function(d) {  return "node_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
+/*
     .on("mouseover",function(d) {
 
       //showPopupTimer = setTimeout(function() {
@@ -983,7 +994,9 @@ function restart() {
     }).on("mouseout",function(d) {
       currentNode = d;
       hidePopupTimer = setTimeout(hidePopup,150);
-    }).on("click",function(d) {
+    })
+*/
+.on("click",function(d) {
       hidePopup();
 
       $("#network").fadeOut('fast',
@@ -1040,7 +1053,7 @@ function restart() {
     .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8; })
 	.style("fill", "#000000")
 	.attr("visibility", "hidden")
-    .text(function(d) { console.log('d.label', d.label); return d.label; });	
+    .text(function(d) { return d.label; });	//console.log('d.label', d.label);
 	
   force.start();
 
@@ -1085,6 +1098,8 @@ function restart() {
         }
 		
 	nodeEnter.append("svg:rect")
+    .attr("id", function(d) {  return "circleTextRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
+    .attr("class",  function(d) {return "circleTextRect"})
 	 .attr("x", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().x; })
      .attr("y", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
      .attr("width", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width; })
@@ -1107,7 +1122,7 @@ function restart() {
     .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8; })
 	.style("fill", "#ffffff")
 	.attr("visibility", "visible")
-    .text(function(d) { console.log('d.label', d.label); return d.label; });	
+    .text(function(d) { return d.label; });	//console.log('d.label', d.label); 
 	
    nodeEnter.append("svg:text")
     .attr("id", function(d) {  return "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
@@ -1125,6 +1140,7 @@ function restart() {
     .text("ARTIST");	
 	
    nodeEnter.append("svg:rect")
+    .attr("id", function(d) {  return "labelRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
 	 .attr("x", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().x; })
      .attr("y", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
      .attr("width", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width; })
@@ -1289,6 +1305,9 @@ function hidePopup() {
   d3.selectAll(".backgroundCircle").attr("fill-opacity",1).attr("stroke-opacity",1);
   d3.selectAll(".imageCircle").attr("display","block");
   d3.selectAll(".circleText").attr("fill-opacity",1).attr("stroke-opacity",1);
+  d3.selectAll(".circleTextRect").attr("fill-opacity",1).attr("stroke-opacity",1);
+  d3.selectAll(".labelText").attr("fill-opacity",1).attr("stroke-opacity",1);
+  d3.selectAll(".labelRect").attr("fill-opacity",1).attr("stroke-opacity",1);
 }
 
 function showPopup(d,cords) {
@@ -1298,10 +1317,15 @@ function showPopup(d,cords) {
   d3.selectAll(".link").attr("stroke-opacity",0.1).attr("fill-opacity",0.1);
   d3.selectAll(".backgroundCircle").attr("fill-opacity",0.1).attr("stroke-opacity",0.1);
   d3.selectAll(".circleText").attr("fill-opacity",0.1).attr("stroke-opacity",0.1);
+  d3.selectAll(".circleTextRect").attr("fill-opacity",0.1).attr("stroke-opacity",0.1);
+  d3.selectAll(".labelText").attr("fill-opacity",0.1).attr("stroke-opacity",0.1);
+  d3.selectAll(".labelRect").attr("fill-opacity",0.1).attr("stroke-opacity",0.1);
   d3.selectAll(".imageCircle").attr("display","none");
 
   d3.selectAll(".marker").attr("stroke-opacity",0.1).attr("fill-opacity",0.1)
 
+  // Lines
+  // Get ID of the node being hovered over
   var customClass =  d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'');
   //d3.selectAll("." + "link_" + customClass).style("stroke","#fd8d3c").style("stroke-opacity",1).style("fill-opacity",1);//.attr("display","block");//.style("opacity",1);
   d3.selectAll("." + "link_" + customClass).attr("stroke-opacity",1).style("fill-opacity",1).style("stroke-width",2);//.style("opacity",1);
@@ -1309,6 +1333,9 @@ function showPopup(d,cords) {
   d3.selectAll("#backgroundCircle_" + customClass).attr("fill-opacity",1).attr("stroke-opacity",1);
   d3.selectAll("#imageCircle_"+ customClass).attr("display","block");
   d3.selectAll("#circleText_"+ customClass).attr("fill-opacity",1).attr("stroke-opacity",1);
+  d3.selectAll("#circleTextRect_"+ customClass).attr("fill-opacity",1).attr("stroke-opacity",1);
+  d3.selectAll("#labelText_"+ customClass).attr("fill-opacity",1).attr("stroke-opacity",1);
+  d3.selectAll("#labelRect_"+ customClass).attr("fill-opacity",1).attr("stroke-opacity",1);
 
   for (x in connectionIndex[d.id]) {
     var id = connectionIndex[d.id][x].split("/")[connectionIndex[d.id][x].split("/").length-1].replace(cssSafe,'');
@@ -1316,6 +1343,9 @@ function showPopup(d,cords) {
     d3.selectAll("#backgroundCircle_" + id).attr("fill-opacity",1).attr("stroke-opacity",1);
     d3.selectAll("#imageCircle_"+ id).attr("display","block");
     d3.selectAll("#circleText_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1);
+    d3.selectAll("#circleTextRect_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1);
+    d3.selectAll("#labelText_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1);
+    d3.selectAll("#labelRect_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1);
   }
 
   var useX,useY;
@@ -1333,6 +1363,7 @@ function showPopup(d,cords) {
     }
   }
 
+/*
   var descText = '';
   if (descObject.hasOwnProperty(d.id)) {
 
@@ -1488,6 +1519,7 @@ function showPopup(d,cords) {
     .css("top", useY + "px");
 
   jQuery("#popUp").fadeIn(300);
+*/
 }
 
 
@@ -1590,6 +1622,48 @@ function showDialogPopup(person1,person2) {
           } else if (rel.value == '<http://purl.org/ontology/mo/collaborated_with>') {
             relationship = "collaborated with";
             color = 'rgba(159, 144, 131, 0.25)';
+          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_colleague_of>') {
+            relationship = "is colleague of";
+            color = 'rgba(159, 144, 131, 0.25)';
+          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_spouse_of>') {
+            relationship = "is spouse of";
+            color = 'rgba(188, 143, 102, 0.25)';
+          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_assistant_to>') {
+            relationship = "is assistant to";
+            color = 'rgba(229, 142, 60, 0.25)';
+          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_friend_of>') {
+            relationship = "is friend of";
+            color = 'rgba(131, 149, 159, 0.25)';
+          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_student_of>') {
+            relationship = "is student of";
+            color = 'rgba(77, 165, 213, 0.25)';
+          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_artist_of>') {
+            relationship = "is artist of";
+            color = 'rgba(43, 175, 247, 0.25)';
+          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_model_for>') {
+            relationship = "is model for";
+            color = 'rgba(108, 156, 182, 0.25)';
+          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_intimate_with>') {
+            relationship = "is intimate with";
+            color = 'rgba(43, 175, 247, 0.25)';
+          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_teacher_of>') {
+            relationship = "is teacher of";
+            color = 'rgba(159, 143, 60, 0.25)';
+          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_relative_of>') {
+            relationship = "is relative of";
+            color = 'rgba(188, 142, 159, 0.25)';
+          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_executor_for>') {
+            relationship = "is executor for";
+            color = 'rgba(229, 149, 213, 0.25)';
+          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_master_of>') {
+            relationship = "is master of";
+            color = 'rgba(131, 165, 247, 0.25)';
+          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_physician_to>') {
+            relationship = "is physician to";
+            color = 'rgba(77, 175, 182, 0.25)';
+          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_secretary_to>') {
+            relationship = "is secratory to";
+            color = 'rgba(43, 156, 247, 0.25)';
           }
 
           if (added.indexOf(source + ' ' + relationship + ' ' + target) == -1) {
@@ -1747,6 +1821,75 @@ function changeVisMode(changeTo) {
 
     rendering = false;
   });
+}
+
+function hideRelations() {
+  d3.selectAll(".marker").attr("stroke-opacity",1).attr("fill-opacity",1)
+  d3.selectAll(".link").attr("stroke-opacity",1).style("fill-opacity",1).style("stroke-width",function(d) {return edgeStrokeWidth(d)});
+  d3.selectAll(".backgroundCircle").attr("fill-opacity",1).attr("stroke-opacity",1);
+  d3.selectAll(".imageCircle").attr("display","block");
+  d3.selectAll(".circleText").attr("fill-opacity",1).attr("stroke-opacity",1);
+  d3.selectAll(".circleTextRect").attr("fill-opacity",1).attr("stroke-opacity",1);
+  d3.selectAll(".labelText").attr("fill-opacity",1).attr("stroke-opacity",1);
+  d3.selectAll(".labelRect").attr("fill-opacity",1).attr("stroke-opacity",1);
+}
+
+function showRelations(rel) {
+  // Which predicates to show
+  var relationsToShow = [];
+  if (rel == "friends") {
+    relationsToShow.push("http://data.artic.edu/whistler/predicate/is_friend_of");
+  }
+  else if (rel == "family") {
+    relationsToShow.push("http://data.artic.edu/whistler/predicate/is_relative_of");
+  }
+  else if (rel == "colleagues") {
+    relationsToShow.push("http://data.artic.edu/whistler/predicate/is_colleague_of");
+  }
+  else if (rel == "mentors") {
+    relationsToShow.push("http://data.artic.edu/whistler/predicate/is_student_of");
+    relationsToShow.push("http://data.artic.edu/whistler/predicate/is_teacher_of");
+  }
+  else if (rel == "employers") {
+    relationsToShow.push("http://data.artic.edu/whistler/predicate/is_master_of");
+    relationsToShow.push("http://data.artic.edu/whistler/predicate/is_assistant_to");
+  }
+
+  // First we grey out everything
+  clearTimeout(hidePopupTimer);
+  d3.selectAll(".link").attr("stroke-opacity",0.1).attr("fill-opacity",0.1);
+  d3.selectAll(".backgroundCircle").attr("fill-opacity",0.1).attr("stroke-opacity",0.1);
+  d3.selectAll(".circleText").attr("fill-opacity",0.1).attr("stroke-opacity",0.1);
+  d3.selectAll(".circleTextRect").attr("fill-opacity",0.1).attr("stroke-opacity",0.1);
+  d3.selectAll(".labelText").attr("fill-opacity",0.1).attr("stroke-opacity",0.1);
+  d3.selectAll(".labelRect").attr("fill-opacity",0.1).attr("stroke-opacity",0.1);
+  d3.selectAll(".imageCircle").attr("display","none");
+
+  var nodesShown = [];
+
+  // Show circles and names
+  for (var r in relationsToShow) {
+    var rx = relationsToShow[r];
+    for (var e in relationIndex[rx]) {
+      var id = relationIndex[rx][e].split("/")[relationIndex[rx][e].split("/").length-1].replace(cssSafe,'');
+      d3.selectAll("#backgroundCircle_" + id).attr("fill-opacity",1).attr("stroke-opacity",1);
+      d3.selectAll("#imageCircle_"+ id).attr("display","block");
+      d3.selectAll("#circleText_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1);
+      d3.selectAll("#circleTextRect_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1);
+      d3.selectAll("#labelText_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1);
+      d3.selectAll("#labelRect_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1);
+      nodesShown.push(id);
+    }
+  }
+
+  // Now show all the lines between all the nodes that we've shown
+  for (var n in nodesShown) {
+    for (var m in nodesShown) {
+      if (nodesShown[n] != nodesShown[m]) {
+        d3.selectAll(".link_" + nodesShown[n] + ".link_" + nodesShown[m]).attr("stroke-opacity",1).style("fill-opacity",1).style("stroke-width",2);
+      }
+    }
+  }
 }
 
 //build the intial list used for dynamic mode
