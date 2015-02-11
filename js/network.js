@@ -120,7 +120,7 @@ jQuery(document).ready(function($) {
       buildDescriptionStore(data);
     });
 
-    $.get('data/relationships.txt', function(data) {
+    $.get('data/relationships2.txt', function(data) {
 
       buildTripleStore(data);
 
@@ -510,7 +510,6 @@ function dataAnalysis() {
     for (y in tripleObject[x]) {		//this level is the types of relations, mentions, knows, etc. each y here is a realtion bundle
       size = size + tripleObject[x][y].length;
     }
-
     var sizeObj = {};
     sizeObj.node = x;
     sizeObj.size = size;
@@ -542,7 +541,6 @@ function dataAnalysis() {
   });
 
   if (visMode == "wave") {
-
     //we want to pin some of the larger nodes to the outside in order to keep things readable, so figure our where to put them and store it in this obj array
     for (n in largestNodes) {
       var nudge = 0;
@@ -968,7 +966,7 @@ function restart() {
 
   var node = vis.selectAll("g.node")
     .data(nodes);
-
+	
   var nodeEnter = node.enter().append("svg:g")
     .attr("class", "node")
     .style("cursor","pointer")
@@ -1006,10 +1004,10 @@ function restart() {
     .attr("cx", function(d) { return 0; })
     .attr("cy", function(d) { return 0; })
     .attr("r", function(d) { return  returnNodeSize(d); })
-    .style("fill", function(d, i) { return "#ccc"; }) //return fill(i & 3); })
-    .style("stroke", function(d, i) { return returnNodeColor(d); })
+    .style("fill", "#000000")
+	.style("stroke", "#000000")
     .style("stroke-width", function(d) {return returnNodeStrokeWidth(d);});
-
+	
   nodeEnter.append("svg:image")
     .attr("id", function(d) {  return "imageCircle_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
     .attr("class","imageCircle")
@@ -1017,7 +1015,7 @@ function restart() {
 
       var useId = $.trim(decodeURI(d.id).split("\/")[decodeURI(d.id).split("\/").length-1]);
       if (fileNames.indexOf(useId+'.png') == -1) {
-        return "menu/no_image.png";
+        return "menu/whistler.png";
       } else {
         return "/image/round/" + useId+'.png';
       }
@@ -1025,19 +1023,25 @@ function restart() {
     .attr("x", function(d) { return  (returnNodeSize(d)*-1); })
     .attr("y", function(d) { return  (returnNodeSize(d)*-1); })
     .attr("width", function(d) { return  (returnNodeSize(d)*2); })
-    .attr("height", function(d) { return  (returnNodeSize(d)*2); });
-
+    .attr("height", function(d) { return  (returnNodeSize(d)*2); })
+	.style("opacity", function(d) { return returnNodeOpac(d);  })
+	.attr("visibility", function(d) { return returnNodeVisible(d);  });
+	
   nodeEnter.append("svg:text")
     .attr("id", function(d) {  return "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
-    .attr("font-size", function(d) {return returnNodeSize(d) / 2})
+    .attr("font-size", function(d) {return returnNodeSize2(d) / 2})
     .attr("class",  function(d) {return "circleText"})
-    /*.attr("font-family", "helvetica, sans-serif")*/
+    .attr("font-family", "Verdana, Geneva, sans-serif")
+	.style("text-transform", "uppercase")
+	.style("letter-spacing", ".25em")
     .attr("text-anchor","middle")
     .attr("display",function(d) { return displayLabel(d);})
-    .attr("x", function(d) { return  (returnNodeSize(d)*-0.1); })
-    .attr("y", function(d) { return returnNodeSize(d)+returnNodeSize(d)/1.8; })
-    .text(function(d) { return d.label; });
-
+    .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
+    .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8; })
+	.style("fill", "#000000")
+	.attr("visibility", "hidden")
+    .text(function(d) { console.log('d.label', d.label); return d.label; });	
+	
   force.start();
 
   //controls the movement of the nodes
@@ -1073,12 +1077,81 @@ function restart() {
           .attr("y2", function(d) { return d.target.y; });
 
         vis.selectAll("g.node").attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
-
+		
         if ($("#network").css("visibility") != "visible") {
           $("#network").css("visibility","visible");
           $("#network").fadeIn();
           $("#zoomWidget").css("visibility","visible");
         }
+		
+	nodeEnter.append("svg:rect")
+	 .attr("x", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().x; })
+     .attr("y", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
+     .attr("width", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width; })
+     .attr("height", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height; })
+	 .attr("stroke", "black")
+	 .attr("stroke-width", 10)
+	 .attr("visibility", "visible")
+	 .style("fill", "black");
+	  
+   nodeEnter.append("svg:text")
+    .attr("id", function(d) {  return "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
+    .attr("font-size", function(d) {return returnNodeSize2(d) / 2})
+    .attr("class",  function(d) {return "circleText"})
+    .attr("font-family", "Verdana, Geneva, sans-serif")
+	.style("text-transform", "uppercase")
+	.style("letter-spacing", ".25em")
+    .attr("text-anchor","middle")
+    .attr("display",function(d) { return displayLabel(d);})
+    .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
+    .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8; })
+	.style("fill", "#ffffff")
+	.attr("visibility", "visible")
+    .text(function(d) { console.log('d.label', d.label); return d.label; });	
+	
+   nodeEnter.append("svg:text")
+    .attr("id", function(d) {  return "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
+    .attr("font-size", function(d) {return returnNodeSize2(d) / 2})
+    .attr("class",  "labelText")
+    .attr("font-family", "Verdana, Geneva, sans-serif")
+	.style("text-transform", "uppercase")
+	.style("letter-spacing", ".25em")
+    .attr("text-anchor","middle")
+    .attr("display",function(d) { return displayLabel(d);})
+    .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
+    .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+20; })
+	.style("fill", "#000000")
+	.attr("visibility", "hidden")
+    .text("ARTIST");	
+	
+   nodeEnter.append("svg:rect")
+	 .attr("x", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().x; })
+     .attr("y", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
+     .attr("width", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width; })
+     .attr("height", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height; })
+	 .attr("class",  "labelRect")
+	 .attr("stroke", "black")
+	 .attr("stroke-width", 10)
+	 .style("opacity", 0)
+	 .attr("visibility", "hidden")
+	 .style("fill", "black");
+	 
+   nodeEnter.append("svg:text")
+    .attr("id", function(d) {  return "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
+    .attr("font-size", function(d) {return returnNodeSize2(d) / 2})
+    .attr("class",  "labelText")
+    .attr("font-family", "Verdana, Geneva, sans-serif")
+	.style("text-transform", "uppercase")
+	.style("letter-spacing", ".25em")
+    .attr("text-anchor","middle")
+    .attr("display",function(d) { return displayLabel(d);})
+    .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
+    .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+20; })
+	.style("fill", "#ffffff")
+	.style("opacity", 0)
+	.attr("visibility", "hidden")
+    .text("ARTIST");	
+	
 
         if (networkStopTick) {
           force.stop();
@@ -1135,6 +1208,7 @@ function returnNodeColor(d) {
 }
 
 function returnNodeSize(d) {
+  /* original code here 2.9.ts
   if (visMode == "person") {
     if (d.id == usePerson) {
       return 50;
@@ -1149,7 +1223,43 @@ function returnNodeSize(d) {
     }
   } else {
     return Math.round(Math.sqrt(d.connections)*3 + (d.connections/6));
+  }*/
+ if (d.label == "James McNeill Whistler" || d.label == "Theodore Casimir Roussel") {
+	  //console.log(d);
+		return 15;
+  } else {
+	return 5;
   }
+}
+
+function returnNodeVisible(d) {
+	if (d.label == "James McNeill Whistler" || d.label == "Theodore Casimir Roussel") {
+		return "visible";
+  } else {
+	  return "hidden";
+  }
+}
+
+//replacing returnNodeSize for testing 2.10.ts
+function returnTextLoc(d) {
+	if (d.label == "James McNeill Whistler" || d.label == "Theodore Casimir Roussel") {
+		return 20;
+	} else {
+		return 15;
+	}
+}
+
+function returnNodeOpac(d) {
+	if (d.label == "James McNeill Whistler" || d.label == "Theodore Casimir Roussel") {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+//replacing returnNodeSize for testing 2.10.ts
+function returnNodeSize2(d) {
+	return 15;
 }
 
 //wooo!, from https://groups.google.com/forum/?fromgroups#!topic/d3-js/ndyvibO7wDA
@@ -1749,10 +1859,21 @@ function dynamicFilterList() {
 
 //zoom/pan function called by mouse event
 function redraw(useScale) {
-
   //store the last event data
   trans = d3.event.translate;
   scale = d3.event.scale;
+  
+  if (scale > 2) {
+	 //console.log(trans);
+  	 //console.log(scale);
+	 d3.selectAll(".backgroundCircle").style("fill", "#ffffff");
+	 d3.selectAll(".imageCircle").transition(800).style("opacity",1).attr("visibility","visible");
+  }
+  if (scale > 3) {
+	 d3.selectAll(".labelText").transition(800).style("opacity",1).attr("visibility","visible");
+	 d3.selectAll(".labelRect").transition(800).style("opacity",1).attr("visibility","visible");  
+  }
+  
 
   //transform the vis
   vis.attr("transform",
@@ -1818,15 +1939,19 @@ function edgeColor(d) {
   }
 
   if (d.connections <= edgesAvg) {
-    return "#bcbddc";
+    //return "#bcbddc";
+	return "#666666";
   }
   if ((d.connections-edgesAvg)/edgesInterval <= 1.5) {
-    return "#9ecae1";
+    //return "#9ecae1";
+	return "#666666";
   }
   if ((d.connections-edgesAvg)/edgesInterval <= 2.5) {
-    return "#74c476";
+    //return "#74c476";
+	return "#666666";
   }
-  return "#fdae6b";
+  //return "#fdae6b";
+  return "#666666";
 }
 
 function linkStrength(d) {
