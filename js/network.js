@@ -2022,6 +2022,19 @@ function redraw(useScale) {
   vis.attr("transform",
            "translate(" + trans + ")"
            + " scale(" + scale + ")");
+  y = 1/trans[1] + scale*.6;
+  d3.selectAll(".circleText").attr("transform",
+                                   "translate(" + 1/trans[0] + " " + y + ")"
+                                   + " scale(" + 1/scale + ")");
+  d3.selectAll(".circleTextRect").attr("transform",
+                                   "translate(" + 1/trans[0] + " " + y + ")"
+                                   + " scale(" + 1/scale + ")");
+  d3.selectAll(".labelText").attr("transform",
+                                  "translate(" + 1/trans[0] + " " + y + ")"
+                                  + " scale(" + 1/scale + ")");
+  d3.selectAll(".labelRect").attr("transform",
+                                   "translate(" + 1/trans[0] + " " + y + ")"
+                                  + " scale(" + 1/scale + ")");
 
   //we need to update the zoom slider, set the boolean to false so the slider change does not trigger a zoom change in the vis (from the slider callback function)
   zoomWidgetObjDoZoom = false;
