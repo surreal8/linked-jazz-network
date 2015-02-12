@@ -1857,12 +1857,12 @@ function showRelations(rel) {
 
   // First we grey out everything
   clearTimeout(hidePopupTimer);
-  d3.selectAll(".link").attr("stroke-opacity",0.1).attr("fill-opacity",0.1);
-  d3.selectAll(".backgroundCircle").attr("fill-opacity",0.1).attr("stroke-opacity",0.1);
-  d3.selectAll(".circleText").attr("fill-opacity",0.1).attr("stroke-opacity",0.1);
-  d3.selectAll(".circleTextRect").attr("fill-opacity",0.1).attr("stroke-opacity",0.1);
-  d3.selectAll(".labelText").attr("fill-opacity",0.1).attr("stroke-opacity",0.1);
-  d3.selectAll(".labelRect").attr("fill-opacity",0.1).attr("stroke-opacity",0.1);
+  d3.selectAll(".link").attr("stroke-opacity",0.03).attr("fill-opacity",0.03);
+  d3.selectAll(".backgroundCircle").attr("fill-opacity",0.03).attr("stroke-opacity",0.03);
+  d3.selectAll(".circleText").attr("fill-opacity",0.03).attr("stroke-opacity",0.03);
+  d3.selectAll(".circleTextRect").attr("fill-opacity",0.03).attr("stroke-opacity",0.03);
+  d3.selectAll(".labelText").attr("fill-opacity",0.03).attr("stroke-opacity",0.03);
+  d3.selectAll(".labelRect").attr("fill-opacity",0.03).attr("stroke-opacity",0.03);
   d3.selectAll(".imageCircle").attr("display","none");
 
   var nodesShown = [];
