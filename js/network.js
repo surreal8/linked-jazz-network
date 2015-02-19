@@ -1824,46 +1824,55 @@ function changeVisMode(changeTo) {
 }
 
 function hideRelations() {
+  var fill = "black";
   d3.selectAll(".marker").attr("stroke-opacity",1).attr("fill-opacity",1)
-  d3.selectAll(".link").attr("stroke-opacity",1).style("fill-opacity",1).style("stroke-width",function(d) {return edgeStrokeWidth(d)});
-  d3.selectAll(".backgroundCircle").attr("fill-opacity",1).attr("stroke-opacity",1);
+  d3.selectAll(".backgroundCircle").attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", fill).style("stroke", fill);
   d3.selectAll(".imageCircle").attr("display","block");
   d3.selectAll(".circleText").attr("fill-opacity",1).attr("stroke-opacity",1);
-  d3.selectAll(".circleTextRect").attr("fill-opacity",1).attr("stroke-opacity",1);
+  d3.selectAll(".circleTextRect").attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", fill).attr("stroke", fill);
   d3.selectAll(".labelText").attr("fill-opacity",1).attr("stroke-opacity",1);
-  d3.selectAll(".labelRect").attr("fill-opacity",1).attr("stroke-opacity",1);
+  d3.selectAll(".labelRect").attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", fill).attr("stroke", fill);
+  d3.selectAll(".link").attr("stroke-opacity",1).style("fill-opacity",1).style("stroke-width",function(d) {return edgeStrokeWidth(d)}).style("fill", fill).style("stroke", fill);
 }
 
 function showRelations(rel) {
+
+  // First we grey out everything
+  var fill = "black";
+  clearTimeout(hidePopupTimer);
+  d3.selectAll(".backgroundCircle").attr("fill-opacity",0.03).attr("stroke-opacity",0.03).style("fill", fill).style("stroke", fill);
+  d3.selectAll(".circleText").attr("fill-opacity",0.03).attr("stroke-opacity",0.03);
+  d3.selectAll(".circleTextRect").attr("fill-opacity",0.03).attr("stroke-opacity",0.03).style("fill", fill).attr("stroke", fill);
+  d3.selectAll(".labelText").attr("fill-opacity",0.03).attr("stroke-opacity",0.03);
+  d3.selectAll(".labelRect").attr("fill-opacity",0.03).attr("stroke-opacity",0.03).style("fill", fill).attr("stroke", fill);
+  d3.selectAll(".imageCircle").attr("display","none");
+  d3.selectAll(".link").attr("stroke-opacity",0.03).attr("fill-opacity",0.03).style("fill", fill).style("stroke", fill);
+
   // Which predicates to show
   var relationsToShow = [];
   if (rel == "friends") {
     relationsToShow.push("http://data.artic.edu/whistler/predicate/is_friend_of");
+    fill = "#ff9019";
   }
   else if (rel == "family") {
     relationsToShow.push("http://data.artic.edu/whistler/predicate/is_relative_of");
+    relationsToShow.push("http://data.artic.edu/whistler/predicate/is_spouse_of");
+    fill = "#79c942";
   }
   else if (rel == "colleagues") {
     relationsToShow.push("http://data.artic.edu/whistler/predicate/is_colleague_of");
+    fill = "#e33b61";
   }
   else if (rel == "mentors") {
     relationsToShow.push("http://data.artic.edu/whistler/predicate/is_student_of");
     relationsToShow.push("http://data.artic.edu/whistler/predicate/is_teacher_of");
+    fill = "#ff9900";
   }
   else if (rel == "employers") {
     relationsToShow.push("http://data.artic.edu/whistler/predicate/is_master_of");
     relationsToShow.push("http://data.artic.edu/whistler/predicate/is_assistant_to");
+    fill = "#ff9019";
   }
-
-  // First we grey out everything
-  clearTimeout(hidePopupTimer);
-  d3.selectAll(".link").attr("stroke-opacity",0.03).attr("fill-opacity",0.03);
-  d3.selectAll(".backgroundCircle").attr("fill-opacity",0.03).attr("stroke-opacity",0.03);
-  d3.selectAll(".circleText").attr("fill-opacity",0.03).attr("stroke-opacity",0.03);
-  d3.selectAll(".circleTextRect").attr("fill-opacity",0.03).attr("stroke-opacity",0.03);
-  d3.selectAll(".labelText").attr("fill-opacity",0.03).attr("stroke-opacity",0.03);
-  d3.selectAll(".labelRect").attr("fill-opacity",0.03).attr("stroke-opacity",0.03);
-  d3.selectAll(".imageCircle").attr("display","none");
 
   var nodesShown = [];
 
@@ -1872,12 +1881,12 @@ function showRelations(rel) {
     var rx = relationsToShow[r];
     for (var e in relationIndex[rx]) {
       var id = relationIndex[rx][e].split("/")[relationIndex[rx][e].split("/").length-1].replace(cssSafe,'');
-      d3.selectAll("#backgroundCircle_" + id).attr("fill-opacity",1).attr("stroke-opacity",1);
-      d3.selectAll("#imageCircle_"+ id).attr("display","block");
+      d3.selectAll("#backgroundCircle_" + id).attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", fill).style("stroke", fill);
+      d3.selectAll("#imageCircle_"+ id).attr("display","block").style("fill", fill).attr("stroke", fill);
       d3.selectAll("#circleText_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1);
-      d3.selectAll("#circleTextRect_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1);
+      d3.selectAll("#circleTextRect_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", fill).attr("stroke", fill);
       d3.selectAll("#labelText_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1);
-      d3.selectAll("#labelRect_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1);
+      d3.selectAll("#labelRect_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", fill).attr("stroke", fill);
       nodesShown.push(id);
     }
   }
@@ -1886,7 +1895,7 @@ function showRelations(rel) {
   for (var n in nodesShown) {
     for (var m in nodesShown) {
       if (nodesShown[n] != nodesShown[m]) {
-        d3.selectAll(".link_" + nodesShown[n] + ".link_" + nodesShown[m]).attr("stroke-opacity",1).style("fill-opacity",1).style("stroke-width",2);
+        d3.selectAll(".link_" + nodesShown[n] + ".link_" + nodesShown[m]).attr("stroke-opacity",1).style("fill-opacity",1).style("stroke-width",2).style("fill", fill).style("stroke", fill);
       }
     }
   }
