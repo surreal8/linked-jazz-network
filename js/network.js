@@ -1871,6 +1871,8 @@ function showRelations(rel) {
   else if (rel == "employers") {
     relationsToShow.push("http://data.artic.edu/whistler/predicate/is_master_of");
     relationsToShow.push("http://data.artic.edu/whistler/predicate/is_assistant_to");
+    relationsToShow.push("http://data.artic.edu/whistler/predicate/is_artist_of");
+    relationsToShow.push("http://data.artic.edu/whistler/predicate/is_model_for");
     fill = "#ff9019";
   }
 
