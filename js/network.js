@@ -295,7 +295,7 @@ function initalizeNetwork() {
     netwokrLinkLength = 25;
     networkLargeNodeLimit = 20;
     netwokrCharge = -2600;
-    networkStopTick = false;
+    networkStopTick = true;
     networkNodeDrag = true;
   }
 
@@ -1763,6 +1763,7 @@ function changeVisMode(changeTo) {
 function hideRelations() {
   var fill = "black";
   d3.selectAll(".marker").attr("stroke-opacity",1).attr("fill-opacity",1)
+  d3.selectAll(".marker path").style("fill", fill);
   d3.selectAll(".backgroundCircle").attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", fill).style("stroke", fill);
   d3.selectAll(".imageCircle").attr("display","block");
   d3.selectAll(".circleText").attr("fill-opacity",1).attr("stroke-opacity",1);
@@ -1826,6 +1827,7 @@ function showRelations(rel) {
       d3.selectAll("#circleTextRect_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", fill).attr("stroke", fill);
       d3.selectAll("#labelText_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1);
       d3.selectAll("#labelRect_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", fill).attr("stroke", fill);
+      d3.selectAll(".marker path").style("fill", fill);
       nodesShown.push(id);
     }
   }
