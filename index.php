@@ -27,6 +27,23 @@ if ($handle = opendir('image/round/')) {
   closedir($handle);
 }
 
+if ($handle = opendir('image/headshot/')) {
+	$jsHeadshotFileNames='';
+  while (false !== ($entry = readdir($handle))) {
+    if ($entry != "." && $entry != "..") {
+			if (strpos($entry,'.png')!==false){
+				$jsHeadshotFileNames .= '"' . $entry . '",';
+			}
+    }
+  }
+
+  //these get put out to the html render as JS vars.
+	$jsHeadshotFileNames = substr($jsHeadshotFileNames,0,strlen($jsHeadshotFileNames)-1);
+	$jsHeadshotFileNames = "var headshotFileNames = [" . $jsHeadshotFileNames . "];";
+	
+  closedir($handle);
+}
+
 
 
 
@@ -61,7 +78,7 @@ if ($handle = opendir('image/round/')) {
 
 
 
-<script type="text/javascript"><?=$jsFileNames?><?=$jsMetaNames?></script>
+<script type="text/javascript"><?=$jsFileNames?><?=$jsMetaNames?><?=$jsHeadshotFileNames?></script>
 
 <link rel="stylesheet" href="css/network.css">
 <link rel="stylesheet" href="css/vex.css">
@@ -70,7 +87,7 @@ if ($handle = opendir('image/round/')) {
 </head>
 
 <body>
-<a href="/linked-visions"><img src="menu/logo.png" id="logo"></a> <h1>Linked Visions</h1>
+<a href="/linked-visions"><img src="menu/logo.png" id="logo"></a>
 
 <div id="network" style="background-color:#fff">
     <div id="popUp">

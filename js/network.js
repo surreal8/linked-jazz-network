@@ -24,6 +24,7 @@ var trans = [0,0];
 var scale = 0.99;
 var dynamicPeople = [];         //holds who is added in the dynamic mode
 var rendering = false;          //global to keep track if we are rendering from a click or a history pushstate change
+var popupShown = false;         //global to keep track if the popup has already been displayed
 
 var idLookup = {}               //holds nice names to uri conversion
 
@@ -87,8 +88,6 @@ jQuery(document).ready(function($) {
 
   /* Binds */
   $(window).resize(function() { windowResize();});
-  jQuery("#popUp").mouseenter(function() {clearTimeout(hidePopupTimer) });
-  jQuery("#popUp").mouseleave(function() {hidePopup() });
 
   jQuery("#menu_fixed").mouseenter(function() {$(this).css("opacity",1); }).mouseleave(function() {$(this).css("opacity",0.15); }).click(function() {changeVisMode("wave"); });
   jQuery("#menu_similar").mouseenter(function() {$(this).css("opacity",1); }).mouseleave(function() {$(this).css("opacity",0.15); }).click(function() {changeVisMode("clique"); });
@@ -108,6 +107,10 @@ jQuery(document).ready(function($) {
 
   $("#network").fadeOut();
 
+  var history = History.getState();
+  if (history.hash.search(/\?person=/) > -1) {
+    visMode = "person";
+  }
   windowResize();
 
   showSpinner("Loading<br>Triples");
@@ -264,7 +267,6 @@ function initalizeNetwork() {
   $("#dynamicListHolder, #dynamicSearchHolder, #dynamicClear").css("display","none")
 
   $("#video").css("left","0px");
-
   if (visMode == "wave") {
     networkGravity =  0.5;
     netwokrLinkLength = 25;
@@ -290,7 +292,7 @@ function initalizeNetwork() {
 
   if (visMode == "person") {
     networkGravity =  0.1;
-    netwokrLinkLength = 55;
+    netwokrLinkLength = 25;
     networkLargeNodeLimit = 20;
     netwokrCharge = -2600;
     networkStopTick = false;
@@ -880,11 +882,9 @@ function filter(clear) {
 
   //lock the large nodes to the pattern
   for (aNode in workingNodes) {
-
     workingNodes[aNode].lock = false;
     workingNodes[aNode].y = visHeight / 2;
     workingNodes[aNode].x = Math.floor((Math.random()*visWidth)+1);
-
     if (visMode != "person") {
       for (large in largestNodes) {
         if (largestNodes[large].node == workingNodes[aNode].id) {
@@ -997,8 +997,6 @@ function restart() {
     })
 */
 .on("click",function(d) {
-      hidePopup();
-
       $("#network").fadeOut('fast',
                             function() {
                               usePerson = d.id;
@@ -1077,6 +1075,7 @@ function restart() {
     if (visMode == "person") {
       nodes[usePersonIndex].x = visWidth/2;
       nodes[usePersonIndex].y = visHeight/2;
+      showPopup(nodes[usePersonIndex]);
     }
 
     if (networkStopTick) {
@@ -1298,7 +1297,7 @@ function hidePopup() {
   //hidePopupTimer
   jQuery("#popUp").css("display","none");
 
-  var customClass = "link_" + currentNode.id.split("/")[currentNode.id.split("/").length-1].replace(/%|\(|\)|\.|\,/g,'');
+  //var customClass = "link_" + currentNode.id.split("/")[currentNode.id.split("/").length-1].replace(/%|\(|\)|\.|\,/g,'');
 
   d3.selectAll(".marker").attr("stroke-opacity",1).attr("fill-opacity",1)
   d3.selectAll(".link").attr("stroke-opacity",1).style("fill-opacity",1).style("stroke-width",function(d) {return edgeStrokeWidth(d)});
@@ -1308,61 +1307,132 @@ function hidePopup() {
   d3.selectAll(".circleTextRect").attr("fill-opacity",1).attr("stroke-opacity",1);
   d3.selectAll(".labelText").attr("fill-opacity",1).attr("stroke-opacity",1);
   d3.selectAll(".labelRect").attr("fill-opacity",1).attr("stroke-opacity",1);
+
+  popupShown = false;
 }
 
 function showPopup(d,cords) {
+  if (!popupShown) {
 
-  //d3 stuff
-  clearTimeout(hidePopupTimer);
-  d3.selectAll(".link").attr("stroke-opacity",0.1).attr("fill-opacity",0.1);
-  d3.selectAll(".backgroundCircle").attr("fill-opacity",0.1).attr("stroke-opacity",0.1);
-  d3.selectAll(".circleText").attr("fill-opacity",0.1).attr("stroke-opacity",0.1);
-  d3.selectAll(".circleTextRect").attr("fill-opacity",0.1).attr("stroke-opacity",0.1);
-  d3.selectAll(".labelText").attr("fill-opacity",0.1).attr("stroke-opacity",0.1);
-  d3.selectAll(".labelRect").attr("fill-opacity",0.1).attr("stroke-opacity",0.1);
-  d3.selectAll(".imageCircle").attr("display","none");
+    // Clear the popup
+    jQuery('#popUp').empty();
 
-  d3.selectAll(".marker").attr("stroke-opacity",0.1).attr("fill-opacity",0.1)
+    // Headshot
+    var useId = $.trim(decodeURI(d.id).split("\/")[decodeURI(d.id).split("\/").length-1]);
 
-  // Lines
-  // Get ID of the node being hovered over
-  var customClass =  d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'');
-  //d3.selectAll("." + "link_" + customClass).style("stroke","#fd8d3c").style("stroke-opacity",1).style("fill-opacity",1);//.attr("display","block");//.style("opacity",1);
-  d3.selectAll("." + "link_" + customClass).attr("stroke-opacity",1).style("fill-opacity",1).style("stroke-width",2);//.style("opacity",1);
-
-  d3.selectAll("#backgroundCircle_" + customClass).attr("fill-opacity",1).attr("stroke-opacity",1);
-  d3.selectAll("#imageCircle_"+ customClass).attr("display","block");
-  d3.selectAll("#circleText_"+ customClass).attr("fill-opacity",1).attr("stroke-opacity",1);
-  d3.selectAll("#circleTextRect_"+ customClass).attr("fill-opacity",1).attr("stroke-opacity",1);
-  d3.selectAll("#labelText_"+ customClass).attr("fill-opacity",1).attr("stroke-opacity",1);
-  d3.selectAll("#labelRect_"+ customClass).attr("fill-opacity",1).attr("stroke-opacity",1);
-
-  for (x in connectionIndex[d.id]) {
-    var id = connectionIndex[d.id][x].split("/")[connectionIndex[d.id][x].split("/").length-1].replace(cssSafe,'');
-
-    d3.selectAll("#backgroundCircle_" + id).attr("fill-opacity",1).attr("stroke-opacity",1);
-    d3.selectAll("#imageCircle_"+ id).attr("display","block");
-    d3.selectAll("#circleText_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1);
-    d3.selectAll("#circleTextRect_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1);
-    d3.selectAll("#labelText_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1);
-    d3.selectAll("#labelRect_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1);
-  }
-
-  var useX,useY;
-
-  if (typeof cords != 'undefined') {
-    useX = cords[0];
-    useY = cords[1];
-  } else {
-    if (scale == 1 && trans[0] == 0 && trans[1] == 0) {
-      useX = d.x;
-      useY = d.y;
+    if (headshotFileNames.indexOf(useId+'.png') == -1) {
+      var useImage = 'menu/no_headshot.png';
     } else {
-      useX = d3.event.pageX;
-      useY = d3.event.pageY;
+      var useImage = '/image/headshot/' + useId+'.png'
     }
+
+    jQuery('#popUp')
+      .append(
+        $("<div>")
+          .attr("id", "popup_headshotCont")
+          .attr("class","popup-headshot-cont")
+          .attr("width", "100%")
+          .attr("height", "250px")
+          .append(
+            $("<img>")
+              .attr("width", "100%")
+              .attr("src", useImage)
+              .attr("id", "popup_headshot")
+              .attr("class","popup-headshot")
+          )
+      );
+
+    // Back
+    jQuery('#popUp')
+      .append(
+        $('<a>')
+          .attr("href", "/linked-visions")
+          .append(
+            $("<div>")
+              .attr("class", "popup-back")
+              .text("BACK")
+          )
+      );
+    
+    // Name and dates
+    jQuery('#popUp')
+      .append(
+        $("<h2>")
+        .text("James McNeill Whistler")
+      )
+      .append(
+        $("<h3>")
+        .text("1876–1942")
+      );
+
+    // Metadata
+    jQuery('#popUp')
+      .append(
+        $("<div>")
+          .attr("id", "popup_metadata")
+          .attr("class", "popup-metadata")
+          .attr("width", "30%")
+          .append(
+            $("<img>")
+              .attr("width", "20px")
+              .attr("height", "4px")
+              .attr("src", "menu/dash.png")
+          )
+          .append($("<br/>"))
+          .append($("<p>").html("BIRTHPLACE<br/>Woodbury, New Jersey"))
+          .append($("<p>").html("OCCUPATION<br/>Printmaker<br/>Painter"))
+      );
+
+    // Desciption
+    jQuery('#popUp')
+      .append(
+        $("<div>")
+          .attr("id", "popup_description")
+          .attr("class", "popup-description")
+          .attr("width", "60%")
+          .append(
+            $("<img>")
+              .attr("width", "20px")
+              .attr("height", "4px")
+              .attr("src", "menu/dash.png")
+          )
+          .append($("<br/>"))
+          .append($("<p>").html("In 1899 Addams entered Whistler’s Académie Carmen in Paris, where he remained a student until it closed in 1901. There he met his future wife Inez Eleanor Bate—the massière, or principle student—who actually admitted Adams to the school. Whistler took the unusual step of making both official apprentices, and they remained faithful followers. Whistler greatly influenced both Addams’s decision to work in the medium of etching and his subject matter, which centered on crowds and architecture."))
+      );
+
+    jQuery('#popUp')
+      .append(
+        $("<div>")
+          .attr("class", "clear")
+      );
+
+    // Works
+    jQuery('#popUp')
+      .append(
+        $("<div>")
+          .attr("id", "popup_works")
+          .attr("class", "popup-works")
+          .attr("width", "90%")
+          .append(
+            $("<img>")
+              .attr("width", "20px")
+              .attr("height", "4px")
+              .attr("src", "menu/dash.png")
+          )
+          .append($("<br/>"))
+          .append($("<p>").html("WORKS"))
+      );
+    
+    jQuery("#popUp")
+      .css("left", "0px")
+      .css("top", "0px");
+
+    jQuery("#popUp").fadeIn(200);
+
+    popupShown = true;
   }
 
+  
 /*
   var descText = '';
   if (descObject.hasOwnProperty(d.id)) {
@@ -1385,141 +1455,8 @@ function showPopup(d,cords) {
       descText = "";
     }
   }
-
-  //if (jQuery("#toolTip .content").html() == "<span>Sorry could not figure out this relationship.</span>") {
-  //	return false;
-  //}
-
-  var useId = $.trim(decodeURI(d.id).split("\/")[decodeURI(d.id).split("\/").length-1]);
-
-  jQuery("#popUp").empty();
-
-  if (fileNames.indexOf(useId+'.png') == -1) {
-    var useImage = 'menu/no_image.png';
-    var useHeight = '0px';
-    var useWidth = '0px';
-    var spanLeft = '5px';
-  } else {
-    var useImage = '/image/round/' + useId+'.png'
-    var useHeight = '75px';
-    var useWidth = '75px';
-    var spanLeft = '80px';
-  }
-
-  jQuery("#popUp").append(
-
-    $("<img>")
-      .attr("src", function() {return useImage;})
-      .css("height",function() {return useHeight;})
-      .css("width",function() {return useWidth;})
-      .css("min-height",function() {return useHeight;})
-      .css("min-width",function() {return useWidth;})
-      .css("position","absolute")
-      .css("left","0px")
-      .css("top","0px")
-      .error(function() {$(this).css("visibility","hidden")})
-  ).append(
-    $("<span>")
-      .css("color","#fff")
-      .text(d.label)
-      .css("position","absolute")
-      .css("left",function() {return useImage;})
-      .css("top","5px")
-      .css("padding","5px")
-
-  ).append(
-    $("<div>")
-      .css("font-size","10px")
-      .css("width","138px")
-      .css("margin-left","80px")
-      .css("margin-top","22px")
-      .css("min-height","140px")
-      .css("text-align","left")
-      .attr("id","popupDesc")
-      .html(descText)
-
-  ).append(
-    $("<div>")
-
-      .css("position","absolute")
-      .css("border","solid 1px white")
-      .css("border-radius","5px")
-      .css("left","20px")
-      .css("cursor","pointer")
-      .css("top","85px")
-      .css("visibility",function() {
-
-        if (metaNames.indexOf(useId+'.meta') == -1) {
-          return "hidden";
-        } else {
-          return 'visible';
-        }
-      })
-      .attr("title","Click to play music by " + d.label + ".")
-      .append(
-        $("<div>")
-          .attr("id","playButton")
-          .data("useId",useId)
-          .click(function() {
-            loadYouTube($(this).data("useId"));
-          })
-      )
-  );
-
-  if (visMode == 'person' && nodes[usePersonIndex].label != d.label ) {
-    var domFragment = $("<div>").addClass('popup-transcript-link-holder');
-
-    domFragment.append(
-      $("<div>")
-        .addClass('popup-transcript-link-image')
-    );
-
-    domFragment.append(
-      $("<div>")
-        .addClass('popup-transcript-link')
-        .text("View transcript text about " + d.label + " and " + nodes[usePersonIndex].label)
-    );
-
-    domFragment.click(function launchDialogViewer() {
-      showDialogPopup(d.id,nodes[usePersonIndex].id);
-    });
-
-    domFragment.append($("<br>"));
-
-    $("#popUp").append(domFragment);
-  }
-
-  //we need to define where to place the box in relation of the node on the vis
-  if (useX < visWidth/2) {
-
-    //is there room to go to the left of the node anyway?
-    if (useX-jQuery("#popUp").width() > 0) {
-      useX = useX - jQuery("#popUp").width() - 5;
-    } else {
-      useX = useX + 15;
-    }
-  } else {
-    if (useX+jQuery("#popUp").width()+25 <= visWidth) {
-      useX = useX + 15;
-    } else {
-      useX = useX - jQuery("#popUp").width() - 5;
-    }
-  }
-
-  if (useY + jQuery("#popUp").height() > visHeight) {
-    useY = useY -  jQuery("#popUp").height();
-  }
-
-  //the
-  if ($("#video object").length > 0) {
-  }
-
-  jQuery("#popUp")
-    .css("left", useX + "px")
-    .css("top", useY + "px");
-
-  jQuery("#popUp").fadeIn(300);
 */
+
 }
 
 
@@ -2172,7 +2109,10 @@ function windowResize() {
 
   visWidth = $(window).width();
   visHeight = $(window).height();
-
+  if (visMode == "person") {
+    visWidth -= 540;
+    $("#network").css('float', 'right');
+  }
   $("#network").css('width', visWidth + 'px');
   $("#network").css('height',visHeight + 'px');
   $("#dynamicListHolder").css('height',visHeight - 110 + 'px');
