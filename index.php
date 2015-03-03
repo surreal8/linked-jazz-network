@@ -83,7 +83,7 @@ if ($handle = opendir('image/headshot/')) {
 <link rel="stylesheet" href="css/network.css">
 <link rel="stylesheet" href="css/vex.css">
 <link rel="stylesheet" href="css/vex-theme-os.css">
-<link rel="stylesheet" type="text/css" href="//www.artic.edu/sites/all/themes/aic_base/fonts/201687/DE1CD028D2131BE18.css" media="screen, projection, print">
+<!-- link rel="stylesheet" type="text/css" href="//www.artic.edu/sites/all/themes/aic_base/fonts/201687/DE1CD028D2131BE18.css" media="screen, projection, print" -->
 </head>
 
 <body>

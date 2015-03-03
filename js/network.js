@@ -105,7 +105,7 @@ jQuery(document).ready(function($) {
   $("#dynamicSearchClear").click(function() {$("#dynamicSearchInput").val(''); dynamicFilterList(); });
   $("#dynamicClear").click(function() {dynamicPeople = []; filter(); });
 
-  $("#network").fadeOut();
+  //$("#network").fadeOut();
 
   var history = History.getState();
   if (history.hash.search(/\?person=/) > -1) {
@@ -113,7 +113,7 @@ jQuery(document).ready(function($) {
   }
   windowResize();
 
-  showSpinner("Loading<br>Triples");
+  //showSpinner("Loading<br>Triples");
 
   initalizeNetwork();
 
@@ -145,12 +145,12 @@ jQuery(document).ready(function($) {
 
           parseStateChangeVis();
         }
-      },500);
+      },10);
 
     })
       .error(function() { alert("There was an error in accessing the data file. Please try again."); });
 
-  }, 200, []);
+  }, 10, []);
 
 
   //add the zoom widget
@@ -257,7 +257,7 @@ function parseStateChangeVis() {
     changeVisMode(mode);
 
   } else {
-    showSpinner("Rendering<br>Network");
+    //showSpinner("Rendering<br>Network");
     filter();
   }
 }
@@ -350,7 +350,7 @@ function initalizeNetwork() {
   force.linkStrength(function(d) {  return linkStrength(d);});
   force.distance(netwokrLinkLength);
   force.charge(netwokrCharge);
-
+  
   if (vis == null) {
     zoom = d3.behavior.zoom()
       .translate([0,0])
@@ -386,7 +386,6 @@ function initalizeNetwork() {
   vis.attr("transform",
            "translate(" + trans + ")"
            + " scale(" + scale + ")");
-
 }
 
 //process the triple data through the RDF jquery plugin to create an object
@@ -429,8 +428,6 @@ function buildTripleStore(data) {
   }
 
   tripleObject = tripleStore.dump()
-
-  console.log(alreadyKnows.length);
 }
 
 //process the triple data through the RDF jquery plugin to create an object
@@ -760,7 +757,7 @@ function filter(clear) {
 
   //are we wiping the nodes out or just adding?
   if (clear) {
-    $("#network").css("visibility","hidden");
+    //$("#network").css("visibility","hidden");
     vis.selectAll("g.node").remove();
     vis.selectAll("line.link").remove();
 
@@ -968,7 +965,7 @@ function restart() {
     .style("stroke",function(d) {return edgeColor(d);})
     .style("stroke-width",function(d) {return edgeStrokeWidth(d);})
     .attr("class", function(d) {return "link " + d.customClass})
-    .attr("marker-end", function(d) { return  (visMode == "person"||visMode == "dynamic") ? "url(#FOAFknows)" : "none"; })
+    //.attr("marker-end", function(d) { return  (visMode == "person"||visMode == "dynamic") ? "url(#FOAFknows)" : "none"; })
     .attr("x1", function(d) { return d.source.x; })
     .attr("y1", function(d) { return d.source.y; })
     .attr("x2", function(d) { return d.target.x; })
@@ -976,34 +973,19 @@ function restart() {
 
   var node = vis.selectAll("g.node")
     .data(nodes);
-	
+
   var nodeEnter = node.enter().append("svg:g")
-    .attr("class", "node")
-    .style("cursor","pointer")
-    .attr("id", function(d) {  return "node_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
-/*
-    .on("mouseover",function(d) {
-
-      //showPopupTimer = setTimeout(function() {
-      //clearTimeout(showPopupTimer);
-
-      currentNode = d;
-      showPopup(d);
-
-      //}, 200, [d]);
-    }).on("mouseout",function(d) {
-      currentNode = d;
-      hidePopupTimer = setTimeout(hidePopup,150);
-    })
-*/
-.on("click",function(d) {
-      $("#network").fadeOut('fast',
-                            function() {
-                              usePerson = d.id;
-                              changeVisMode("person");
-                            }
-                           );
-    });
+      .attr("class", "node")
+      .style("cursor","pointer")
+      .attr("id", function(d) {  return "node_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
+      .on("click",function(d) {
+        //$("#network").fadeOut('fast',
+        //                        function() {
+        usePerson = d.id;
+        changeVisMode("person");
+        //                      }
+        //                   );
+      });
 
   if (networkNodeDrag) {
     nodeEnter.call(force.drag);
@@ -1038,23 +1020,13 @@ function restart() {
 	.style("opacity", function(d) { return returnNodeOpac(d);  })
 	.attr("visibility", function(d) { return returnNodeVisible(d);  });
 	
-  nodeEnter.append("svg:text")
-    .attr("id", function(d) {  return "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
-    .attr("font-size", function(d) {return returnNodeSize2(d) / 2})
-    .attr("class",  function(d) {return "circleText"})
-    .attr("font-family", "Verdana, Geneva, sans-serif")
-	.style("text-transform", "uppercase")
-	.style("letter-spacing", ".25em")
-    .attr("text-anchor","middle")
-    .attr("display",function(d) { return displayLabel(d);})
-    .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
-    .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8; })
-	.style("fill", "#000000")
-	.attr("visibility", "hidden")
-    .text(function(d) { return d.label; });	//console.log('d.label', d.label);
-	
-  force.start();
-
+  
+  // Align nodes along a diagonal for speedier rendering
+  var n = nodes.length;
+  nodes.forEach(function(d, i) {
+    d.x = d.y = visWidth / n * i;
+  });
+  
   //controls the movement of the nodes
   force.on("tick", function(e) {
 
@@ -1082,94 +1054,15 @@ function restart() {
       if (e.alpha <= .02) {
         hideSpinner();
 
-        vis.selectAll("line.link")
-          .attr("x1", function(d) { return d.source.x;})
-          .attr("y1", function(d) { return d.source.y; })
-          .attr("x2", function(d) { return d.target.x; })
-          .attr("y2", function(d) { return d.target.y; });
-
-        vis.selectAll("g.node").attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
-		
+	
         if ($("#network").css("visibility") != "visible") {
           $("#network").css("visibility","visible");
           $("#network").fadeIn();
           $("#zoomWidget").css("visibility","visible");
         }
-		
-	nodeEnter.append("svg:rect")
-    .attr("id", function(d) {  return "circleTextRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
-    .attr("class",  function(d) {return "circleTextRect"})
-	 .attr("x", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().x; })
-     .attr("y", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
-     .attr("width", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width; })
-     .attr("height", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height; })
-	 .attr("stroke", "black")
-	 .attr("stroke-width", 10)
-	 .attr("visibility", "visible")
-	 .style("fill", "black");
-	  
-   nodeEnter.append("svg:text")
-    .attr("id", function(d) {  return "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
-    .attr("font-size", function(d) {return returnNodeSize2(d) / 2})
-    .attr("class",  function(d) {return "circleText"})
-    .attr("font-family", "Verdana, Geneva, sans-serif")
-	.style("text-transform", "uppercase")
-	.style("letter-spacing", ".25em")
-    .attr("text-anchor","middle")
-    .attr("display",function(d) { return displayLabel(d);})
-    .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
-    .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8; })
-	.style("fill", "#ffffff")
-	.attr("visibility", "visible")
-    .text(function(d) { return d.label; });	//console.log('d.label', d.label); 
-	
-   nodeEnter.append("svg:text")
-    .attr("id", function(d) {  return "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
-    .attr("font-size", function(d) {return returnNodeSize2(d) / 2})
-    .attr("class",  "labelText")
-    .attr("font-family", "Verdana, Geneva, sans-serif")
-	.style("text-transform", "uppercase")
-	.style("letter-spacing", ".25em")
-    .attr("text-anchor","middle")
-    .attr("display",function(d) { return displayLabel(d);})
-    .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
-    .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+20; })
-	.style("fill", "#000000")
-	.attr("visibility", "hidden")
-    .text("ARTIST");	
-	
-   nodeEnter.append("svg:rect")
-    .attr("id", function(d) {  return "labelRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
-	 .attr("x", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().x; })
-     .attr("y", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
-     .attr("width", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width; })
-     .attr("height", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height; })
-	 .attr("class",  "labelRect")
-	 .attr("stroke", "black")
-	 .attr("stroke-width", 10)
-	 .style("opacity", 0)
-	 .attr("visibility", "hidden")
-	 .style("fill", "black");
-	 
-   nodeEnter.append("svg:text")
-    .attr("id", function(d) {  return "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
-    .attr("font-size", function(d) {return returnNodeSize2(d) / 2})
-    .attr("class",  "labelText")
-    .attr("font-family", "Verdana, Geneva, sans-serif")
-	.style("text-transform", "uppercase")
-	.style("letter-spacing", ".25em")
-    .attr("text-anchor","middle")
-    .attr("display",function(d) { return displayLabel(d);})
-    .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
-    .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+20; })
-	.style("fill", "#ffffff")
-	.style("opacity", 0)
-	.attr("visibility", "hidden")
-    .text("ARTIST");	
-	
 
         if (networkStopTick) {
-          force.stop();
+          //force.stop();
         }
       }
     } else {
@@ -1193,6 +1086,104 @@ function restart() {
       }
     }
   });
+
+  force.start();
+  for (var i = n * n; i > 0; --i) force.tick();
+  force.stop();
+
+  vis.selectAll("line.link")
+    .attr("x1", function(d) { return d.source.x;})
+    .attr("y1", function(d) { return d.source.y; })
+    .attr("x2", function(d) { return d.target.x; })
+    .attr("y2", function(d) { return d.target.y; });
+
+  vis.selectAll("g.node").attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
+
+  nodeEnter.append("svg:text")
+    .attr("id", function(d) {  return "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
+    .attr("font-size", function(d) {return returnNodeSize2(d) / 2})
+    .attr("class",  function(d) {return "circleText"})
+    .attr("font-family", "Verdana, Geneva, sans-serif")
+	  .style("text-transform", "uppercase")
+	  .style("letter-spacing", ".25em")
+    .attr("text-anchor","middle")
+    .attr("display",function(d) { return displayLabel(d);})
+    .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
+    .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8; })
+	  .style("fill", "#000000")
+	  .attr("visibility", "hidden")
+    .text(function(d) { return d.label; });	//console.log('d.label', d.label);
+
+	nodeEnter.append("svg:rect")
+    .attr("id", function(d) {  return "circleTextRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
+    .attr("class",  function(d) {return "circleTextRect"})
+	  .attr("x", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().x; })
+    .attr("y", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
+    .attr("width", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width; })
+    .attr("height", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height; })
+	  .attr("stroke", "black")
+	  .attr("stroke-width", 10)
+	  .attr("visibility", "visible")
+	  .style("fill", "black");
+
+  nodeEnter.append("svg:text")
+    .attr("id", function(d) {  return "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
+    .attr("font-size", function(d) {return returnNodeSize2(d) / 2})
+    .attr("class",  function(d) {return "circleText"})
+    .attr("font-family", "Verdana, Geneva, sans-serif")
+	  .style("text-transform", "uppercase")
+	  .style("letter-spacing", ".25em")
+    .attr("text-anchor","middle")
+    .attr("display",function(d) { return displayLabel(d);})
+    .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
+    .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8; })
+	  .style("fill", "#ffffff")
+	  .attr("visibility", "visible")
+    .text(function(d) { return d.label; });	// console.log('d.label', d.label); 
+
+  nodeEnter.append("svg:text")
+    .attr("id", function(d) {  return "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
+    .attr("font-size", function(d) {return returnNodeSize2(d) / 2})
+    .attr("class",  "labelText")
+    .attr("font-family", "Verdana, Geneva, sans-serif")
+	  .style("text-transform", "uppercase")
+	  .style("letter-spacing", ".25em")
+    .attr("text-anchor","middle")
+    .attr("display",function(d) { return displayLabel(d);})
+    .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
+    .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+20; })
+	  .style("fill", "#000000")
+	  .attr("visibility", "hidden")
+    .text("ARTIST");	
+	
+  nodeEnter.append("svg:rect")
+    .attr("id", function(d) {  return "labelRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
+	  .attr("x", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().x; })
+    .attr("y", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
+    .attr("width", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width; })
+    .attr("height", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height; })
+	  .attr("class",  "labelRect")
+	  .attr("stroke", "black")
+	  .attr("stroke-width", 10)
+	  .style("opacity", 0)
+	  .attr("visibility", "hidden")
+	  .style("fill", "black");
+	
+  nodeEnter.append("svg:text")
+    .attr("id", function(d) {  return "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
+    .attr("font-size", function(d) {return returnNodeSize2(d) / 2})
+    .attr("class",  "labelText")
+    .attr("font-family", "Verdana, Geneva, sans-serif")
+	  .style("text-transform", "uppercase")
+	  .style("letter-spacing", ".25em")
+    .attr("text-anchor","middle")
+    .attr("display",function(d) { return displayLabel(d);})
+    .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
+    .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+20; })
+	  .style("fill", "#ffffff")
+	  .style("opacity", 0)
+	  .attr("visibility", "hidden")
+    .text("ARTIST");	
 }
 
 function displayLabel(d) {
@@ -1204,12 +1195,13 @@ function displayLabel(d) {
 }
 
 function returnNodeStrokeWidth(d) {
+/*
   if (visMode == "person" || visMode == "dynamic") {
     if (dynamicPeople.indexOf(d.id) != -1 || usePerson == d.id) {
       return 5;
     }
   }
-
+*/
   return 1.5
 }
 
@@ -1737,14 +1729,14 @@ function changeVisMode(changeTo) {
 
   visMode = changeTo;
 
-  $("#network").fadeOut(function() {
+  //$("#network").fadeOut(function() {
 
-    $("#network").css("visibility","hidden");
+    //$("#network").css("visibility","hidden");
 
     //if the popup has been shown make sure its hidden before the next view
     if (currentNode != null) {hidePopup();}
 
-    showSpinner("Rendering<br>Network");
+    //showSpinner("Rendering<br>Network");
     initalizeNetwork();
 
     //we need to rest the zoom/pan
@@ -1757,7 +1749,7 @@ function changeVisMode(changeTo) {
     filter();
 
     rendering = false;
-  });
+  //});
 }
 
 function hideRelations() {
@@ -1777,7 +1769,7 @@ function showRelations(rel) {
 
   // First we grey out everything
   var fill = "black";
-  clearTimeout(hidePopupTimer);
+  //clearTimeout(hidePopupTimer);
   d3.selectAll(".backgroundCircle").attr("fill-opacity",0.03).attr("stroke-opacity",0.03).style("fill", fill).style("stroke", fill);
   d3.selectAll(".circleText").attr("fill-opacity",0.03).attr("stroke-opacity",0.03);
   d3.selectAll(".circleTextRect").attr("fill-opacity",0.03).attr("stroke-opacity",0.03).style("fill", fill).attr("stroke", fill);
@@ -2018,6 +2010,7 @@ function loadYouTube(useId) {
 }
 
 function edgeStrokeWidth(d) {
+/*
   if (visMode == "person" || visMode == "dynamic") {
     if (nodes.length < 10) {
       return 2;
@@ -2032,7 +2025,7 @@ function edgeStrokeWidth(d) {
 
     return .3;
   }
-
+*/
   return 0.3;
 }
 
