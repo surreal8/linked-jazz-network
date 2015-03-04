@@ -224,7 +224,6 @@ jQuery(document).ready(function($) {
 
                                    }
                                  });
-
 });
 
 function parseStateChangeVis() {
@@ -291,12 +290,12 @@ function initalizeNetwork() {
   }
 
   if (visMode == "person") {
-    networkGravity =  0.1;
+    networkGravity = 0.5;
     netwokrLinkLength = 25;
     networkLargeNodeLimit = 20;
-    netwokrCharge = -2600;
+    netwokrCharge = function (d) {return Math.floor(Math.random()*visWidth*-6-visHeight*2)}; 
     networkStopTick = true;
-    networkNodeDrag = true;
+    networkNodeDrag = false;
   }
 
   if (visMode == "clique") {
@@ -350,6 +349,7 @@ function initalizeNetwork() {
   force.linkStrength(function(d) {  return linkStrength(d);});
   force.distance(netwokrLinkLength);
   force.charge(netwokrCharge);
+  force.chargeDistance(visWidth/2);
   
   if (vis == null) {
     zoom = d3.behavior.zoom()
@@ -943,7 +943,7 @@ function filter(clear) {
 
 function restart() {
 
-  vis.append("svg:defs").selectAll("marker")
+/*  vis.append("svg:defs").selectAll("marker")
     .data(["FOAFknows"])
     .enter().append("svg:marker")
     .attr("id", String)
@@ -958,7 +958,8 @@ function restart() {
     .attr("d", "M0,-5L10,0L0,5")
     .style("fill","#666")
     .style("stroke-width",0);
-
+*/
+  
   vis.selectAll("line.link")
     .data(links)
     .enter().insert("line", "circle.node")
@@ -980,11 +981,11 @@ function restart() {
       .attr("id", function(d) {  return "node_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
       .on("click",function(d) {
         //$("#network").fadeOut('fast',
-        //                        function() {
+        //                    function() {
         usePerson = d.id;
         changeVisMode("person");
-        //                      }
-        //                   );
+        //                  }
+        //               );
       });
 
   if (networkNodeDrag) {
@@ -1026,11 +1027,11 @@ function restart() {
   nodes.forEach(function(d, i) {
     d.x = d.y = visWidth / n * i;
   });
-  
+
   //controls the movement of the nodes
   force.on("tick", function(e) {
 
-    if (visMode == "wave") {
+    //if (visMode == "wave") {
       for (aNode in nodes) {
         if (nodes[aNode].lock) {
           nodes[aNode].x = nodes[aNode].lockX;
@@ -1042,7 +1043,7 @@ function restart() {
           }
         }
       }
-    }
+    //}
 
     if (visMode == "person") {
       nodes[usePersonIndex].x = visWidth/2;
@@ -1062,13 +1063,13 @@ function restart() {
         }
 
         if (networkStopTick) {
-          //force.stop();
+          force.stop();
         }
       }
     } else {
       hideSpinner();
 
-      //in this mode (don't stop tick) is used by the person and dynamic mode, we ewant to illustrat the flow of relationships, so
+      //in this mode (don't stop tick) is used by the dynamic mode, we ewant to illustrat the flow of relationships, so
       //do the math needed to draw the markers on the outside of the nodes.
       //for the other modes, its not important
       vis.selectAll("line.link")
@@ -1183,7 +1184,7 @@ function restart() {
 	  .style("fill", "#ffffff")
 	  .style("opacity", 0)
 	  .attr("visibility", "hidden")
-    .text("ARTIST");	
+    .text("ARTIST");
 }
 
 function displayLabel(d) {
@@ -1320,17 +1321,23 @@ function showPopup(d,cords) {
 
     jQuery('#popUp')
       .append(
-        $("<div>")
-          .attr("id", "popup_headshotCont")
-          .attr("class","popup-headshot-cont")
-          .attr("width", "100%")
-          .attr("height", "250px")
+        $("<a>")
+          .attr("href", useImage)
+          .attr("class", "cboxElement")
+          .attr("title", "<h2>James McNeill Whistler</h2><h3>1876–1942</h3><p>In 1899 Addams entered Whistler’s Académie Carmen in Paris, where he remained a student until it closed in 1901. There he met his future wife Inez Eleanor Bate—the massière, or principle student—who actually admitted Adams to the school. Whistler took the unusual step of making both official apprentices, and they remained faithful followers. Whistler greatly influenced both Addams’s decision to work in the medium of etching and his subject matter, which centered on crowds and architecture.</p>")
           .append(
-            $("<img>")
+            $("<div>")
+              .attr("id", "popup_headshotCont")
+              .attr("class","popup-headshot-cont")
               .attr("width", "100%")
-              .attr("src", useImage)
-              .attr("id", "popup_headshot")
-              .attr("class","popup-headshot")
+              .attr("height", "250px")
+              .append(
+                $("<img>")
+                  .attr("width", "100%")
+                  .attr("src", useImage)
+                  .attr("id", "popup_headshot")
+                  .attr("class","popup-headshot")
+              )
           )
       );
 
@@ -1418,6 +1425,8 @@ function showPopup(d,cords) {
     jQuery("#popUp")
       .css("left", "0px")
       .css("top", "0px");
+
+    jQuery('.cboxElement').colorbox({transition:"fade", width:"75%", height:"75%", scrolling:false});
 
     jQuery("#popUp").fadeIn(200);
 
@@ -2065,7 +2074,8 @@ function linkStrength(d) {
     return Math.sqrt(d.source.connections)/9;
   }
   if (visMode == "person") {
-    return 0.2;
+    return 1;
+    //return 0.2;
   }
 
   if (visMode == "dynamic") {

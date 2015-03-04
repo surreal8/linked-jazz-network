@@ -44,19 +44,20 @@ a:hover {
 	color:#000;
 	overflow:visible;
 	font-size: 20px;
-}
-
-#popUp {
   font-family: Verdana, Geneva, sans-serif;
 }
 
-#popUp h2, h3 {
+#popUp h2, #popUp h3 {
   margin: 10px 0px 10px 20px;
   font-weight: normal;
 }
 
 #popUp p {
   font-size: 10pt;
+}
+
+#popUp a {
+    color:#000;
 }
 
 .popup-headshot-cont {

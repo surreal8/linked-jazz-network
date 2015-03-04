@@ -71,8 +71,9 @@ if ($handle = opendir('image/headshot/')) {
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <script src="js/jquery.history.js"></script>
 <script src="js/jquery.rdfquery.core.min-1.0.js"></script>
+<script src="js/jquery.colorbox-min.js"></script>
 <script src="js/dragdealer.js"></script>
-<script src="js/d3.v2.js"></script> 
+<script src="js/d3.v3.5.5.js"></script> 
 <script src="js/vex.min.js"></script> 
 <script src="js/network.js"></script> 
 
@@ -83,6 +84,7 @@ if ($handle = opendir('image/headshot/')) {
 <link rel="stylesheet" href="css/network.css">
 <link rel="stylesheet" href="css/vex.css">
 <link rel="stylesheet" href="css/vex-theme-os.css">
+<link rel="stylesheet" href="css/colorbox.css">
 <!-- link rel="stylesheet" type="text/css" href="//www.artic.edu/sites/all/themes/aic_base/fonts/201687/DE1CD028D2131BE18.css" media="screen, projection, print" -->
 </head>
 
