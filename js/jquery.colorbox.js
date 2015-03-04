@@ -807,7 +807,7 @@
 
 		// floating the IMG removes the bottom line-height and fixed a problem where IE miscalculates the width of the parent element as 100% of the document width.
 
-		//$(photo).css({'float': 'none'});
+		$(photo).css({'float': 'none'});
 
 		setClass(settings.get('className'));
 
@@ -1008,7 +1008,7 @@
 					}
 
 					if (settings.h) {
-						//photo.style.marginTop = Math.max(settings.mh - photo.height, 0) / 2 + 'px';
+						photo.style.marginTop = Math.max(settings.mh - photo.height, 0) / 2 + 'px';
 					}
 
 					if ($related[1] && (settings.get('loop') || $related[index + 1])) {

@@ -1031,7 +1031,7 @@ function restart() {
   //controls the movement of the nodes
   force.on("tick", function(e) {
 
-    //if (visMode == "wave") {
+    if (visMode == "wave" || visMode == "person") {
       for (aNode in nodes) {
         if (nodes[aNode].lock) {
           nodes[aNode].x = nodes[aNode].lockX;
@@ -1043,7 +1043,7 @@ function restart() {
           }
         }
       }
-    //}
+    }
 
     if (visMode == "person") {
       nodes[usePersonIndex].x = visWidth/2;
@@ -1426,8 +1426,13 @@ function showPopup(d,cords) {
       .css("left", "0px")
       .css("top", "0px");
 
-    jQuery('.cboxElement').colorbox({transition:"fade", width:"75%", height:"75%", scrolling:false});
-
+    jQuery('.cboxElement').colorbox({transition:"fade", width:"75%", height:"75%", scrolling:false,
+                                     onComplete:function () {
+                                       jQuery('.cboxPhoto').attr('style','width:55%; height:auto; margin:100px');
+                                       jQuery('.cboxPhoto').css({'float': 'right'});
+                                     }});
+    
+    
     jQuery("#popUp").fadeIn(200);
 
     popupShown = true;
