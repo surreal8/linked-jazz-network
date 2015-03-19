@@ -880,8 +880,8 @@ function filter(clear) {
   //lock the large nodes to the pattern
   for (aNode in workingNodes) {
     workingNodes[aNode].lock = false;
-    workingNodes[aNode].y = visHeight / 2;
-    workingNodes[aNode].x = Math.floor((Math.random()*visWidth)+1);
+    //workingNodes[aNode].y = visHeight / 2;
+    //workingNodes[aNode].x = Math.floor((Math.random()*visWidth)+1);
     if (visMode != "person") {
       for (large in largestNodes) {
         if (largestNodes[large].node == workingNodes[aNode].id) {
@@ -979,14 +979,14 @@ function restart() {
       .attr("class", "node")
       .style("cursor","pointer")
       .attr("id", function(d) {  return "node_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
-      .on("click",function(d) {
+      /*.on("click",function(d) {
         //$("#network").fadeOut('fast',
         //                    function() {
         usePerson = d.id;
         changeVisMode("person");
         //                  }
         //               );
-      });
+      });*/
 
   if (networkNodeDrag) {
     nodeEnter.call(force.drag);
@@ -1021,86 +1021,7 @@ function restart() {
 	.style("opacity", function(d) { return returnNodeOpac(d);  })
 	.attr("visibility", function(d) { return returnNodeVisible(d);  });
 	
-  
-  // Align nodes along a diagonal for speedier rendering
-  var n = nodes.length;
-  nodes.forEach(function(d, i) {
-    d.x = d.y = visWidth / n * i;
-  });
-
-  //controls the movement of the nodes
-  force.on("tick", function(e) {
-
-    if (visMode == "wave" || visMode == "person") {
-      for (aNode in nodes) {
-        if (nodes[aNode].lock) {
-          nodes[aNode].x = nodes[aNode].lockX;
-          nodes[aNode].y = nodes[aNode].lockY;
-        } else {
-          if (e.alpha <= .08) {
-            if  (nodes[aNode].y <= 0) { nodes[aNode].y = Math.floor((Math.random()*20)+8); nodes[aNode].lock = true; nodes[aNode].lockY = nodes[aNode].y; nodes[aNode].lockX = nodes[aNode].x; }
-            if  (nodes[aNode].y >= visHeight) {nodes[aNode].y = visHeight- Math.floor((Math.random()*60)+20); nodes[aNode].lock = true; nodes[aNode].lockY = nodes[aNode].y; nodes[aNode].lockX = nodes[aNode].x; }
-          }
-        }
-      }
-    }
-
-    if (visMode == "person") {
-      nodes[usePersonIndex].x = visWidth/2;
-      nodes[usePersonIndex].y = visHeight/2;
-      showPopup(nodes[usePersonIndex]);
-    }
-
-    if (networkStopTick) {
-      if (e.alpha <= .02) {
-        hideSpinner();
-
-	
-        if ($("#network").css("visibility") != "visible") {
-          $("#network").css("visibility","visible");
-          $("#network").fadeIn();
-          $("#zoomWidget").css("visibility","visible");
-        }
-
-        if (networkStopTick) {
-          force.stop();
-        }
-      }
-    } else {
-      hideSpinner();
-
-      //in this mode (don't stop tick) is used by the dynamic mode, we ewant to illustrat the flow of relationships, so
-      //do the math needed to draw the markers on the outside of the nodes.
-      //for the other modes, its not important
-      vis.selectAll("line.link")
-        .attr("x1", function(d) { return pointsBetween(d.source,d.target)[0][0]; })
-        .attr("y1", function(d) { return pointsBetween(d.source,d.target)[0][1]; })
-        .attr("x2", function(d) { return pointsBetween(d.source,d.target)[1][0];})
-        .attr("y2", function(d) { return pointsBetween(d.source,d.target)[1][1]; });
-
-      vis.selectAll("g.node").attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
-
-      if ($("#network").css("visibility") != "visible") {
-        $("#network").css("visibility","visible");
-        $("#network").fadeIn();
-        $("#zoomWidget").css("visibility","visible");
-      }
-    }
-  });
-
-  force.start();
-  for (var i = n * n; i > 0; --i) force.tick();
-  force.stop();
-
-  vis.selectAll("line.link")
-    .attr("x1", function(d) { return d.source.x;})
-    .attr("y1", function(d) { return d.source.y; })
-    .attr("x2", function(d) { return d.target.x; })
-    .attr("y2", function(d) { return d.target.y; });
-
-  vis.selectAll("g.node").attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
-
-  nodeEnter.append("svg:text")
+	  nodeEnter.append("svg:text")
     .attr("id", function(d) {  return "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
     .attr("font-size", function(d) {return returnNodeSize2(d) / 2})
     .attr("class",  function(d) {return "circleText"})
@@ -1185,7 +1106,159 @@ function restart() {
 	  .style("opacity", 0)
 	  .attr("visibility", "hidden")
     .text("ARTIST");
+	
+  
+  // Align nodes along a diagonal for speedier rendering
+  var n = nodes.length;
+  /*nodes.forEach(function(d, i) {
+    d.x = d.y = visWidth / n * i;
+  });*/
+
+  //controls the movement of the nodes
+  force.on("tick", function(e) {
+	  
+	for (aNode in nodes) {
+			nodes[aNode].width = $("#" + "node_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1])[0].	getBBox().width;
+			nodes[aNode].height = $("#" + "node_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1])[0].getBBox().height;
+		
+			nodes[aNode].x2 = nodes[aNode].width;	
+			nodes[aNode].y2 = nodes[aNode].height;
+			//console.log('nodes[aNode]', nodes[aNode]);
+			//console.log('nodes[aNode].x2', nodes[aNode].x2);
+			//console.log('nodes[aNode].y2', nodes[aNode].y2);
+		  }
+		  
+	  var q = d3.geom.quadtree(nodes);
+	  nodes.forEach(function(d) {
+		  console.log('d', d);
+		  q.visit(collide(d));
+	  });
+
+    if (visMode == "wave" || visMode == "person") {
+      for (aNode in nodes) {
+        if (nodes[aNode].lock) {
+          nodes[aNode].x = nodes[aNode].lockX;
+          nodes[aNode].y = nodes[aNode].lockY;
+        } else {
+          if (e.alpha <= .08) {
+            if  (nodes[aNode].y <= 0) { nodes[aNode].y = Math.floor((Math.random()*20)+8); nodes[aNode].lock = true; nodes[aNode].lockY = nodes[aNode].y; nodes[aNode].lockX = nodes[aNode].x; }
+            if  (nodes[aNode].y >= visHeight) {nodes[aNode].y = visHeight- Math.floor((Math.random()*60)+20); nodes[aNode].lock = true; nodes[aNode].lockY = nodes[aNode].y; nodes[aNode].lockX = nodes[aNode].x; }
+          }
+        }
+      }
+    }
+
+    if (visMode == "person") {
+      nodes[usePersonIndex].x = visWidth/2;
+      nodes[usePersonIndex].y = visHeight/2;
+      showPopup(nodes[usePersonIndex]);
+    }
+
+    if (networkStopTick) {
+      if (e.alpha <= .02) {
+        hideSpinner();
+
+	
+        if ($("#network").css("visibility") != "visible") {
+          $("#network").css("visibility","visible");
+          $("#network").fadeIn();
+          $("#zoomWidget").css("visibility","visible");
+        }
+
+        if (networkStopTick) {
+          //force.stop();
+        }
+      }
+    } else {
+      hideSpinner();
+
+      //in this mode (don't stop tick) is used by the dynamic mode, we ewant to illustrat the flow of relationships, so
+      //do the math needed to draw the markers on the outside of the nodes.
+      //for the other modes, its not important
+      vis.selectAll("line.link")
+        .attr("x1", function(d) { return pointsBetween(d.source,d.target)[0][0]; })
+        .attr("y1", function(d) { return pointsBetween(d.source,d.target)[0][1]; })
+        .attr("x2", function(d) { return pointsBetween(d.source,d.target)[1][0];})
+        .attr("y2", function(d) { return pointsBetween(d.source,d.target)[1][1]; });
+
+      vis.selectAll("g.node").attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
+
+      if ($("#network").css("visibility") != "visible") {
+        $("#network").css("visibility","visible");
+        $("#network").fadeIn();
+        $("#zoomWidget").css("visibility","visible");
+      }
+    }
+  });
+
+  force.start();
+  for (var i = 0; i < n*10; ++i) force.tick();
+  force.stop();
+
+  vis.selectAll("line.link")
+    .attr("x1", function(d) { return d.source.x;})
+    .attr("y1", function(d) { return d.source.y; })
+    .attr("x2", function(d) { return d.target.x; })
+    .attr("y2", function(d) { return d.target.y; });
+
+  vis.selectAll("g.node").attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
 }
+
+function valueInRange(value, mini, maxi)
+{ return (value >= mini) && (value <= maxi); }
+
+function overlap(A, B)
+{
+    xOverlap = valueInRange(A.x, B.x, B.x + B.width) ||
+                    valueInRange(B.x, A.x, A.x + A.width);
+	if (xOverlap) {				
+	console.log('xOverlap', xOverlap);
+	}
+
+    yOverlap = valueInRange(A.y, B.y, B.y + B.height) ||
+                    valueInRange(B.y, A.y, A.y + A.height);
+	if (yOverlap) {				
+	console.log('yOverlap', yOverlap);
+	}
+	
+    return xOverlap || yOverlap;
+}
+
+function collide(node) {
+	console.log('collideNode', node);
+	  var nx1, nx2, ny1, ny2, padding;
+	  padding = 32;
+	  nx1 = node.x - padding;
+	  nx2 = node.x2 + padding;
+	  ny1 = node.y - padding;
+	  ny2 = node.y2 + padding;
+	  return function(quad, x1, y1, x2, y2) {
+		console.log('quad', quad);
+		var dx, dy;
+		if (quad.point && (quad.point !== node)) {
+		  if (overlap(node, quad.point)) {
+			console.log('collideNode', node);
+			console.log('quad.point', quad.point);
+			dx = Math.min(node.x2 - quad.point.x, quad.point.x2 - node.x) / 2;
+			node.x -= dx;
+			quad.point.x -= dx;
+			  console.log('node.y2 - quad.point.y', node.y2 - quad.point.y);
+			  console.log('quad.point.y2 - node.y', quad.point.y2 - node.y);
+			dy = Math.min(node.y2 - quad.point.y, quad.point.y2 - node.y) / 2;
+			console.log('dy', dy);
+			console.log('node.y1', node.y);
+			node.y -= dy;
+			console.log('node.y', node.y);
+			quad.point.y += dy;
+			console.log('quad.point.y', quad.point.y);
+			node.isOverlapping = true;
+		  } else {
+			node.isOverlapping = false; 
+		  }
+		}
+		return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
+	};
+};
 
 function displayLabel(d) {
   if (visMode == "person" || visMode == "dynamic") {
