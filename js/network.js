@@ -5,7 +5,7 @@ if (!document.createElementNS || !document.createElementNS('http://www.w3.org/20
 vex.defaultOptions.className = 'vex-theme-os';
 
 
-var visMode = 'wave';           //the type of network to render, each has it own settings
+var visMode = 'clique';           //the type of network to render, each has it own settings
 
 var tripleStore = null;         //holds the triple data bank created by the rdfquery plugin
 var tripleObject = null;        //holds the javascript seralized object of the triple store
@@ -266,7 +266,39 @@ function initalizeNetwork() {
   $("#dynamicListHolder, #dynamicSearchHolder, #dynamicClear").css("display","none")
 
   $("#video").css("left","0px");
-  if (visMode == "wave") {
+
+  if (visMode == "dynamic") {
+
+    //if we have not yet built the dynamic list
+    if ($("#dynamicListHolder").length<2) {
+      //get dynamic list ready
+      buildDynamicList();
+    }
+
+    $("#video").css("left","225px");
+
+    $("#dynamicListHolder, #dynamicSearchHolder").css("display","block")
+
+    //show a hint
+    if (dynamicPeople.length == 0) {
+
+      $("#dynamicHelp").fadeIn(10,function() {
+
+        $("#dynamicHelp").fadeOut(5000);
+
+      })
+    } else {
+      $("#dynamicClear").fadeIn(5000);
+    }
+  }
+
+  //if it has already been defined
+  if (force == null) {
+    force = d3.layout.force()
+      .size([$("#network").width() - 5, $("#network").height() - 5]);
+  }
+
+    if (visMode == "wave") {
     networkGravity =  0.5;
     netwokrLinkLength = 25;
     networkLargeNodeLimit = 20;
@@ -299,10 +331,10 @@ function initalizeNetwork() {
   }
 
   if (visMode == "clique") {
-    networkGravity =  0.1;
+    networkGravity =  0.5;
     netwokrLinkLength = 125;
     networkLargeNodeLimit = 20;
-    netwokrCharge = -1500;
+    netwokrCharge = -2600;
     networkMinEdges = 4;
     networkStopTick = true;
     networkNodeDrag = false;
@@ -315,42 +347,15 @@ function initalizeNetwork() {
     netwokrCharge = -800;
     networkStopTick = false;
     networkNodeDrag = true;
-
-    //if we have not yet built the dynamic list
-    if ($("#dynamicListHolder").length<2) {
-      //get dynamic list ready
-      buildDynamicList();
-    }
-
-    $("#video").css("left","225px");
-
-    $("#dynamicListHolder, #dynamicSearchHolder").css("display","block")
-
-    //show a hint
-    if (dynamicPeople.length == 0) {
-
-      $("#dynamicHelp").fadeIn(10,function() {
-
-        $("#dynamicHelp").fadeOut(5000);
-
-      })
-    } else {
-      $("#dynamicClear").fadeIn(5000);
-    }
-  }
-
-  //if it has already been defined
-  if (force == null) {
-    force = d3.layout.force()
-      .size([$("#network").width() - 5, $("#network").height() - 5]);
   }
 
   force.gravity(networkGravity);
   force.linkStrength(function(d) {  return linkStrength(d);});
-  force.distance(netwokrLinkLength);
+  force.linkDistance(netwokrLinkLength);
   force.charge(netwokrCharge);
   force.chargeDistance(visWidth/2);
-  
+  force.friction(0.4);
+
   if (vis == null) {
     zoom = d3.behavior.zoom()
       .translate([0,0])
@@ -1114,26 +1119,51 @@ function restart() {
     d.x = d.y = visWidth / n * i;
   });*/
 
+  force.start();
+
   //controls the movement of the nodes
   force.on("tick", function(e) {
-	  
-	for (aNode in nodes) {
-			nodes[aNode].width = $("#" + "node_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1])[0].	getBBox().width;
-			nodes[aNode].height = $("#" + "node_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1])[0].getBBox().height;
+    if (e.alpha < 0.02) {
+	    for (aNode in nodes) {
+		    nodes[aNode].width = $("#" + "node_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))[0].	getBBox().width;
+		    nodes[aNode].height = $("#" + "node_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height;
 		
-			nodes[aNode].x2 = nodes[aNode].width;	
-			nodes[aNode].y2 = nodes[aNode].height;
-			//console.log('nodes[aNode]', nodes[aNode]);
-			//console.log('nodes[aNode].x2', nodes[aNode].x2);
-			//console.log('nodes[aNode].y2', nodes[aNode].y2);
-		  }
-		  
-	  var q = d3.geom.quadtree(nodes);
-	  nodes.forEach(function(d) {
-		  console.log('d', d);
-		  q.visit(collide(d));
-	  });
+		    nodes[aNode].x2 = nodes[aNode].width;	
+		    nodes[aNode].y2 = nodes[aNode].height;
+		    //console.log('nodes[aNode]', nodes[aNode]);
+		    //console.log('nodes[aNode].x2', nodes[aNode].x2);
+		    //console.log('nodes[aNode].y2', nodes[aNode].y2);
+	    }
 
+      // Alternate way to set width, height, x2 and y2
+      // vis.selectAll("g.node")
+      //   .attr("width", function(d) { return $("#" + "node_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].	getBBox().width })
+      //   .attr("height", function(d) { return $("#" + "node_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].	getBBox().height })
+      //   .attr("x2", function(d) { return d.width})
+      //   .attr("y2", function(d) { return d.height});
+
+      var q = d3.geom.quadtree(nodes.map(function (d, i) {
+        return {
+          x: d.x,
+          y: d.y,
+          x2: d.x2,
+          y2: d.y2,
+          width: d.width,
+          all: d};
+        }));
+
+      nodes.forEach(function(d) {
+        q.visit(collide(d));
+      });
+/* Alternate way to call the collide function
+      vis.selectAll("g.node")
+        .each(function(d, i) {
+		      q.visit(collide(d));
+	      });
+    }
+*/
+    }
+/*
     if (visMode == "wave" || visMode == "person") {
       for (aNode in nodes) {
         if (nodes[aNode].lock) {
@@ -1147,61 +1177,21 @@ function restart() {
         }
       }
     }
-
+*/
     if (visMode == "person") {
       nodes[usePersonIndex].x = visWidth/2;
       nodes[usePersonIndex].y = visHeight/2;
       showPopup(nodes[usePersonIndex]);
     }
 
-    if (networkStopTick) {
-      if (e.alpha <= .02) {
-        hideSpinner();
+    vis.selectAll("g.node").attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
 
-	
-        if ($("#network").css("visibility") != "visible") {
-          $("#network").css("visibility","visible");
-          $("#network").fadeIn();
-          $("#zoomWidget").css("visibility","visible");
-        }
-
-        if (networkStopTick) {
-          //force.stop();
-        }
-      }
-    } else {
-      hideSpinner();
-
-      //in this mode (don't stop tick) is used by the dynamic mode, we ewant to illustrat the flow of relationships, so
-      //do the math needed to draw the markers on the outside of the nodes.
-      //for the other modes, its not important
-      vis.selectAll("line.link")
-        .attr("x1", function(d) { return pointsBetween(d.source,d.target)[0][0]; })
-        .attr("y1", function(d) { return pointsBetween(d.source,d.target)[0][1]; })
-        .attr("x2", function(d) { return pointsBetween(d.source,d.target)[1][0];})
-        .attr("y2", function(d) { return pointsBetween(d.source,d.target)[1][1]; });
-
-      vis.selectAll("g.node").attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
-
-      if ($("#network").css("visibility") != "visible") {
-        $("#network").css("visibility","visible");
-        $("#network").fadeIn();
-        $("#zoomWidget").css("visibility","visible");
-      }
-    }
-  });
-
-  force.start();
-  for (var i = 0; i < n*10; ++i) force.tick();
-  force.stop();
-
-  vis.selectAll("line.link")
+    vis.selectAll("line.link")
     .attr("x1", function(d) { return d.source.x;})
     .attr("y1", function(d) { return d.source.y; })
     .attr("x2", function(d) { return d.target.x; })
     .attr("y2", function(d) { return d.target.y; });
-
-  vis.selectAll("g.node").attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
+  });
 }
 
 function valueInRange(value, mini, maxi)
@@ -1209,7 +1199,8 @@ function valueInRange(value, mini, maxi)
 
 function overlap(A, B)
 {
-    xOverlap = valueInRange(A.x, B.x, B.x + B.width) ||
+  console.log('widths', A.width, B.width);
+  xOverlap = valueInRange(A.x, B.x, B.x + B.width) ||
                     valueInRange(B.x, A.x, A.x + A.width);
 	if (xOverlap) {				
 	console.log('xOverlap', xOverlap);
@@ -1226,34 +1217,35 @@ function overlap(A, B)
 
 function collide(node) {
 	console.log('collideNode', node);
-	  var nx1, nx2, ny1, ny2, padding;
-	  padding = 32;
-	  nx1 = node.x - padding;
-	  nx2 = node.x2 + padding;
-	  ny1 = node.y - padding;
-	  ny2 = node.y2 + padding;
-	  return function(quad, x1, y1, x2, y2) {
-		console.log('quad', quad);
+	var nx1, nx2, ny1, ny2, padding;
+	padding = 32;
+	nx1 = node.x - padding;
+	nx2 = node.x2 + padding;
+	ny1 = node.y - padding;
+	ny2 = node.y2 + padding;
+	return function(quad, x1, y1, x2, y2) {
 		var dx, dy;
 		if (quad.point && (quad.point !== node)) {
+		  console.log('quad', quad);
+      console.log('comparing', node, quad.point);
 		  if (overlap(node, quad.point)) {
-			console.log('collideNode', node);
-			console.log('quad.point', quad.point);
-			dx = Math.min(node.x2 - quad.point.x, quad.point.x2 - node.x) / 2;
-			node.x -= dx;
-			quad.point.x -= dx;
+			  console.log('collideNode', node);
+			  console.log('quad.point', quad.point);
+			  dx = Math.min(node.x2 - quad.point.x, quad.point.x2 - node.x) / 2;
+			  node.x -= dx;
+			  //quad.point.x -= dx;
 			  console.log('node.y2 - quad.point.y', node.y2 - quad.point.y);
 			  console.log('quad.point.y2 - node.y', quad.point.y2 - node.y);
-			dy = Math.min(node.y2 - quad.point.y, quad.point.y2 - node.y) / 2;
-			console.log('dy', dy);
-			console.log('node.y1', node.y);
-			node.y -= dy;
-			console.log('node.y', node.y);
-			quad.point.y += dy;
-			console.log('quad.point.y', quad.point.y);
-			node.isOverlapping = true;
+			  dy = Math.min(node.y2 - quad.point.y, quad.point.y2 - node.y) / 2;
+			  console.log('dy', dy);
+			  console.log('node.y1', node.y);
+			  node.y -= dy;
+			  console.log('node.y', node.y);
+			  //quad.point.y += dy;
+			  console.log('quad.point.y', quad.point.y);
+			  node.isOverlapping = true;
 		  } else {
-			node.isOverlapping = false; 
+			  node.isOverlapping = false; 
 		  }
 		}
 		return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
