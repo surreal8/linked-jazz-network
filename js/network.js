@@ -60,7 +60,6 @@ var networkMinEdges = 2;        //the min number of edges to have a node be rend
 
 var cssSafe = new RegExp(/%|\(|\)|\.|\,|'|"/g);	//the regex to remove non css viable chars
 
-var youTubeObject = '<object style="height=130px; width=200px; position: absolute; bottom: 0px;"> <param name="movie" value="https://www.youtube.com/v/<id>?version=3&feature=player_embedded&controls=1&enablejsapi=1&modestbranding=1&rel=0&showinfo=1&autoplay=1"><param name="allowFullScreen" value="true"><param name="wmode" value="transparent"><param name="allowScriptAccess" value="always"><embed src="https://www.youtube.com/v/<id>?version=3&feature=player_embedded&controls=1&enablejsapi=1&modestbranding=1&rel=0&showinfo=1&autoplay=1" type="application/x-shockwave-flash" allowfullscreen="true" allowScriptAccess="always" width="200" height="130" wmode="transparent"></object>';
 var zoomWidgetObj = null;       //the zoom widget draghandeler object
 var zoomWidgetObjDoZoom = true;
 
@@ -152,78 +151,6 @@ jQuery(document).ready(function($) {
 
   }, 10, []);
 
-
-  //add the zoom widget
-  jQuery("#network").append(
-    jQuery("<div>")
-      .attr("id","zoomWidget")
-      .addClass("dragdealer")
-      .append(
-        jQuery("<div>")
-          .addClass("handle")
-          .append(
-            jQuery("<div>")
-              .text("-")
-          )
-      )
-      .append(
-        jQuery("<div>")
-          .addClass("zoomWidgetRail")
-      )
-      .append(
-        jQuery("<div>")
-          .addClass("zoomWidgetEndcaps")
-          .attr("id","woomWidgetZoomOut")
-          .css("top","-17px")
-          .append(
-            jQuery("<div>")
-              .text("-")
-          )
-      )
-      .append(
-        jQuery("<div>")
-          .addClass("zoomWidgetEndcaps")
-          .attr("id","woomWidgetZoomIn")
-          .css("top","145px")
-          .append(
-            jQuery("<div>")
-              .text("+")
-          )
-      )
-
-  );
-
-  jQuery("#zoomWidget").mouseenter(function() {console.log('whhyyy'); zoomWidgetObjDoZoom = true; });
-
-  zoomWidgetObj = new Dragdealer('zoomWidget',
-                                 {
-                                   horizontal: false,
-                                   vertical: true,
-                                   y: 0.255555555,
-                                   animationCallback: function(x, y)
-                                   {
-                                     //if the value is the same as the intial value exit, to prevent a zoom even being called onload
-                                     if (y==0.255555555) {return false;}
-                                     //prevent too muuch zooooom
-                                     if (y<0.05) {return false;}
-
-
-                                     //are we  zooming based on a call from interaction with the slider, or is this callback being triggerd by the mouse event updating the slider position.
-                                     if (zoomWidgetObjDoZoom == true) {
-
-                                       y =y *4;
-
-                                       //this is how it works now until i figure out how to handle this better.
-                                       //translate to the middle of the vis and apply the zoom level
-                                       vis.attr("transform", "translate(" + [(visWidth/2)-(visWidth*y/2),(visHeight/2)-(visHeight*y/2)] + ")"  + " scale(" + y+ ")");
-                                       //store the new data into the zoom object so it is ready for mouse events
-                                       zoom.translate([(visWidth/2)-(visWidth*y/2),(visHeight/2)-(visHeight*y/2)]).scale(y);
-                                     }
-
-
-
-                                   }
-                                 });
 });
 
 function parseStateChangeVis() {
@@ -265,60 +192,10 @@ function initalizeNetwork() {
 
   $("#dynamicListHolder, #dynamicSearchHolder, #dynamicClear").css("display","none")
 
-  $("#video").css("left","0px");
-
-  if (visMode == "dynamic") {
-
-    //if we have not yet built the dynamic list
-    if ($("#dynamicListHolder").length<2) {
-      //get dynamic list ready
-      buildDynamicList();
-    }
-
-    $("#video").css("left","225px");
-
-    $("#dynamicListHolder, #dynamicSearchHolder").css("display","block")
-
-    //show a hint
-    if (dynamicPeople.length == 0) {
-
-      $("#dynamicHelp").fadeIn(10,function() {
-
-        $("#dynamicHelp").fadeOut(5000);
-
-      })
-    } else {
-      $("#dynamicClear").fadeIn(5000);
-    }
-  }
-
   //if it has already been defined
   if (force == null) {
     force = d3.layout.force()
       .size([$("#network").width() - 5, $("#network").height() - 5]);
-  }
-
-    if (visMode == "wave") {
-    networkGravity =  0.5;
-    netwokrLinkLength = 25;
-    networkLargeNodeLimit = 20;
-    netwokrCharge = -600;
-    networkMinEdges = 2;
-    networkStopTick = true;
-    networkNodeDrag = false;
-
-  }
-
-  if (visMode == "free") {
-    networkGravity =  0.1;
-    netwokrLinkLength = 25;
-    networkLargeNodeLimit = 20;
-    netwokrCharge = -45;
-    networkMinEdges = 2;
-    networkStopTick = true;
-    networkNodeDrag = false;
-    //scale = 0.6;
-    //trans = [visWidth/6,visHeight/6];
   }
 
   if (visMode == "person") {
@@ -332,7 +209,7 @@ function initalizeNetwork() {
 
   if (visMode == "clique") {
     networkGravity =  0.5;
-    netwokrLinkLength = 125;
+    netwokrLinkLength = 200;//125;
     networkLargeNodeLimit = 20;
     netwokrCharge = -2600;
     networkMinEdges = 4;
@@ -340,57 +217,31 @@ function initalizeNetwork() {
     networkNodeDrag = false;
   }
 
-  if (visMode == "dynamic") {
-    networkGravity =  0.05;
-    netwokrLinkLength = 500;
-    networkLargeNodeLimit = 20;
-    netwokrCharge = -800;
-    networkStopTick = false;
-    networkNodeDrag = true;
-  }
-
-  force.gravity(networkGravity);
+  force.gravity(.4);
   force.linkStrength(function(d) {  return linkStrength(d);});
+  //force.linkStrength(1.0);
   force.linkDistance(netwokrLinkLength);
   force.charge(netwokrCharge);
-  force.chargeDistance(visWidth/2);
-  force.friction(0.4);
+ // force.chargeDistance(visWidth/2);
+  force.friction(0.6);
 
   if (vis == null) {
-    zoom = d3.behavior.zoom()
-      .translate([0,0])
-      .scale(0.99)
-      .scaleExtent([0.25,6])	//how far it can zoom out and in
-      .on("zoom", redraw);
 
     vis = d3.select("#network").append("svg:svg")
       .attr("width", $("#network").width() - 10)
       .attr("height", $("#network").height() - 10)
-      .append('svg:g')
-      .call(zoom)//.call(d3.behavior.zoom().scaleExtent([0.25, 6]).on("zoom", redraw)) //.call(d3.behavior.zoom().on("zoom", redraw))
       .append('svg:g');
+      //.call(zoom);//.call(d3.behavior.zoom().scaleExtent([0.25, 6]).on("zoom", redraw)) //.call(d3.behavior.zoom().on("zoom", redraw))
 
     vis.append('svg:rect')
-      .attr('width', $("#network").width() + 1000)
-      .attr('height', $("#network").height() + 1000)
+      //.attr('width', $("#network").width() + 1000)
+      //.attr('height', $("#network").height() + 1000)
+	  .attr('width', $("#network").width())
+      .attr('height', $("#network").height())
       .attr('fill', 'white')
       .attr('id', 'zoomCanvas')
-      .style("cursor",  "url(menu/openhand.png)")
-      .on("mousedown", function() {
-
-        //the grabbing css rules do not work with web-kit, so specifiy the cursor hand and use the css for firefox.
-        d3.select("#zoomCanvas").style("cursor",  "url(menu/closedhand.png)");
-        d3.select("#zoomCanvas").attr("class","grabbing");
-      })
-      .on("mouseup", function() {
-        d3.select("#zoomCanvas").style("cursor",  "url(menu/openhand.png)");
-        d3.select("#zoomCanvas").attr("class","");
-      });
+      .style("cursor",  "url(menu/openhand.png)");
   }
-
-  vis.attr("transform",
-           "translate(" + trans + ")"
-           + " scale(" + scale + ")");
 }
 
 //process the triple data through the RDF jquery plugin to create an object
@@ -538,35 +389,6 @@ function dataAnalysis() {
   largestNodes.sort(function(a,b) {
     return b.flipFlop - a.flipFlop;
   });
-
-  if (visMode == "wave") {
-    //we want to pin some of the larger nodes to the outside in order to keep things readable, so figure our where to put them and store it in this obj array
-    for (n in largestNodes) {
-      var nudge = 0;
-      var r = visHeight/3;
-      var a = (186 / largestNodes.length) * n;
-
-      if (n == 0) {nudge = 50;}
-      if (n == 1) {nudge = -50;}
-
-      largestNodes[n].x = (visWidth/2) + (r+visWidth/4) * Math.cos(a);
-      largestNodes[n].y = (visHeight/2) + nudge - 10 + r * Math.sin(a);
-
-      /*
-
-        vis.append("circle")
-        .attr("class", "node")
-        .attr("cx", largestNodes[n].x)
-        .attr("cy", largestNodes[n].y)
-        .attr("r", 8)
-        .style("fill", function(d, i) { return fill(i & 3); })
-        .style("stroke", function(d, i) { return d3.rgb(fill(i & 3)).darker(2); })
-        .style("stroke-width", 1.5);
-
-      */
-
-    }
-  }
 }
 
 
@@ -785,68 +607,8 @@ function filter(clear) {
         nodesRemove[key] = true;
       }
     }
-  } else if (visMode == 'dynamic') {
-
-    console.log('dynamicPeople: ' + dynamicPeople);
-
-    var connected = [];
-    var connetedCounteed = {};
-
-    //we want to only add people if they are a selected person, or they have a connection that is shared by at least one person aready on the graph
-
-    for (x in dynamicPeople) {
-      //add everyones connections
-      for (y in connectionIndex[dynamicPeople[x]]) {
-        connected.push(connectionIndex[dynamicPeople[x]][y]);
-      }
-    }
-
-    for (x in connected) {
-      if (connetedCounteed.hasOwnProperty(connected[x])) {
-        connetedCounteed[connected[x]] = connetedCounteed[connected[x]] + 1;
-      } else {
-        connetedCounteed[connected[x]] = 1;
-      }
-    }
-
-    console.log('connetedCounteed: ' + connetedCounteed);
-
-    for (x in baseNodes) {
-
-      //is this node in the conenctions?
-      if (connetedCounteed.hasOwnProperty(baseNodes[x].id)) {
-
-        //yes, but do they have more than one entry, meaning that more than 1 person has them as a connection?
-        if (connetedCounteed[baseNodes[x].id] < 2) {
-
-          //no
-          //but are they one of the dynamic people?
-          if (dynamicPeople.indexOf(baseNodes[x].id) == -1) {
-            //no
-            nodesRemove[baseNodes[x].id] = true;
-          }
-        }
-      } else {
-
-        //no...but are they the person themselfs?
-        if (dynamicPeople.indexOf(baseNodes[x].id) == -1) {
-          //no, remove them
-          nodesRemove[baseNodes[x].id] = true;
-        }
-      }
-    }
-  } else {
-
-    //filter out people with too little number of conenctions. we use the connectionCounter from the buildBase function
-    for (var key in connectionCounter) {
-      if (connectionCounter.hasOwnProperty(key)) {
-        if (connectionCounter[key] < networkMinEdges) {
-          nodesRemove[key] = true;
-        }
-      }
-    }
-  }
-
+  } 
+  
   //now build the working arrays of the things we want to keep,
   for (aNode in baseNodes) {
     if (!nodesRemove.hasOwnProperty(baseNodes[aNode].id)) {
@@ -858,18 +620,6 @@ function filter(clear) {
     if (nodesRemove.hasOwnProperty(baseLinks[aLink].source.id) == false && nodesRemove.hasOwnProperty(baseLinks[aLink].target.id) == false) {
       workingLinks.push(baseLinks[aLink]);
     }
-  }
-
-  if(visMode == 'dynamic') {
-    //for the dynmaic mode, we don't want a whole mess of edges cofusing things, since we are just intrested in how the added people are connected
-    var temp = [];
-    for (aLink in workingLinks) {
-      if (dynamicPeople.indexOf(workingLinks[aLink].source.id) != -1 || dynamicPeople.indexOf(workingLinks[aLink].target.id) != -1) {
-        temp.push(workingLinks[aLink]);
-      }
-    }
-    workingLinks = temp;
-
   }
 
   /*
@@ -913,57 +663,12 @@ function filter(clear) {
     links.push(workingLinks[aLink]);
   }
 
-  /*
-    if (visMode == 'dynamic') {
-    //we also dont want to double add nodes, we needed to leave them in up to this point so the new links could be drawn, but, now take them out
-    var temp = [];
-    for (r in nodes) {
-
-    var add = true;
-
-    //is it already in there?
-    for (n in temp) {
-    if (nodes[r].id == temp[n].id) {
-    add = false;
-    }
-    }
-
-    if (add) {
-    temp.push(nodes[r]);
-    }
-
-    }
-    nodes = temp;
-
-
-
-    }
-
-
-    console.log(nodes);
-  */
-
   restart();
 }
 
 function restart() {
-
-/*  vis.append("svg:defs").selectAll("marker")
-    .data(["FOAFknows"])
-    .enter().append("svg:marker")
-    .attr("id", String)
-    .attr("class","marker")
-    .attr("viewBox", "0 -5 10 10")
-    .attr("refX", 10)
-    .attr("refY", 0)
-    .attr("markerWidth", 10)
-    .attr("markerHeight", 10)
-    .attr("orient", "auto")
-    .append("svg:path")
-    .attr("d", "M0,-5L10,0L0,5")
-    .style("fill","#666")
-    .style("stroke-width",0);
-*/
+	
+	force.start();
   
   vis.selectAll("line.link")
     .data(links)
@@ -972,10 +677,10 @@ function restart() {
     .style("stroke-width",function(d) {return edgeStrokeWidth(d);})
     .attr("class", function(d) {return "link " + d.customClass})
     //.attr("marker-end", function(d) { return  (visMode == "person"||visMode == "dynamic") ? "url(#FOAFknows)" : "none"; })
-    .attr("x1", function(d) { return d.source.x; })
+    /*.attr("x1", function(d) { return d.source.x; })
     .attr("y1", function(d) { return d.source.y; })
     .attr("x2", function(d) { return d.target.x; })
-    .attr("y2", function(d) { return d.target.y; });
+    .attr("y2", function(d) { return d.target.y; });*/
 
   var node = vis.selectAll("g.node")
     .data(nodes);
@@ -1000,8 +705,8 @@ function restart() {
   nodeEnter.append("circle")
     .attr("id", function(d) {return "backgroundCircle_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'');})
     .attr("class","backgroundCircle")
-    .attr("cx", function(d) { return 0; })
-    .attr("cy", function(d) { return 0; })
+    //.attr("cx", function(d) { return 0; })
+    //.attr("cy", function(d) { return 0; })
     .attr("r", function(d) { return  returnNodeSize(d); })
     .style("fill", "#000000")
 	.style("stroke", "#000000")
@@ -1119,30 +824,22 @@ function restart() {
     d.x = d.y = visWidth / n * i;
   });*/
 
-  force.start();
-
-  //controls the movement of the nodes
-  force.on("tick", function(e) {
-    if (e.alpha < 0.02) {
-	    for (aNode in nodes) {
+  for (aNode in nodes) {
 		    nodes[aNode].width = $("#" + "node_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))[0].	getBBox().width;
 		    nodes[aNode].height = $("#" + "node_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height;
 		
-		    nodes[aNode].x2 = nodes[aNode].width;	
-		    nodes[aNode].y2 = nodes[aNode].height;
-		    //console.log('nodes[aNode]', nodes[aNode]);
-		    //console.log('nodes[aNode].x2', nodes[aNode].x2);
+		    nodes[aNode].x2 = nodes[aNode].x + nodes[aNode].width;	
+		    nodes[aNode].y2 = nodes[aNode].y + nodes[aNode].height;
+			console.log('nodes[aNode]', nodes[aNode].label);
+		    console.log('nodes[aNode]', nodes[aNode].x);
+		    console.log('nodes[aNode].x2', nodes[aNode].x2);
 		    //console.log('nodes[aNode].y2', nodes[aNode].y2);
 	    }
 
-      // Alternate way to set width, height, x2 and y2
-      // vis.selectAll("g.node")
-      //   .attr("width", function(d) { return $("#" + "node_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].	getBBox().width })
-      //   .attr("height", function(d) { return $("#" + "node_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].	getBBox().height })
-      //   .attr("x2", function(d) { return d.width})
-      //   .attr("y2", function(d) { return d.height});
+  //controls the movement of the nodes
+  force.on("end", function(e) {
 
-      var q = d3.geom.quadtree(nodes.map(function (d, i) {
+     /* var q = d3.geom.quadtree(nodes.map(function (d, i) {
         return {
           x: d.x,
           y: d.y,
@@ -1154,35 +851,22 @@ function restart() {
 
       nodes.forEach(function(d) {
         q.visit(collide(d));
+      });*/
+	  
+	  vis.selectAll("g.node").attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
+
+    vis.selectAll("line.link")
+    .attr("x1", function(d) { return d.source.x;})
+    .attr("y1", function(d) { return d.source.y; })
+    .attr("x2", function(d) { return d.target.x; })
+    .attr("y2", function(d) { return d.target.y; });
+
+  
+   var q = d3.geom.quadtree(nodes);
+
+      nodes.forEach(function(d) {
+        q.visit(collide(d));
       });
-/* Alternate way to call the collide function
-      vis.selectAll("g.node")
-        .each(function(d, i) {
-		      q.visit(collide(d));
-	      });
-    }
-*/
-    }
-/*
-    if (visMode == "wave" || visMode == "person") {
-      for (aNode in nodes) {
-        if (nodes[aNode].lock) {
-          nodes[aNode].x = nodes[aNode].lockX;
-          nodes[aNode].y = nodes[aNode].lockY;
-        } else {
-          if (e.alpha <= .08) {
-            if  (nodes[aNode].y <= 0) { nodes[aNode].y = Math.floor((Math.random()*20)+8); nodes[aNode].lock = true; nodes[aNode].lockY = nodes[aNode].y; nodes[aNode].lockX = nodes[aNode].x; }
-            if  (nodes[aNode].y >= visHeight) {nodes[aNode].y = visHeight- Math.floor((Math.random()*60)+20); nodes[aNode].lock = true; nodes[aNode].lockY = nodes[aNode].y; nodes[aNode].lockX = nodes[aNode].x; }
-          }
-        }
-      }
-    }
-*/
-    if (visMode == "person") {
-      nodes[usePersonIndex].x = visWidth/2;
-      nodes[usePersonIndex].y = visHeight/2;
-      showPopup(nodes[usePersonIndex]);
-    }
 
     vis.selectAll("g.node").attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
 
@@ -1253,7 +937,7 @@ function collide(node) {
 };
 
 function displayLabel(d) {
-  if (visMode == "person" || visMode == "dynamic") {
+  if (visMode == "person") {
     return "block";
   } else {
     return (d.connections >= edgesInterval/1.5) ? "block" : "none";
@@ -2060,32 +1744,6 @@ function redraw(useScale) {
   //we need to update the zoom slider, set the boolean to false so the slider change does not trigger a zoom change in the vis (from the slider callback function)
   zoomWidgetObjDoZoom = false;
   zoomWidgetObj.setValue(0,(scale/4));
-}
-
-function loadYouTube(useId) {
-
-  var filename = useId + '.meta';
-  $.get('img/' + filename, function(data) {
-
-    var objectCode = youTubeObject.replace(/\<id\>/ig,data);
-
-    $("#video").empty();
-    $("#video").append(
-      $("<a>")
-        .text("[x] Close")
-        .attr("href","#")
-        .attr("id", "youTubeClose")
-        .attr("title","Close Video")
-        .click(function(event) {
-          $("#video").empty();
-          event.stopPropagation();
-          event.preventDefault();
-        })
-    );
-    $("#video").append(objectCode);
-
-  });
-  //youTubeObject
 }
 
 function edgeStrokeWidth(d) {
