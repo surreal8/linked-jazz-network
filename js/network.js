@@ -643,6 +643,7 @@ function filter(clear) {
           workingNodes[aNode].lockX = largestNodes[large].x;
           workingNodes[aNode].lockY = largestNodes[large].y;
           workingNodes[aNode].lock = true;
+
         }
       }
     }
@@ -667,15 +668,15 @@ function filter(clear) {
 }
 
 function restart() {
-	
-	force.start();
-  
+
+  force.start();
+
   vis.selectAll("line.link")
     .data(links)
     .enter().insert("line", "circle.node")
     .style("stroke",function(d) {return edgeColor(d);})
     .style("stroke-width",function(d) {return edgeStrokeWidth(d);})
-    .attr("class", function(d) {return "link " + d.customClass})
+    .attr("class", function(d) {return "link " + d.customClass});
     //.attr("marker-end", function(d) { return  (visMode == "person"||visMode == "dynamic") ? "url(#FOAFknows)" : "none"; })
     /*.attr("x1", function(d) { return d.source.x; })
     .attr("y1", function(d) { return d.source.y; })
@@ -688,7 +689,8 @@ function restart() {
   var nodeEnter = node.enter().append("svg:g")
       .attr("class", "node")
       .style("cursor","pointer")
-      .attr("id", function(d) {  return "node_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
+      .attr("id", function(d) {  return "node_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')});
+
       /*.on("click",function(d) {
         //$("#network").fadeOut('fast',
         //                    function() {
@@ -709,14 +711,13 @@ function restart() {
     //.attr("cy", function(d) { return 0; })
     .attr("r", function(d) { return  returnNodeSize(d); })
     .style("fill", "#000000")
-	.style("stroke", "#000000")
+	  .style("stroke", "#000000")
     .style("stroke-width", function(d) {return returnNodeStrokeWidth(d);});
-	
+
   nodeEnter.append("svg:image")
     .attr("id", function(d) {  return "imageCircle_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
     .attr("class","imageCircle")
     .attr("xlink:href", function(d) {
-
       var useId = $.trim(decodeURI(d.id).split("\/")[decodeURI(d.id).split("\/").length-1]);
       if (fileNames.indexOf(useId+'.png') == -1) {
         return "menu/whistler.png";
@@ -728,10 +729,10 @@ function restart() {
     .attr("y", function(d) { return  (returnNodeSize(d)*-1); })
     .attr("width", function(d) { return  (returnNodeSize(d)*2); })
     .attr("height", function(d) { return  (returnNodeSize(d)*2); })
-	.style("opacity", function(d) { return returnNodeOpac(d);  })
-	.attr("visibility", function(d) { return returnNodeVisible(d);  });
+	//.attr("visibility", function(d) { return returnNodeVisible(d);  })
+	  .style("opacity", function(d) { return returnNodeOpac(d);  });
 	
-	  nodeEnter.append("svg:text")
+  nodeEnter.append("svg:text")
     .attr("id", function(d) {  return "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
     .attr("font-size", function(d) {return returnNodeSize2(d) / 2})
     .attr("class",  function(d) {return "circleText"})
@@ -743,19 +744,19 @@ function restart() {
     .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
     .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8; })
 	  .style("fill", "#000000")
-	  .attr("visibility", "hidden")
+	//.attr("visibility", "hidden")
     .text(function(d) { return d.label; });	//console.log('d.label', d.label);
 
-	nodeEnter.append("svg:rect")
+  nodeEnter.append("svg:rect")
     .attr("id", function(d) {  return "circleTextRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
     .attr("class",  function(d) {return "circleTextRect"})
-	  .attr("x", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().x; })
+    .attr("x", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().x; })
     .attr("y", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
     .attr("width", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width; })
     .attr("height", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height; })
 	  .attr("stroke", "black")
 	  .attr("stroke-width", 10)
-	  .attr("visibility", "visible")
+	//.attr("visibility", "visible")
 	  .style("fill", "black");
 
   nodeEnter.append("svg:text")
@@ -770,8 +771,8 @@ function restart() {
     .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
     .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8; })
 	  .style("fill", "#ffffff")
-	  .attr("visibility", "visible")
-    .text(function(d) { return d.label; });	// console.log('d.label', d.label); 
+	  //.attr("visibility", "hidden")
+    .text(function(d) { return d.label; });	//console.log('d.label', d.label);
 
   nodeEnter.append("svg:text")
     .attr("id", function(d) {  return "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
@@ -787,7 +788,7 @@ function restart() {
 	  .style("fill", "#000000")
 	  .attr("visibility", "hidden")
     .text("ARTIST");	
-	
+
   nodeEnter.append("svg:rect")
     .attr("id", function(d) {  return "labelRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
 	  .attr("x", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().x; })
@@ -800,8 +801,8 @@ function restart() {
 	  .style("opacity", 0)
 	  .attr("visibility", "hidden")
 	  .style("fill", "black");
-	
-  nodeEnter.append("svg:text")
+
+    nodeEnter.append("svg:text")
     .attr("id", function(d) {  return "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
     .attr("font-size", function(d) {return returnNodeSize2(d) / 2})
     .attr("class",  "labelText")
@@ -813,11 +814,10 @@ function restart() {
     .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
     .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+20; })
 	  .style("fill", "#ffffff")
-	  .style("opacity", 0)
 	  .attr("visibility", "hidden")
-    .text("ARTIST");
-	
-  
+    .text("ARTIST");	
+
+
   // Align nodes along a diagonal for speedier rendering
   var n = nodes.length;
   /*nodes.forEach(function(d, i) {
@@ -825,57 +825,54 @@ function restart() {
   });*/
 
   for (aNode in nodes) {
-		    nodes[aNode].width = $("#" + "node_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))[0].	getBBox().width;
-		    nodes[aNode].height = $("#" + "node_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height;
-		
-		    nodes[aNode].x2 = nodes[aNode].x + nodes[aNode].width;	
-		    nodes[aNode].y2 = nodes[aNode].y + nodes[aNode].height;
-			console.log('nodes[aNode]', nodes[aNode].label);
-		    console.log('nodes[aNode]', nodes[aNode].x);
-		    console.log('nodes[aNode].x2', nodes[aNode].x2);
-		    //console.log('nodes[aNode].y2', nodes[aNode].y2);
-	    }
+		nodes[aNode].width = $("#" + "node_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))[0].	getBBox().width;
+		nodes[aNode].height = $("#" + "node_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height;
+
+		nodes[aNode].x2 = nodes[aNode].x + nodes[aNode].width;	
+		nodes[aNode].y2 = nodes[aNode].y + nodes[aNode].height;
+    console.log('nodes[aNode]', nodes[aNode].label);
+		console.log('nodes[aNode]', nodes[aNode].x);
+		console.log('nodes[aNode].x2', nodes[aNode].x2);
+		//console.log('nodes[aNode].y2', nodes[aNode].y2);
+	}
 
   //controls the movement of the nodes
-  force.on("end", function(e) {
+  force.on("start", function(e) {
+    if (visMode == "person") {
+      nodes[usePersonIndex].x = visWidth/2;
+      nodes[usePersonIndex].y = visHeight/2;
+      nodes[usePersonIndex].fixed = true;
+      showPopup(nodes[usePersonIndex]);
+    }
+  });
 
-     /* var q = d3.geom.quadtree(nodes.map(function (d, i) {
-        return {
-          x: d.x,
-          y: d.y,
-          x2: d.x2,
-          y2: d.y2,
-          width: d.width,
-          all: d};
-        }));
-
-      nodes.forEach(function(d) {
-        q.visit(collide(d));
-      });*/
-	  
+  force.on("tick", function(e) {
 	  vis.selectAll("g.node").attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
 
     vis.selectAll("line.link")
-    .attr("x1", function(d) { return d.source.x;})
-    .attr("y1", function(d) { return d.source.y; })
-    .attr("x2", function(d) { return d.target.x; })
-    .attr("y2", function(d) { return d.target.y; });
+      .attr("x1", function(d) { return d.source.x;})
+      .attr("y1", function(d) { return d.source.y; })
+      .attr("x2", function(d) { return d.target.x; })
+      .attr("y2", function(d) { return d.target.y; });
+  });
 
-  
-   var q = d3.geom.quadtree(nodes);
-
-      nodes.forEach(function(d) {
-        q.visit(collide(d));
-      });
+/*
+  force.on("end", function(e) {
+    var q = d3.geom.quadtree(nodes);
+    
+    nodes.forEach(function(d) {
+      q.visit(collide(d));
+    });
 
     vis.selectAll("g.node").attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
 
     vis.selectAll("line.link")
-    .attr("x1", function(d) { return d.source.x;})
-    .attr("y1", function(d) { return d.source.y; })
-    .attr("x2", function(d) { return d.target.x; })
-    .attr("y2", function(d) { return d.target.y; });
+      .attr("x1", function(d) { return d.source.x;})
+      .attr("y1", function(d) { return d.source.y; })
+      .attr("x2", function(d) { return d.target.x; })
+      .attr("y2", function(d) { return d.target.y; });
   });
+*/
 }
 
 function valueInRange(value, mini, maxi)
