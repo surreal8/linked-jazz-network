@@ -197,6 +197,7 @@ function initalizeNetwork() {
 
   force.gravity(0);
   force.charge(0);
+  force.friction(0.2);
 
   if (vis == null) {
     vis = d3.select("#network").append("svg:svg")
@@ -607,7 +608,7 @@ function filter(clear) {
   for (aNode in workingNodes) {
     workingNodes[aNode].lock = false;
     //workingNodes[aNode].y = visHeight / 2;
-    //workingNodes[aNode].x = Math.floor((Math.random()*visWidth)+1);
+    workingNodes[aNode].x = Math.floor((Math.random()*visWidth)+1);
     if (visMode != "person") {
       for (large in largestNodes) {
         if (largestNodes[large].node == workingNodes[aNode].id) {
@@ -824,9 +825,10 @@ function restart() {
   });
 
   force.on("tick", function(e) {
-    // Collision detection borrowed from: http://vallandingham.me/building_a_bubble_cloud.html
+    // Collision detection stolen from: http://vallandingham.me/building_a_bubble_cloud.html
     dampenedAlpha = e.alpha * 0.1;
     jitter = 0.25;
+    ratio = 2.77; // xy ratio
 
     vis.selectAll("g.node")
       .each(gravity(dampenedAlpha))
@@ -848,7 +850,7 @@ function gravity(alpha) {
 
   // use alpha to affect how much to push
   // towards the horizontal or vertical
-  ax = alpha / 2;
+  ax = alpha / (8 * ratio);
   ay = alpha;
 
   // return a function that will modify the
@@ -860,7 +862,7 @@ function gravity(alpha) {
 }
 
 function collide(jitter) {
-  var collisionPadding = 32;
+  var collisionPadding = 50;
   // return a function that modifies
   // the x and y of a node
   return function(d) {
@@ -875,7 +877,7 @@ function collide(jitter) {
         distance = Math.sqrt(x * x + y * y);
         // find current minimum space between two nodes
         // using the width of the nodes
-        minDistance = d.width/2 + d2.width/2 + collisionPadding;
+        minDistance = d.width*0.6 + d2.width*0.6 + collisionPadding;
 
         // if the current distance is less then the minimum
         // allowed then we need to push both nodes away from one another
@@ -883,7 +885,7 @@ function collide(jitter) {
           // scale the distance based on the jitter variable
           distance = (distance - minDistance) / distance * jitter;
           // move our two nodes
-          moveX = x * distance;
+          moveX = x * distance * ratio;
           moveY = y * distance;
           if (d.id == 'http://data.artic.edu/whistler/person/James_McNeill_Whistler' || d.id == 'http://data.artic.edu/whistler/person/Theodore_Casimir_Roussel') {
             d2.x += moveX * 2;
@@ -898,6 +900,24 @@ function collide(jitter) {
             d.y -= moveY;
             d2.x += moveX;
             d2.y += moveY;
+          }
+
+          // Keep nodes within the bounds of the window
+          // Left side
+          if (d.x < d.width - collisionPadding/2) {
+            d.x = d.width - collisionPadding/2;
+          }
+          // Right side
+          if (d.x > visWidth - d.width/2 - collisionPadding) {
+            d.x = visWidth - d.width/2 - collisionPadding;
+          }
+          // Top
+          if (d.y < d.height - collisionPadding/2) {
+            d.y = d.height - collisionPadding/2;
+          }
+          // Bottom
+          if (d.y > visHeight - d.height - collisionPadding/2) {
+            d.y = visHeight - d.height - collisionPadding/2;
           }
         }
       }
