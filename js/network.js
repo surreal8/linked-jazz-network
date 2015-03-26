@@ -13,9 +13,6 @@ var descStore = null;           //holds the triple data bank created by the rdfq
 var descObject = null;          //holds the javascript seralized object of the triple store for the description
 var nameObject = null;          //holds the foaf names of the people
 var largestNodes = [];          //holds a list of the N largest nodes/people (most connections) in order to place/lock them properly on render
-var hidePopupTimer = null;      //holds the timer to close the popup
-var showPopupTimer = null;
-var currentNode = null;         //the current node we are highligting
 var usePerson = null;           //the person in person mode
 var usePersonIndex = 0;         //the index pos of the usePerson in the nodes array, so we dont have to loop through the whole thing everytime
 var edgesAvg = 0;
@@ -48,7 +45,7 @@ var largestSimilarity = 0;      //holds the max number of similar connections an
 
 var strokeWidth = 0.3;          //the defult width to make the stroke
 
-                                //the settings that vary for each diff type of network
+//the settings that vary for each diff type of network
 var networkLargeNodeLimit = 20;	//the number of top nodes to fix/lock to a patterend spot on the network
 var networkNodeDrag = false;    //can you drag the nodes about?
 
@@ -206,11 +203,11 @@ function initalizeNetwork() {
       .attr("width", $("#network").width() - 10)
       .attr("height", $("#network").height() - 10)
       .append('svg:g');
-      //.call(zoom);//.call(d3.behavior.zoom().scaleExtent([0.25, 6]).on("zoom", redraw)) //.call(d3.behavior.zoom().on("zoom", redraw))
+    //.call(zoom);//.call(d3.behavior.zoom().scaleExtent([0.25, 6]).on("zoom", redraw)) //.call(d3.behavior.zoom().on("zoom", redraw))
 
     vis.append('svg:rect')
-      //.attr('width', $("#network").width() + 1000)
-      //.attr('height', $("#network").height() + 1000)
+    //.attr('width', $("#network").width() + 1000)
+    //.attr('height', $("#network").height() + 1000)
       .attr('width', $("#network").width())
       .attr('height', $("#network").height())
       .attr('fill', 'white')
@@ -233,7 +230,7 @@ function buildTripleStore(data) {
                                    rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
                                    xml: 'http://www.w3.org/XML/1998/namespace',
                                    xsd: 'http://www.w3.org/2001/XMLSchema#'
-                                 } 
+                                 }
                                });
 
 
@@ -581,8 +578,8 @@ function filter(clear) {
         nodesRemove[key] = true;
       }
     }
-  } 
-  
+  }
+
   //now build the working arrays of the things we want to keep,
   for (aNode in baseNodes) {
     if (!nodesRemove.hasOwnProperty(baseNodes[aNode].id)) {
@@ -655,28 +652,28 @@ function restart() {
     .style("stroke",function(d) {return edgeColor(d);})
     .style("stroke-width",function(d) {return edgeStrokeWidth(d);})
     .attr("class", function(d) {return "link " + d.customClass});
-    //.attr("marker-end", function(d) { return  (visMode == "person"||visMode == "dynamic") ? "url(#FOAFknows)" : "none"; })
-    /*.attr("x1", function(d) { return d.source.x; })
+  //.attr("marker-end", function(d) { return  (visMode == "person"||visMode == "dynamic") ? "url(#FOAFknows)" : "none"; })
+  /*.attr("x1", function(d) { return d.source.x; })
     .attr("y1", function(d) { return d.source.y; })
     .attr("x2", function(d) { return d.target.x; })
     .attr("y2", function(d) { return d.target.y; });*/
 
   var node = vis.selectAll("g.node")
-    .data(nodes);
+      .data(nodes);
 
   var nodeEnter = node.enter().append("svg:g")
       .attr("class", "node")
       .style("cursor","pointer")
       .attr("id", function(d) {  return "node_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')});
 
-      /*.on("click",function(d) {
-        //$("#network").fadeOut('fast',
-        //                    function() {
-        usePerson = d.id;
-        changeVisMode("person");
-        //                  }
-        //               );
-      });*/
+  /*.on("click",function(d) {
+  //$("#network").fadeOut('fast',
+  //                    function() {
+  usePerson = d.id;
+  changeVisMode("person");
+  //                  }
+  //               );
+  });*/
 
   if (networkNodeDrag) {
     nodeEnter.call(force.drag);
@@ -685,11 +682,11 @@ function restart() {
   nodeEnter.append("circle")
     .attr("id", function(d) {return "backgroundCircle_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'');})
     .attr("class","backgroundCircle")
-    //.attr("cx", function(d) { return 0; })
-    //.attr("cy", function(d) { return 0; })
+  //.attr("cx", function(d) { return 0; })
+  //.attr("cy", function(d) { return 0; })
     .attr("r", function(d) { return  returnNodeSize(d); })
     .style("fill", "#000000")
-	  .style("stroke", "#000000")
+    .style("stroke", "#000000")
     .style("stroke-width", function(d) {return returnNodeStrokeWidth(d);});
 
   nodeEnter.append("svg:image")
@@ -707,22 +704,22 @@ function restart() {
     .attr("y", function(d) { return  (returnNodeSize(d)*-1); })
     .attr("width", function(d) { return  (returnNodeSize(d)*2); })
     .attr("height", function(d) { return  (returnNodeSize(d)*2); })
-	//.attr("visibility", function(d) { return returnNodeVisible(d);  })
-	  .style("opacity", function(d) { return returnNodeOpac(d);  });
-	
+  //.attr("visibility", function(d) { return returnNodeVisible(d);  })
+    .style("opacity", function(d) { return returnNodeOpac(d);  });
+
   nodeEnter.append("svg:text")
     .attr("id", function(d) {  return "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
     .attr("font-size", function(d) {return returnNodeSize2(d) / 2})
     .attr("class",  function(d) {return "circleText"})
     .attr("font-family", "Verdana, Geneva, sans-serif")
-	  .style("text-transform", "uppercase")
-	  .style("letter-spacing", ".25em")
+    .style("text-transform", "uppercase")
+    .style("letter-spacing", ".25em")
     .attr("text-anchor","middle")
     .attr("display",function(d) { return displayLabel(d);})
     .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
     .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8; })
-	  .style("fill", "#000000")
-	//.attr("visibility", "hidden")
+    .style("fill", "#000000")
+  //.attr("visibility", "hidden")
     .text(function(d) { return d.label; });	//console.log('d.label', d.label);
 
   nodeEnter.append("svg:rect")
@@ -732,24 +729,24 @@ function restart() {
     .attr("y", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
     .attr("width", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width; })
     .attr("height", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height; })
-	  .attr("stroke", "black")
-	  .attr("stroke-width", 10)
-	//.attr("visibility", "visible")
-	  .style("fill", "black");
+    .attr("stroke", "black")
+    .attr("stroke-width", 10)
+  //.attr("visibility", "visible")
+    .style("fill", "black");
 
   nodeEnter.append("svg:text")
     .attr("id", function(d) {  return "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
     .attr("font-size", function(d) {return returnNodeSize2(d) / 2})
     .attr("class",  function(d) {return "circleText"})
     .attr("font-family", "Verdana, Geneva, sans-serif")
-	  .style("text-transform", "uppercase")
-	  .style("letter-spacing", ".25em")
+    .style("text-transform", "uppercase")
+    .style("letter-spacing", ".25em")
     .attr("text-anchor","middle")
     .attr("display",function(d) { return displayLabel(d);})
     .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
     .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8; })
-	  .style("fill", "#ffffff")
-	  //.attr("visibility", "hidden")
+    .style("fill", "#ffffff")
+  //.attr("visibility", "hidden")
     .text(function(d) { return d.label; });	//console.log('d.label', d.label);
 
   nodeEnter.append("svg:text")
@@ -757,57 +754,57 @@ function restart() {
     .attr("font-size", function(d) {return returnNodeSize2(d) / 2})
     .attr("class",  "labelText")
     .attr("font-family", "Verdana, Geneva, sans-serif")
-	  .style("text-transform", "uppercase")
-	  .style("letter-spacing", ".25em")
+    .style("text-transform", "uppercase")
+    .style("letter-spacing", ".25em")
     .attr("text-anchor","middle")
     .attr("display",function(d) { return displayLabel(d);})
     .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
     .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+20; })
-	  .style("fill", "#000000")
-	  .attr("visibility", "hidden")
-    .text("ARTIST");	
+    .style("fill", "#000000")
+    .attr("visibility", "hidden")
+    .text("ARTIST");
 
   nodeEnter.append("svg:rect")
     .attr("id", function(d) {  return "labelRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
-	  .attr("x", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().x; })
+    .attr("x", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().x; })
     .attr("y", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
     .attr("width", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width; })
     .attr("height", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height; })
-	  .attr("class",  "labelRect")
-	  .attr("stroke", "black")
-	  .attr("stroke-width", 10)
-	  .style("opacity", 0)
-	  .attr("visibility", "hidden")
-	  .style("fill", "black");
+    .attr("class",  "labelRect")
+    .attr("stroke", "black")
+    .attr("stroke-width", 10)
+    .style("opacity", 0)
+    .attr("visibility", "hidden")
+    .style("fill", "black");
 
-    nodeEnter.append("svg:text")
+  nodeEnter.append("svg:text")
     .attr("id", function(d) {  return "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
     .attr("font-size", function(d) {return returnNodeSize2(d) / 2})
     .attr("class",  "labelText")
     .attr("font-family", "Verdana, Geneva, sans-serif")
-	  .style("text-transform", "uppercase")
-	  .style("letter-spacing", ".25em")
+    .style("text-transform", "uppercase")
+    .style("letter-spacing", ".25em")
     .attr("text-anchor","middle")
     .attr("display",function(d) { return displayLabel(d);})
     .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
     .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+20; })
-	  .style("fill", "#ffffff")
-	  .attr("visibility", "hidden")
-    .text("ARTIST");	
+    .style("fill", "#ffffff")
+    .attr("visibility", "hidden")
+    .text("ARTIST");
 
   for (aNode in nodes) {
-		nodes[aNode].width = $("#" + "node_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))[0].	getBBox().width;
-		nodes[aNode].height = $("#" + "node_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height;
+    nodes[aNode].width = $("#" + "node_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))[0].	getBBox().width;
+    nodes[aNode].height = $("#" + "node_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height;
 
-		nodes[aNode].x2 = nodes[aNode].x + nodes[aNode].width;
-		nodes[aNode].y2 = nodes[aNode].y + nodes[aNode].height;
+    nodes[aNode].x2 = nodes[aNode].x + nodes[aNode].width;
+    nodes[aNode].y2 = nodes[aNode].y + nodes[aNode].height;
 
-	  if (nodes[aNode].id == 'http://data.artic.edu/whistler/person/James_McNeill_Whistler') {
+    if (nodes[aNode].id == 'http://data.artic.edu/whistler/person/James_McNeill_Whistler') {
       nodes[aNode].x = visWidth/2 + 100;
       nodes[aNode].y = visHeight/2;
       nodes[aNode].fixed = true;
     }
-	  if (nodes[aNode].id == 'http://data.artic.edu/whistler/person/Theodore_Casimir_Roussel') {
+    if (nodes[aNode].id == 'http://data.artic.edu/whistler/person/Theodore_Casimir_Roussel') {
       nodes[aNode].x = visWidth/2 - 100;
       nodes[aNode].y = visHeight/2;
       nodes[aNode].fixed = true;
@@ -910,23 +907,23 @@ function collide(jitter) {
 
 function displayLabel(d) {
   return "block";
-/*
-  if (visMode == "person") {
+  /*
+    if (visMode == "person") {
     return "block";
-  } else {
+    } else {
     return (d.connections >= edgesInterval/1.5) ? "block" : "none";
-  }
-*/
+    }
+  */
 }
 
 function returnNodeStrokeWidth(d) {
-/*
-  if (visMode == "person" || visMode == "dynamic") {
+  /*
+    if (visMode == "person" || visMode == "dynamic") {
     if (dynamicPeople.indexOf(d.id) != -1 || usePerson == d.id) {
-      return 5;
+    return 5;
     }
-  }
-*/
+    }
+  */
   return 1.5
 }
 
@@ -941,66 +938,66 @@ function returnNodeColor(d) {
 
 function returnNodeSize(d) {
   /* original code here 2.9.ts
-  if (visMode == "person") {
-    if (d.id == usePerson) {
-      return 50;
-    } else {
-      return 15 + Math.round(d.connections/15);
-    }
-  } else if (visMode == "dynamic") {
-    if (dynamicPeople.indexOf(d.id) == -1) {
-      return 20;
-    } else {
-      return 35;
-    }
+     if (visMode == "person") {
+     if (d.id == usePerson) {
+     return 50;
+     } else {
+     return 15 + Math.round(d.connections/15);
+     }
+     } else if (visMode == "dynamic") {
+     if (dynamicPeople.indexOf(d.id) == -1) {
+     return 20;
+     } else {
+     return 35;
+     }
+     } else {
+     return Math.round(Math.sqrt(d.connections)*3 + (d.connections/6));
+     }*/
+  if (d.label == "James McNeill Whistler" || d.label == "Theodore Casimir Roussel") {
+    //console.log(d);
+    return 15;
   } else {
-    return Math.round(Math.sqrt(d.connections)*3 + (d.connections/6));
-  }*/
- if (d.label == "James McNeill Whistler" || d.label == "Theodore Casimir Roussel") {
-	  //console.log(d);
-		return 15;
-  } else {
-	return 5;
+    return 5;
   }
 }
 
 function returnNodeVisible(d) {
-	if (d.label == "James McNeill Whistler" || d.label == "Theodore Casimir Roussel") {
-		return "visible";
+  if (d.label == "James McNeill Whistler" || d.label == "Theodore Casimir Roussel") {
+    return "visible";
   } else {
-	  return "hidden";
+    return "hidden";
   }
 }
 
 //replacing returnNodeSize for testing 2.10.ts
 function returnTextLoc(d) {
-	if (d.label == "James McNeill Whistler" || d.label == "Theodore Casimir Roussel") {
-		return 20;
-	} else {
-		return 15;
-	}
+  if (d.label == "James McNeill Whistler" || d.label == "Theodore Casimir Roussel") {
+    return 20;
+  } else {
+    return 15;
+  }
 }
 
 function returnNodeOpac(d) {
-	if (d.label == "James McNeill Whistler" || d.label == "Theodore Casimir Roussel") {
-		return 1;
-	} else {
-		return 0;
-	}
+  if (d.label == "James McNeill Whistler" || d.label == "Theodore Casimir Roussel") {
+    return 1;
+  } else {
+    return 0;
+  }
 }
 
 //replacing returnNodeSize for testing 2.10.ts
 function returnNodeSize2(d) {
-	return 15;
+  return 15;
 }
 
 //wooo!, from https://groups.google.com/forum/?fromgroups#!topic/d3-js/ndyvibO7wDA
 function pointsBetween(circle1,circle2,standOff1,standOff2) {
   var x1 = circle1.x, y1 = circle1.y,
-  x2 = circle2.x, y2 = circle2.y,
-  dx = x2-x1, dy = y2-y1,
-  r1 = returnNodeSize(circle1) + (standOff1||0),
-  r2 = returnNodeSize(circle2) + (standOff2||0);
+      x2 = circle2.x, y2 = circle2.y,
+      dx = x2-x1, dy = y2-y1,
+      r1 = returnNodeSize(circle1) + (standOff1||0),
+      r2 = returnNodeSize(circle2) + (standOff2||0);
   if ( (r1+r2)*(r1+r2) >= dx*dx+dy*dy ) return [[0,0],[0,0]];
   var a = Math.atan2(dy,dx), c = Math.cos(a), s = Math.sin(a);
   return [
@@ -1011,10 +1008,7 @@ function pointsBetween(circle1,circle2,standOff1,standOff2) {
 
 function hidePopup() {
 
-  //hidePopupTimer
   jQuery("#popUp").css("display","none");
-
-  //var customClass = "link_" + currentNode.id.split("/")[currentNode.id.split("/").length-1].replace(/%|\(|\)|\.|\,/g,'');
 
   d3.selectAll(".marker").attr("stroke-opacity",1).attr("fill-opacity",1)
   d3.selectAll(".link").attr("stroke-opacity",1).style("fill-opacity",1).style("stroke-width",function(d) {return edgeStrokeWidth(d)});
@@ -1076,16 +1070,16 @@ function showPopup(d,cords) {
               .text("BACK")
           )
       );
-    
+
     // Name and dates
     jQuery('#popUp')
       .append(
         $("<h2>")
-        .text("James McNeill Whistler")
+          .text("James McNeill Whistler")
       )
       .append(
         $("<h3>")
-        .text("1876–1942")
+          .text("1876–1942")
       );
 
     // Metadata
@@ -1145,7 +1139,7 @@ function showPopup(d,cords) {
           .append($("<br/>"))
           .append($("<p>").html("WORKS"))
       );
-    
+
     jQuery("#popUp")
       .css("left", "0px")
       .css("top", "0px");
@@ -1155,37 +1149,37 @@ function showPopup(d,cords) {
                                        jQuery('.cboxPhoto').attr('style','width:55%; height:auto; margin:100px');
                                        jQuery('.cboxPhoto').css({'float': 'right'});
                                      }});
-    
-    
+
+
     jQuery("#popUp").fadeIn(200);
 
     popupShown = true;
   }
 
-  
-/*
-  var descText = '';
-  if (descObject.hasOwnProperty(d.id)) {
+
+  /*
+    var descText = '';
+    if (descObject.hasOwnProperty(d.id)) {
 
     if (descObject[d.id]['http://dbpedia.org/ontology/abstract']) {
-      var desc = descObject[d.id]['http://dbpedia.org/ontology/abstract'][0].value;
-      var r = /\\u([\d\w]{4})/gi;
-      desc = desc.replace(r, function (match, grp) {
-        return String.fromCharCode(parseInt(grp, 16)); } );
-      desc = unescape(desc);
-      descText = decodeURIComponent(desc);
-      descText = descText.replace(/&ndash;/gi,'-');
-      descText = descText.replace(/&amp;/gi,'&');
+    var desc = descObject[d.id]['http://dbpedia.org/ontology/abstract'][0].value;
+    var r = /\\u([\d\w]{4})/gi;
+    desc = desc.replace(r, function (match, grp) {
+    return String.fromCharCode(parseInt(grp, 16)); } );
+    desc = unescape(desc);
+    descText = decodeURIComponent(desc);
+    descText = descText.replace(/&ndash;/gi,'-');
+    descText = descText.replace(/&amp;/gi,'&');
 
-      var link = d.id.replace('dbpedia','wikipedia').replace('resource','wiki');
+    var link = d.id.replace('dbpedia','wikipedia').replace('resource','wiki');
 
-      descText = descText.substring(0,250) + '...' + '<br>' + '<a class="popup-link" target="_blank" href="' + link + '">From Wikipedia</a><br><br>';
+    descText = descText.substring(0,250) + '...' + '<br>' + '<a class="popup-link" target="_blank" href="' + link + '">From Wikipedia</a><br><br>';
 
     } else {
-      descText = "";
+    descText = "";
     }
-  }
-*/
+    }
+  */
 
 }
 
@@ -1469,24 +1463,21 @@ function changeVisMode(changeTo) {
 
   //$("#network").fadeOut(function() {
 
-    //$("#network").css("visibility","hidden");
+  //$("#network").css("visibility","hidden");
 
-    //if the popup has been shown make sure its hidden before the next view
-    if (currentNode != null) {hidePopup();}
+  //showSpinner("Rendering<br>Network");
+  initalizeNetwork();
 
-    //showSpinner("Rendering<br>Network");
-    initalizeNetwork();
+  //we need to rest the zoom/pan
+  zoom.translate([0,0]).scale(1);
+  vis.attr("transform", "translate(" + [0,0] + ")"  + " scale(" + 1 + ")");
 
-    //we need to rest the zoom/pan
-    zoom.translate([0,0]).scale(1);
-    vis.attr("transform", "translate(" + [0,0] + ")"  + " scale(" + 1 + ")");
+  zoomWidgetObjDoZoom = false;
+  zoomWidgetObj.setValue(0,0.255555555);
 
-    zoomWidgetObjDoZoom = false;
-    zoomWidgetObj.setValue(0,0.255555555);
+  filter();
 
-    filter();
-
-    rendering = false;
+  rendering = false;
   //});
 }
 
@@ -1507,7 +1498,6 @@ function showRelations(rel) {
 
   // First we grey out everything
   var fill = "black";
-  //clearTimeout(hidePopupTimer);
   d3.selectAll(".backgroundCircle").attr("fill-opacity",0.03).attr("stroke-opacity",0.03).style("fill", fill).style("stroke", fill);
   d3.selectAll(".circleText").attr("fill-opacity",0.03).attr("stroke-opacity",0.03);
   d3.selectAll(".circleTextRect").attr("fill-opacity",0.03).attr("stroke-opacity",0.03).style("fill", fill).attr("stroke", fill);
@@ -1685,18 +1675,18 @@ function redraw(useScale) {
   //store the last event data
   trans = d3.event.translate;
   scale = d3.event.scale;
-  
+
   if (scale > 2) {
-	 //console.log(trans);
-  	 //console.log(scale);
-	 d3.selectAll(".backgroundCircle").style("fill", "#ffffff");
-	 d3.selectAll(".imageCircle").transition(800).style("opacity",1).attr("visibility","visible");
+    //console.log(trans);
+    //console.log(scale);
+    d3.selectAll(".backgroundCircle").style("fill", "#ffffff");
+    d3.selectAll(".imageCircle").transition(800).style("opacity",1).attr("visibility","visible");
   }
   if (scale > 3) {
-	 d3.selectAll(".labelText").transition(800).style("opacity",1).attr("visibility","visible");
-	 d3.selectAll(".labelRect").transition(800).style("opacity",1).attr("visibility","visible");  
+    d3.selectAll(".labelText").transition(800).style("opacity",1).attr("visibility","visible");
+    d3.selectAll(".labelRect").transition(800).style("opacity",1).attr("visibility","visible");
   }
-  
+
 
   //transform the vis
   vis.attr("transform",
@@ -1707,13 +1697,13 @@ function redraw(useScale) {
                                    "translate(" + 1/trans[0] + " " + y + ")"
                                    + " scale(" + 1/scale + ")");
   d3.selectAll(".circleTextRect").attr("transform",
-                                   "translate(" + 1/trans[0] + " " + y + ")"
-                                   + " scale(" + 1/scale + ")");
+                                       "translate(" + 1/trans[0] + " " + y + ")"
+                                       + " scale(" + 1/scale + ")");
   d3.selectAll(".labelText").attr("transform",
                                   "translate(" + 1/trans[0] + " " + y + ")"
                                   + " scale(" + 1/scale + ")");
   d3.selectAll(".labelRect").attr("transform",
-                                   "translate(" + 1/trans[0] + " " + y + ")"
+                                  "translate(" + 1/trans[0] + " " + y + ")"
                                   + " scale(" + 1/scale + ")");
 
   //we need to update the zoom slider, set the boolean to false so the slider change does not trigger a zoom change in the vis (from the slider callback function)
@@ -1722,22 +1712,22 @@ function redraw(useScale) {
 }
 
 function edgeStrokeWidth(d) {
-/*
-  if (visMode == "person" || visMode == "dynamic") {
+  /*
+    if (visMode == "person" || visMode == "dynamic") {
     if (nodes.length < 10) {
-      return 2;
+    return 2;
     }
 
     if (nodes.length < 30) {
-      return 1;
+    return 1;
     }
     if (nodes.length < 40) {
-      return 0.5;
+    return 0.5;
     }
 
     return .3;
-  }
-*/
+    }
+  */
   return 0.3;
 }
 
@@ -1751,15 +1741,15 @@ function edgeColor(d) {
 
   if (d.connections <= edgesAvg) {
     //return "#bcbddc";
-	return "#666666";
+    return "#666666";
   }
   if ((d.connections-edgesAvg)/edgesInterval <= 1.5) {
     //return "#9ecae1";
-	return "#666666";
+    return "#666666";
   }
   if ((d.connections-edgesAvg)/edgesInterval <= 2.5) {
     //return "#74c476";
-	return "#666666";
+    return "#666666";
   }
   //return "#fdae6b";
   return "#666666";
