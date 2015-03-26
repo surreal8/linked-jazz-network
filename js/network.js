@@ -49,14 +49,8 @@ var largestSimilarity = 0;      //holds the max number of similar connections an
 var strokeWidth = 0.3;          //the defult width to make the stroke
 
                                 //the settings that vary for each diff type of network
-var networkGravity =  0;
-var netwokrLinkLength = 35;
 var networkLargeNodeLimit = 20;	//the number of top nodes to fix/lock to a patterend spot on the network
-var netwokrCharge = -800;
-var networkStopTick = true;     //when the alpha value drops to display the graph, do we stop the nodes from animating?
 var networkNodeDrag = false;    //can you drag the nodes about?
-
-var networkMinEdges = 2;        //the min number of edges to have a node be rendered
 
 var cssSafe = new RegExp(/%|\(|\)|\.|\,|'|"/g);	//the regex to remove non css viable chars
 
@@ -67,6 +61,9 @@ var oldzoom = 0;
 
 var fill = d3.scale.category10();
 var lineColor = d3.scale.category20c();
+
+var whistlerPersonIndex = 0;    //the index pos of the James_McNeill_whistler in the nodes array, so we dont have to loop through the whole thing everytime
+var roussellPersonIndex = 0;    //the index pos of the James_McNeill_whistler in the nodes array, so we dont have to loop through the whole thing everytime
 
 
 jQuery(document).ready(function($) {
@@ -198,35 +195,13 @@ function initalizeNetwork() {
       .size([$("#network").width() - 5, $("#network").height() - 5]);
   }
 
-  if (visMode == "person") {
-    networkGravity = 0.5;
-    netwokrLinkLength = 25;
-    networkLargeNodeLimit = 20;
-    netwokrCharge = function (d) {return Math.floor(Math.random()*visWidth*-6-visHeight*2)}; 
-    networkStopTick = true;
-    networkNodeDrag = false;
-  }
+  networkNodeDrag = false;
+  networkLargeNodeLimit = 20;
 
-  if (visMode == "clique") {
-    networkGravity =  0.5;
-    netwokrLinkLength = 200;//125;
-    networkLargeNodeLimit = 20;
-    netwokrCharge = -2600;
-    networkMinEdges = 4;
-    networkStopTick = true;
-    networkNodeDrag = false;
-  }
-
-  force.gravity(.4);
-  force.linkStrength(function(d) {  return linkStrength(d);});
-  //force.linkStrength(1.0);
-  force.linkDistance(netwokrLinkLength);
-  force.charge(netwokrCharge);
- // force.chargeDistance(visWidth/2);
-  force.friction(0.6);
+  force.gravity(0);
+  force.charge(0);
 
   if (vis == null) {
-
     vis = d3.select("#network").append("svg:svg")
       .attr("width", $("#network").width() - 10)
       .attr("height", $("#network").height() - 10)
@@ -236,7 +211,7 @@ function initalizeNetwork() {
     vis.append('svg:rect')
       //.attr('width', $("#network").width() + 1000)
       //.attr('height', $("#network").height() + 1000)
-	  .attr('width', $("#network").width())
+      .attr('width', $("#network").width())
       .attr('height', $("#network").height())
       .attr('fill', 'white')
       .attr('id', 'zoomCanvas')
@@ -442,7 +417,6 @@ function buildBase() {
     var label = "";
 
     if (nameObject.hasOwnProperty(id)) {
-
       if (nameObject[id]['http://xmlns.com/foaf/0.1/name']) {
         label = nameObject[id]['http://xmlns.com/foaf/0.1/name'][0].value;
       }
@@ -651,6 +625,12 @@ function filter(clear) {
     if (visMode == "person" && workingNodes[aNode].id == usePerson) {
       usePersonIndex = aNode;
     }
+    if (workingNodes[aNode].id == 'http://data.artic.edu/whistler/person/James_McNeill_Whistler') {
+      whistlerPersonIndex = aNode;
+    }
+    if (workingNodes[aNode].id == 'http://data.artic.edu/whistler/person/Theodore_Casimir_Roussel') {
+      roussellPersonIndex = aNode;
+    }
   }
 
   //copy over our work into the d3 node/link array
@@ -668,8 +648,6 @@ function filter(clear) {
 }
 
 function restart() {
-
-  force.start();
 
   vis.selectAll("line.link")
     .data(links)
@@ -817,24 +795,26 @@ function restart() {
 	  .attr("visibility", "hidden")
     .text("ARTIST");	
 
-
-  // Align nodes along a diagonal for speedier rendering
-  var n = nodes.length;
-  /*nodes.forEach(function(d, i) {
-    d.x = d.y = visWidth / n * i;
-  });*/
-
   for (aNode in nodes) {
 		nodes[aNode].width = $("#" + "node_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))[0].	getBBox().width;
 		nodes[aNode].height = $("#" + "node_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height;
 
-		nodes[aNode].x2 = nodes[aNode].x + nodes[aNode].width;	
+		nodes[aNode].x2 = nodes[aNode].x + nodes[aNode].width;
 		nodes[aNode].y2 = nodes[aNode].y + nodes[aNode].height;
-    console.log('nodes[aNode]', nodes[aNode].label);
-		console.log('nodes[aNode]', nodes[aNode].x);
-		console.log('nodes[aNode].x2', nodes[aNode].x2);
-		//console.log('nodes[aNode].y2', nodes[aNode].y2);
-	}
+
+	  if (nodes[aNode].id == 'http://data.artic.edu/whistler/person/James_McNeill_Whistler') {
+      nodes[aNode].x = visWidth/2 + 100;
+      nodes[aNode].y = visHeight/2;
+      nodes[aNode].fixed = true;
+    }
+	  if (nodes[aNode].id == 'http://data.artic.edu/whistler/person/Theodore_Casimir_Roussel') {
+      nodes[aNode].x = visWidth/2 - 100;
+      nodes[aNode].y = visHeight/2;
+      nodes[aNode].fixed = true;
+    }
+  }
+
+  force.start();
 
   //controls the movement of the nodes
   force.on("start", function(e) {
@@ -847,7 +827,14 @@ function restart() {
   });
 
   force.on("tick", function(e) {
-	  vis.selectAll("g.node").attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
+    // Collision detection borrowed from: http://vallandingham.me/building_a_bubble_cloud.html
+    dampenedAlpha = e.alpha * 0.1;
+    jitter = 0.25;
+
+    vis.selectAll("g.node")
+      .each(gravity(dampenedAlpha))
+        .each(collide(jitter))
+          .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
 
     vis.selectAll("line.link")
       .attr("x1", function(d) { return d.source.x;})
@@ -855,90 +842,81 @@ function restart() {
       .attr("x2", function(d) { return d.target.x; })
       .attr("y2", function(d) { return d.target.y; });
   });
+}
 
-/*
-  force.on("end", function(e) {
-    var q = d3.geom.quadtree(nodes);
-    
-    nodes.forEach(function(d) {
-      q.visit(collide(d));
+function gravity(alpha) {
+  // start with the center of the display
+  cx = visWidth / 2;
+  cy = visHeight / 2;
+
+  // use alpha to affect how much to push
+  // towards the horizontal or vertical
+  ax = alpha / 2;
+  ay = alpha;
+
+  // return a function that will modify the
+  // node's x and y values
+  return function(d) {
+    d.x += (cx - d.x) * ax;
+    d.y += (cy - d.y) * ay;
+  };
+}
+
+function collide(jitter) {
+  var collisionPadding = 32;
+  // return a function that modifies
+  // the x and y of a node
+  return function(d) {
+    nodes.forEach(function(d2) {
+      // check that we aren't comparing a node
+      // with itself
+      if (d != d2) {
+        // use distance formula to find distance
+        //between two nodes
+        x = d.x - d2.x;
+        y = d.y - d2.y;
+        distance = Math.sqrt(x * x + y * y);
+        // find current minimum space between two nodes
+        // using the width of the nodes
+        minDistance = d.width/2 + d2.width/2 + collisionPadding;
+
+        // if the current distance is less then the minimum
+        // allowed then we need to push both nodes away from one another
+        if (distance < minDistance) {
+          // scale the distance based on the jitter variable
+          distance = (distance - minDistance) / distance * jitter;
+          // move our two nodes
+          moveX = x * distance;
+          moveY = y * distance;
+          if (d.id == 'http://data.artic.edu/whistler/person/James_McNeill_Whistler' || d.id == 'http://data.artic.edu/whistler/person/Theodore_Casimir_Roussel') {
+            d2.x += moveX * 2;
+            d2.y += moveY * 2;
+          }
+          else if (d2.id == 'http://data.artic.edu/whistler/person/James_McNeill_Whistler' || d2.id == 'http://data.artic.edu/whistler/person/Theodore_Casimir_Roussel') {
+            d.x -= moveX * 2;
+            d.y -= moveY * 2;
+          }
+          else {
+            d.x -= moveX;
+            d.y -= moveY;
+            d2.x += moveX;
+            d2.y += moveY;
+          }
+        }
+      }
     });
-
-    vis.selectAll("g.node").attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
-
-    vis.selectAll("line.link")
-      .attr("x1", function(d) { return d.source.x;})
-      .attr("y1", function(d) { return d.source.y; })
-      .attr("x2", function(d) { return d.target.x; })
-      .attr("y2", function(d) { return d.target.y; });
-  });
-*/
+  };
 }
-
-function valueInRange(value, mini, maxi)
-{ return (value >= mini) && (value <= maxi); }
-
-function overlap(A, B)
-{
-  console.log('widths', A.width, B.width);
-  xOverlap = valueInRange(A.x, B.x, B.x + B.width) ||
-                    valueInRange(B.x, A.x, A.x + A.width);
-	if (xOverlap) {				
-	console.log('xOverlap', xOverlap);
-	}
-
-    yOverlap = valueInRange(A.y, B.y, B.y + B.height) ||
-                    valueInRange(B.y, A.y, A.y + A.height);
-	if (yOverlap) {				
-	console.log('yOverlap', yOverlap);
-	}
-	
-    return xOverlap || yOverlap;
-}
-
-function collide(node) {
-	console.log('collideNode', node);
-	var nx1, nx2, ny1, ny2, padding;
-	padding = 32;
-	nx1 = node.x - padding;
-	nx2 = node.x2 + padding;
-	ny1 = node.y - padding;
-	ny2 = node.y2 + padding;
-	return function(quad, x1, y1, x2, y2) {
-		var dx, dy;
-		if (quad.point && (quad.point !== node)) {
-		  console.log('quad', quad);
-      console.log('comparing', node, quad.point);
-		  if (overlap(node, quad.point)) {
-			  console.log('collideNode', node);
-			  console.log('quad.point', quad.point);
-			  dx = Math.min(node.x2 - quad.point.x, quad.point.x2 - node.x) / 2;
-			  node.x -= dx;
-			  //quad.point.x -= dx;
-			  console.log('node.y2 - quad.point.y', node.y2 - quad.point.y);
-			  console.log('quad.point.y2 - node.y', quad.point.y2 - node.y);
-			  dy = Math.min(node.y2 - quad.point.y, quad.point.y2 - node.y) / 2;
-			  console.log('dy', dy);
-			  console.log('node.y1', node.y);
-			  node.y -= dy;
-			  console.log('node.y', node.y);
-			  //quad.point.y += dy;
-			  console.log('quad.point.y', quad.point.y);
-			  node.isOverlapping = true;
-		  } else {
-			  node.isOverlapping = false; 
-		  }
-		}
-		return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
-	};
-};
 
 function displayLabel(d) {
+  return "block";
+/*
   if (visMode == "person") {
     return "block";
   } else {
     return (d.connections >= edgesInterval/1.5) ? "block" : "none";
   }
+*/
 }
 
 function returnNodeStrokeWidth(d) {
@@ -1808,6 +1786,7 @@ function linkStrength(d) {
   }
 
   if (visMode == "clique") {
+    return 0.1;
     //return Math.sqrt(d.source.connections)/8;
 
     //we want to find the combined simlarity between the two people
