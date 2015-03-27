@@ -565,7 +565,7 @@ function filter(clear) {
     links = [];
     force.nodes([]);
     force.links([]);
-    restart();
+    //restart();
   }
 
   var workingNodes = [];
@@ -594,15 +594,14 @@ function filter(clear) {
     }
   }
 
-  /*
-
+/*
     for (var i = nodesRemove.length - 1; i >= 0; i--) {
     nodes.splice(nodesRemove[i],1);
     }
     for (var i = linksRemove.length - 1; i >= 0; i--) {
-    links.splice(linksRemove[i],1);
+      links.splice(linksRemove[i],1);
     }
-  */
+*/
 
   //lock the large nodes to the pattern
   for (aNode in workingNodes) {
@@ -665,16 +664,15 @@ function restart() {
   var nodeEnter = node.enter().append("svg:g")
       .attr("class", "node")
       .style("cursor","pointer")
-      .attr("id", function(d) {  return "node_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')});
-
-  /*.on("click",function(d) {
-  //$("#network").fadeOut('fast',
-  //                    function() {
-  usePerson = d.id;
-  changeVisMode("person");
-  //                  }
-  //               );
-  });*/
+      .attr("id", function(d) {  return "node_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
+      .on("click",function(d) {
+        //$("#network").fadeOut('fast',
+        //                    function() {
+        usePerson = d.id;
+        changeVisMode("person");
+        //                  }
+        //               );
+      });
 
   if (networkNodeDrag) {
     nodeEnter.call(force.drag);
@@ -800,19 +798,26 @@ function restart() {
     nodes[aNode].x2 = nodes[aNode].x + nodes[aNode].width;
     nodes[aNode].y2 = nodes[aNode].y + nodes[aNode].height;
 
-    if (nodes[aNode].id == 'http://data.artic.edu/whistler/person/James_McNeill_Whistler') {
-      nodes[aNode].x = visWidth/2 + 100;
-      nodes[aNode].y = visHeight/2;
-      nodes[aNode].fixed = true;
+    if (visMode != 'person') {
+      if (nodes[aNode].id == 'http://data.artic.edu/whistler/person/James_McNeill_Whistler') {
+        nodes[aNode].x = visWidth/2 + 100;
+        nodes[aNode].y = visHeight/2;
+        nodes[aNode].fixed = true;
+      }
+      if (nodes[aNode].id == 'http://data.artic.edu/whistler/person/Theodore_Casimir_Roussel') {
+        nodes[aNode].x = visWidth/2 - 100;
+        nodes[aNode].y = visHeight/2;
+        nodes[aNode].fixed = true;
+      }
     }
-    if (nodes[aNode].id == 'http://data.artic.edu/whistler/person/Theodore_Casimir_Roussel') {
-      nodes[aNode].x = visWidth/2 - 100;
-      nodes[aNode].y = visHeight/2;
-      nodes[aNode].fixed = true;
+    else {
+      if (nodes[aNode].id == usePerson) {
+        nodes[aNode].x = visWidth/2;
+        nodes[aNode].y = visHeight/2;
+        nodes[aNode].fixed = true;
+      }
     }
   }
-
-  force.start();
 
   //controls the movement of the nodes
   force.on("start", function(e) {
@@ -823,6 +828,8 @@ function restart() {
       showPopup(nodes[usePersonIndex]);
     }
   });
+
+  force.start();
 
   force.on("tick", function(e) {
     // Collision detection stolen from: http://vallandingham.me/building_a_bubble_cloud.html
@@ -887,11 +894,16 @@ function collide(jitter) {
           // move our two nodes
           moveX = x * distance * ratio;
           moveY = y * distance;
-          if (d.id == 'http://data.artic.edu/whistler/person/James_McNeill_Whistler' || d.id == 'http://data.artic.edu/whistler/person/Theodore_Casimir_Roussel') {
+          if (moveX == 0) { moveX = 1; }
+          if (moveY == 0) { moveY = 1; }
+
+          if ((visMode != 'person' && (d.id == 'http://data.artic.edu/whistler/person/James_McNeill_Whistler' || d.id == 'http://data.artic.edu/whistler/person/Theodore_Casimir_Roussel'))
+             || (visMode == 'person' && (d.id == usePerson))) {
             d2.x += moveX * 2;
             d2.y += moveY * 2;
           }
-          else if (d2.id == 'http://data.artic.edu/whistler/person/James_McNeill_Whistler' || d2.id == 'http://data.artic.edu/whistler/person/Theodore_Casimir_Roussel') {
+          else if ((visMode != 'person' && (d2.id == 'http://data.artic.edu/whistler/person/James_McNeill_Whistler' || d2.id == 'http://data.artic.edu/whistler/person/Theodore_Casimir_Roussel'))
+             || (visMode == 'person' && (d2.id == usePerson))) {
             d.x -= moveX * 2;
             d.y -= moveY * 2;
           }
@@ -1489,11 +1501,11 @@ function changeVisMode(changeTo) {
   initalizeNetwork();
 
   //we need to rest the zoom/pan
-  zoom.translate([0,0]).scale(1);
+  //zoom.translate([0,0]).scale(1);
   vis.attr("transform", "translate(" + [0,0] + ")"  + " scale(" + 1 + ")");
 
   zoomWidgetObjDoZoom = false;
-  zoomWidgetObj.setValue(0,0.255555555);
+  //zoomWidgetObj.setValue(0,0.255555555);
 
   filter();
 

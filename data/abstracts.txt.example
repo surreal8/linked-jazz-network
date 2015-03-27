@@ -1,0 +1,70 @@
+<http://data.artic.edu/whistler/person/Clifford_Isaac_Addams> <http://dbpedia.org/ontology/abstract> "In 1899 Addams entered Whistler?s Acad?mie Carmen in Paris, where he remained a student until it closed in 1901. There he met his future wife Inez Eleanor Bate?the massi?re, or principle student?who actually admitted Adams to the school. Whistler took the unusual step of making both official apprentices, and they remained faithful followers. Whistler greatly influenced both Addams?s decision to work in the medium of etching and his subject matter, which centered on crowds and architecture. Addams returned, alone, to New York in 1920 and continued to paint and etch there. "@en .
+<http://data.artic.edu/whistler/person/Clifford_Isaac_Addams> <http://xmlns.com/foaf/0.1/name> "Clifford Isaac Addams"@en .
+<http://data.artic.edu/whistler/person/Clifford_Isaac_Addams> <http://dbpedia.org/ontology/birthPlace> "Woodbury, New Jersey"@en .
+<http://data.artic.edu/whistler/person/Clifford_Isaac_Addams> <http://dbpedia.org/ontology/birthDate> "1876"@en .
+<http://data.artic.edu/whistler/person/Clifford_Isaac_Addams> <http://dbpedia.org/ontology/deathPlace> "[New York, New York?]"@en .
+<http://data.artic.edu/whistler/person/Clifford_Isaac_Addams> <http://dbpedia.org/ontology/deathDate> "1942"@en .
+<http://data.artic.edu/whistler/person/Clifford_Isaac_Addams> <http://dbpedia.org/ontology/occupation> "Printmaker, Painter"@en .
+<http://data.artic.edu/whistler/person/Clifford_Isaac_Addams> <http://dbpedia.org/ontology/fileURL> "http://ntri-metaciti.artic.edu/images/headshot/Clifford_Isaac_Addams.jpg"@en .
+<http://data.artic.edu/whistler/person/Inez_Eleanor_Addams> <http://dbpedia.org/ontology/abstract> "Born Inez Eleanor Bate, Addams studied in Belgium before moving to Paris and becoming Whistler?s legal apprentice in 1899. She was one of the first students of the Acad?mie Carmen, established by model Carmen Rossi and Whistler, and was later appointed massi?re?or chief woman student?running the academy until it closed in 1901. That same year, Inez married Clifford Isaac Addams, a fellow student and apprentice of Whistler, but later separated from him."@en .
+<http://data.artic.edu/whistler/person/Inez_Eleanor_Addams> <http://xmlns.com/foaf/0.1/name> "Inez Eleanor Addams"@en .
+<http://data.artic.edu/whistler/person/Inez_Eleanor_Addams> <http://dbpedia.org/ontology/birthPlace> "Kings Heath, England"@en .
+<http://data.artic.edu/whistler/person/Inez_Eleanor_Addams> <http://dbpedia.org/ontology/birthDate> "1874"@en .
+<http://data.artic.edu/whistler/person/Inez_Eleanor_Addams> <http://dbpedia.org/ontology/deathPlace> "South Middlesex [London?], England"@en .
+<http://data.artic.edu/whistler/person/Inez_Eleanor_Addams> <http://dbpedia.org/ontology/deathDate> "1958"@en .
+<http://data.artic.edu/whistler/person/Inez_Eleanor_Addams> <http://dbpedia.org/ontology/occupation> "Painter"@en .
+<http://data.artic.edu/whistler/person/Otto_Henry_Bacher> <http://dbpedia.org/ontology/abstract> "A student of American artist Frank Duveneck, Bacher travelled to Venice with the other ?Duveneck Boys? in 1880, meeting Whistler and becoming a devoted follower. Bacher?who lent Whistler his press, gathered old papers, and assisted in proofing Whistler?s Venice etchings?published his recollections in magazine articles and a book, With Whistler in Venice, between 1906 and 1908. As an etcher, Bacher was inspired by both Duveneck and Whistler, but he, likewise, influenced Whistler, who incorporated the tonal printing of the young artist?s ?Bachertypes? (monotypes) into the artistic wiping of his Venice plates. "@en .
+<http://data.artic.edu/whistler/person/Otto_Henry_Bacher> <http://xmlns.com/foaf/0.1/name> "Otto Henry Bacher"@en .
+<http://data.artic.edu/whistler/person/Otto_Henry_Bacher> <http://dbpedia.org/ontology/birthPlace> "Cleveland, Ohio"@en .
+<http://data.artic.edu/whistler/person/Otto_Henry_Bacher> <http://dbpedia.org/ontology/birthDate> "1856"@en .
+<http://data.artic.edu/whistler/person/Otto_Henry_Bacher> <http://dbpedia.org/ontology/deathPlace> "Bronxville, New York"@en .
+<http://data.artic.edu/whistler/person/Otto_Henry_Bacher> <http://dbpedia.org/ontology/deathDate> "1909"@en .
+<http://data.artic.edu/whistler/person/Otto_Henry_Bacher> <http://dbpedia.org/ontology/occupation> "Printmaker, Painter, Illustrator"@en .
+<http://data.artic.edu/whistler/person/Alice_Pike_Barney> <http://dbpedia.org/ontology/abstract> "Although married with two children, Barney left Washington, D.C., for Paris in the late 1880s to study with portrait painter Carolus-Duran. She later trained with Whistler and painted his model, Carmen Rossi. Returning to Washington, Barney became an important supporter of the arts and an influential figure in social and artistic circles. "@en .
+<http://data.artic.edu/whistler/person/Alice_Pike_Barney> <http://xmlns.com/foaf/0.1/name> "Alice Pike Barney"@en .
+<http://data.artic.edu/whistler/person/Alice_Pike_Barney> <http://dbpedia.org/ontology/birthPlace> "Cincinnati, Ohio"@en .
+<http://data.artic.edu/whistler/person/Alice_Pike_Barney> <http://dbpedia.org/ontology/birthDate> "1857/60"@en .
+<http://data.artic.edu/whistler/person/Alice_Pike_Barney> <http://dbpedia.org/ontology/deathPlace> "Los Angeles, California"@en .
+<http://data.artic.edu/whistler/person/Alice_Pike_Barney> <http://dbpedia.org/ontology/deathDate> "1931"@en .
+<http://data.artic.edu/whistler/person/Alice_Pike_Barney> <http://dbpedia.org/ontology/occupation> "Painter"@en .
+<http://data.artic.edu/whistler/person/Max_Beerbohm> <http://dbpedia.org/ontology/abstract> "In 1892 Beerbohm began making caricatures, describing them as ?the delicious art of exaggerating.? He met Whistler in 1896 but had included him in satirical writing as early as 1894. Beerbohm made a number of caricature drawings of the artist, both during and after Whistler?s lifetime. They incorporate many of the features he noted when they first met, including his tiny stature and exquisite, long, lithe hands. "@en .
+<http://data.artic.edu/whistler/person/Max_Beerbohm> <http://xmlns.com/foaf/0.1/name> "Max Beerbohm"@en .
+<http://data.artic.edu/whistler/person/Max_Beerbohm> <http://dbpedia.org/ontology/birthPlace> "London, England"@en .
+<http://data.artic.edu/whistler/person/Max_Beerbohm> <http://dbpedia.org/ontology/birthDate> "1872"@en .
+<http://data.artic.edu/whistler/person/Max_Beerbohm> <http://dbpedia.org/ontology/deathPlace> "Rapallo, Italy "@en .
+<http://data.artic.edu/whistler/person/Max_Beerbohm> <http://dbpedia.org/ontology/deathDate> "1956"@en .
+<http://data.artic.edu/whistler/person/Max_Beerbohm> <http://dbpedia.org/ontology/occupation> "Illustrator, Writer"@en .
+<http://data.artic.edu/whistler/person/Henry_Belfond> <http://dbpedia.org/ontology/abstract> "Belfond printed all six of Whistler?s color lithographs between October 1891 and the summer of 1893. Whistler thought well of Belfond, writing that he was the only man in Paris who printed ?with intelligence and feeling.? However, their relationship soured, and Whistler discontinued work with Belfond in November 1893. Belfond?s firm was bankrupt by the end of 1894, and he worked for other French lithographic printers during the latter part of the decade. "@en .
+<http://data.artic.edu/whistler/person/Henry_Belfond> <http://xmlns.com/foaf/0.1/name> "Henry Belfond"@en .
+<http://data.artic.edu/whistler/person/Henry_Belfond> <http://dbpedia.org/ontology/birthPlace> "fl. France"@en .
+<http://data.artic.edu/whistler/person/Henry_Belfond> <http://dbpedia.org/ontology/birthDate> "1891"@en .
+<http://data.artic.edu/whistler/person/Henry_Belfond> <http://dbpedia.org/ontology/deathDate> "1894"@en .
+<http://data.artic.edu/whistler/person/Henry_Belfond> <http://dbpedia.org/ontology/occupation> "Printer"@en .
+<http://data.artic.edu/whistler/person/Jacques-Émile_Blanche> <http://dbpedia.org/ontology/abstract> "Blanche lived in France but visited London annually from 1884. He painted portraits of important figures in social as well as literary circles, and was influenced by James Tissot and Whistler, among others. After meeting Whistler in 1884, Blanche acquired a number of his paintings, and corresponded with the artist throughout the 1880s. He was a friend of Paul-C\u00e9sar Helleu, Walter Sickert, Giovanni Boldini, Marcel Proust, and Henry James, and Blanche\u2019s memoir, Portraits of a Lifetime (1938), chronicles the artistic interchange during his life. "@en .
+<http://data.artic.edu/whistler/person/Jacques-Émile_Blanche> <http://xmlns.com/foaf/0.1/name> "Jacques-Émile Blanche"@en .
+<http://data.artic.edu/whistler/person/Jacques-Émile_Blanche> <http://dbpedia.org/ontology/birthPlace> "Paris, France"@en .
+<http://data.artic.edu/whistler/person/Jacques-Émile_Blanche> <http://dbpedia.org/ontology/birthDate> "1861"@en .
+<http://data.artic.edu/whistler/person/Jacques-Émile_Blanche> <http://dbpedia.org/ontology/deathPlace> "Offranville, France"@en .
+<http://data.artic.edu/whistler/person/Jacques-Émile_Blanche> <http://dbpedia.org/ontology/deathDate> "1942"@en .
+<http://data.artic.edu/whistler/person/Jacques-Émile_Blanche> <http://dbpedia.org/ontology/occupation> "Painter, Writer"@en .
+<http://data.artic.edu/whistler/person/Robert_Frederick_Blum> <http://dbpedia.org/ontology/abstract> "In 1880, with a group of American art students known as the ?Duveneck Boys,? Blum traveled to Venice and met Whistler, under whose influence he took up etching. Blum made several return trips to Europe and revisited Venice in 1886 with Otto Bacher, another Duveneck Boy and a lifelong friend. Like Whistler, Blum was interested in Japanese art, and in 1890 he travelled to Japan, returning with sketches and paintings depicting Japanese life. He exhibited watercolors, pastels, and paintings in both New York and London. "@en .
+<http://data.artic.edu/whistler/person/Robert_Frederick_Blum> <http://xmlns.com/foaf/0.1/name> "Robert Frederick Blum"@en .
+<http://data.artic.edu/whistler/person/Robert_Frederick_Blum> <http://dbpedia.org/ontology/birthPlace> "Cincinnati, Ohio"@en .
+<http://data.artic.edu/whistler/person/Robert_Frederick_Blum> <http://dbpedia.org/ontology/birthDate> "1857"@en .
+<http://data.artic.edu/whistler/person/Robert_Frederick_Blum> <http://dbpedia.org/ontology/deathPlace> "New York, New York"@en .
+<http://data.artic.edu/whistler/person/Robert_Frederick_Blum> <http://dbpedia.org/ontology/deathDate> "1903"@en .
+<http://data.artic.edu/whistler/person/Robert_Frederick_Blum> <http://dbpedia.org/ontology/occupation> "Printmaker, Painter, Illustrator"@en .
+<http://data.artic.edu/whistler/person/Giovanni_Boldini> <http://dbpedia.org/ontology/abstract> "When Boldini settled in Paris in 1871, he was already a renowned portrait painter in his native Italy. He was a friend of Whistler, Paul-C?sar Helleu, John Signer Sargent, and other fashionable portraitists as well as Edgar Degas, who may have encouraged Boldini to try etching and drypoint at the end of the 1870s. Boldini?s drypoint Whistler Dozing was made while Whistler was posing for the 1897 oil portrait by Boldini."@en .
+<http://data.artic.edu/whistler/person/Giovanni_Boldini> <http://xmlns.com/foaf/0.1/name> "Giovanni Boldini"@en .
+<http://data.artic.edu/whistler/person/Giovanni_Boldini> <http://dbpedia.org/ontology/birthPlace> "Ferrara, Italy "@en .
+<http://data.artic.edu/whistler/person/Giovanni_Boldini> <http://dbpedia.org/ontology/birthDate> "1842"@en .
+<http://data.artic.edu/whistler/person/Giovanni_Boldini> <http://dbpedia.org/ontology/deathPlace> "Paris, France"@en .
+<http://data.artic.edu/whistler/person/Giovanni_Boldini> <http://dbpedia.org/ontology/deathDate> "1931"@en .
+<http://data.artic.edu/whistler/person/Giovanni_Boldini> <http://dbpedia.org/ontology/occupation> "Printmaker, Etcher"@en .
+<http://data.artic.edu/whistler/person/Félix_Bracquemond> <http://dbpedia.org/ontology/abstract> "Although Bracquemond took up etching only in 1849, he was one of the principal exponents of the etching revival in France during the 1850s. He encouraged other artists, including Manet, to etch, and in 1857 he and Alphonse Legros introduced Whistler to Auguste Del\u00e2tre, who printed the American artist\u2019s \u201cFrench Set\u201d later that year. Acquainted with Bracquemond\u2019s collection of Japanese woodcuts, Whistler soon began to acquire Japanese art and porcelain, himself. "@en .
+<http://data.artic.edu/whistler/person/Félix_Bracquemond> <http://xmlns.com/foaf/0.1/name> "Félix Bracquemond"@en .
+<http://data.artic.edu/whistler/person/Félix_Bracquemond> <http://dbpedia.org/ontology/birthPlace> "Paris, France "@en .
+<http://data.artic.edu/whistler/person/Félix_Bracquemond> <http://dbpedia.org/ontology/birthDate> "1833"@en .
+<http://data.artic.edu/whistler/person/Félix_Bracquemond> <http://dbpedia.org/ontology/deathPlace> "Paris, France "@en .
+<http://data.artic.edu/whistler/person/Félix_Bracquemond> <http://dbpedia.org/ontology/deathDate> "1914"@en .
+<http://data.artic.edu/whistler/person/Félix_Bracquemond> <http://dbpedia.org/ontology/occupation> "Printmaker, Painter, Designer, Writer"@en .
