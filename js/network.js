@@ -5,7 +5,7 @@ if (!document.createElementNS || !document.createElementNS('http://www.w3.org/20
 vex.defaultOptions.className = 'vex-theme-os';
 
 
-var visMode = 'wave';           //the type of network to render, each has it own settings
+var visMode = 'clique';           //the type of network to render, each has it own settings
 
 var tripleStore = null;         //holds the triple data bank created by the rdfquery plugin
 var tripleObject = null;        //holds the javascript seralized object of the triple store
@@ -13,9 +13,6 @@ var descStore = null;           //holds the triple data bank created by the rdfq
 var descObject = null;          //holds the javascript seralized object of the triple store for the description
 var nameObject = null;          //holds the foaf names of the people
 var largestNodes = [];          //holds a list of the N largest nodes/people (most connections) in order to place/lock them properly on render
-var hidePopupTimer = null;      //holds the timer to close the popup
-var showPopupTimer = null;
-var currentNode = null;         //the current node we are highligting
 var usePerson = null;           //the person in person mode
 var usePersonIndex = 0;         //the index pos of the usePerson in the nodes array, so we dont have to loop through the whole thing everytime
 var edgesAvg = 0;
@@ -48,19 +45,12 @@ var largestSimilarity = 0;      //holds the max number of similar connections an
 
 var strokeWidth = 0.3;          //the defult width to make the stroke
 
-                                //the settings that vary for each diff type of network
-var networkGravity =  0;
-var netwokrLinkLength = 35;
+//the settings that vary for each diff type of network
 var networkLargeNodeLimit = 20;	//the number of top nodes to fix/lock to a patterend spot on the network
-var netwokrCharge = -800;
-var networkStopTick = true;     //when the alpha value drops to display the graph, do we stop the nodes from animating?
 var networkNodeDrag = false;    //can you drag the nodes about?
-
-var networkMinEdges = 2;        //the min number of edges to have a node be rendered
 
 var cssSafe = new RegExp(/%|\(|\)|\.|\,|'|"/g);	//the regex to remove non css viable chars
 
-var youTubeObject = '<object style="height=130px; width=200px; position: absolute; bottom: 0px;"> <param name="movie" value="https://www.youtube.com/v/<id>?version=3&feature=player_embedded&controls=1&enablejsapi=1&modestbranding=1&rel=0&showinfo=1&autoplay=1"><param name="allowFullScreen" value="true"><param name="wmode" value="transparent"><param name="allowScriptAccess" value="always"><embed src="https://www.youtube.com/v/<id>?version=3&feature=player_embedded&controls=1&enablejsapi=1&modestbranding=1&rel=0&showinfo=1&autoplay=1" type="application/x-shockwave-flash" allowfullscreen="true" allowScriptAccess="always" width="200" height="130" wmode="transparent"></object>';
 var zoomWidgetObj = null;       //the zoom widget draghandeler object
 var zoomWidgetObjDoZoom = true;
 
@@ -68,6 +58,9 @@ var oldzoom = 0;
 
 var fill = d3.scale.category10();
 var lineColor = d3.scale.category20c();
+
+var whistlerPersonIndex = 0;    //the index pos of the James_McNeill_whistler in the nodes array, so we dont have to loop through the whole thing everytime
+var roussellPersonIndex = 0;    //the index pos of the James_McNeill_whistler in the nodes array, so we dont have to loop through the whole thing everytime
 
 
 jQuery(document).ready(function($) {
@@ -89,21 +82,12 @@ jQuery(document).ready(function($) {
   /* Binds */
   $(window).resize(function() { windowResize();});
 
-  jQuery("#menu_fixed").mouseenter(function() {$(this).css("opacity",1); }).mouseleave(function() {$(this).css("opacity",0.15); }).click(function() {changeVisMode("wave"); });
-  jQuery("#menu_similar").mouseenter(function() {$(this).css("opacity",1); }).mouseleave(function() {$(this).css("opacity",0.15); }).click(function() {changeVisMode("clique"); });
-  jQuery("#menu_free").mouseenter(function() {$(this).css("opacity",1); }).mouseleave(function() {$(this).css("opacity",0.15); }).click(function() {changeVisMode("free"); });
-  jQuery("#menu_dynamic").mouseenter(function() {$(this).css("opacity",1); }).mouseleave(function() {$(this).css("opacity",0.15); }).click(function() {changeVisMode("dynamic"); });
-
-  jQuery("#filter_all").mouseenter(function() {$(this).css("opacity",1); }).mouseleave(function() {$(this).css("opacity",0.15); }).click(function() {hideRelations(); });
-  jQuery("#filter_family").mouseenter(function() {$(this).css("opacity",1); }).mouseleave(function() {$(this).css("opacity",0.15); }).click(function() {showRelations("family"); });
-  jQuery("#filter_friends").mouseenter(function() {$(this).css("opacity",1); }).mouseleave(function() {$(this).css("opacity",0.15); }).click(function() {showRelations("friends"); });
-  jQuery("#filter_colleagues").mouseenter(function() {$(this).css("opacity",1); }).mouseleave(function() {$(this).css("opacity",0.15); }).click(function() {showRelations("colleagues"); });
-  jQuery("#filter_mentors").mouseenter(function() {$(this).css("opacity",1); }).mouseleave(function() {$(this).css("opacity",0.15); }).click(function() {showRelations("mentors"); });
-  jQuery("#filter_employers").mouseenter(function() {$(this).css("opacity",1); }).mouseleave(function() {$(this).css("opacity",0.15); }).click(function() {showRelations("employers"); });
-
-  $("#dynamicSearchInput").keyup(function() {dynamicFilterList(); });
-  $("#dynamicSearchClear").click(function() {$("#dynamicSearchInput").val(''); dynamicFilterList(); });
-  $("#dynamicClear").click(function() {dynamicPeople = []; filter(); });
+  jQuery("#filter_all").click(function() {hideRelations(); });
+  jQuery("#filter_family").click(function() {showRelations("family"); });
+  jQuery("#filter_friends").click(function() {showRelations("friends"); });
+  jQuery("#filter_colleagues").click(function() {showRelations("colleagues"); });
+  jQuery("#filter_mentors").click(function() {showRelations("mentors"); });
+  jQuery("#filter_employers").click(function() {showRelations("employers"); });
 
   //$("#network").fadeOut();
 
@@ -152,78 +136,6 @@ jQuery(document).ready(function($) {
 
   }, 10, []);
 
-
-  //add the zoom widget
-  jQuery("#network").append(
-    jQuery("<div>")
-      .attr("id","zoomWidget")
-      .addClass("dragdealer")
-      .append(
-        jQuery("<div>")
-          .addClass("handle")
-          .append(
-            jQuery("<div>")
-              .text("-")
-          )
-      )
-      .append(
-        jQuery("<div>")
-          .addClass("zoomWidgetRail")
-      )
-      .append(
-        jQuery("<div>")
-          .addClass("zoomWidgetEndcaps")
-          .attr("id","woomWidgetZoomOut")
-          .css("top","-17px")
-          .append(
-            jQuery("<div>")
-              .text("-")
-          )
-      )
-      .append(
-        jQuery("<div>")
-          .addClass("zoomWidgetEndcaps")
-          .attr("id","woomWidgetZoomIn")
-          .css("top","145px")
-          .append(
-            jQuery("<div>")
-              .text("+")
-          )
-      )
-
-  );
-
-  jQuery("#zoomWidget").mouseenter(function() {console.log('whhyyy'); zoomWidgetObjDoZoom = true; });
-
-  zoomWidgetObj = new Dragdealer('zoomWidget',
-                                 {
-                                   horizontal: false,
-                                   vertical: true,
-                                   y: 0.255555555,
-                                   animationCallback: function(x, y)
-                                   {
-                                     //if the value is the same as the intial value exit, to prevent a zoom even being called onload
-                                     if (y==0.255555555) {return false;}
-                                     //prevent too muuch zooooom
-                                     if (y<0.05) {return false;}
-
-
-                                     //are we  zooming based on a call from interaction with the slider, or is this callback being triggerd by the mouse event updating the slider position.
-                                     if (zoomWidgetObjDoZoom == true) {
-
-                                       y =y *4;
-
-                                       //this is how it works now until i figure out how to handle this better.
-                                       //translate to the middle of the vis and apply the zoom level
-                                       vis.attr("transform", "translate(" + [(visWidth/2)-(visWidth*y/2),(visHeight/2)-(visHeight*y/2)] + ")"  + " scale(" + y+ ")");
-                                       //store the new data into the zoom object so it is ready for mouse events
-                                       zoom.translate([(visWidth/2)-(visWidth*y/2),(visHeight/2)-(visHeight*y/2)]).scale(y);
-                                     }
-
-
-
-                                   }
-                                 });
 });
 
 function parseStateChangeVis() {
@@ -263,129 +175,33 @@ function parseStateChangeVis() {
 
 function initalizeNetwork() {
 
-  $("#dynamicListHolder, #dynamicSearchHolder, #dynamicClear").css("display","none")
-
-  $("#video").css("left","0px");
-  if (visMode == "wave") {
-    networkGravity =  0.5;
-    netwokrLinkLength = 25;
-    networkLargeNodeLimit = 20;
-    netwokrCharge = -600;
-    networkMinEdges = 2;
-    networkStopTick = true;
-    networkNodeDrag = false;
-
-  }
-
-  if (visMode == "free") {
-    networkGravity =  0.1;
-    netwokrLinkLength = 25;
-    networkLargeNodeLimit = 20;
-    netwokrCharge = -45;
-    networkMinEdges = 2;
-    networkStopTick = true;
-    networkNodeDrag = false;
-    //scale = 0.6;
-    //trans = [visWidth/6,visHeight/6];
-  }
-
-  if (visMode == "person") {
-    networkGravity = 0.5;
-    netwokrLinkLength = 25;
-    networkLargeNodeLimit = 20;
-    netwokrCharge = function (d) {return Math.floor(Math.random()*visWidth*-6-visHeight*2)}; 
-    networkStopTick = true;
-    networkNodeDrag = false;
-  }
-
-  if (visMode == "clique") {
-    networkGravity =  0.1;
-    netwokrLinkLength = 125;
-    networkLargeNodeLimit = 20;
-    netwokrCharge = -1500;
-    networkMinEdges = 4;
-    networkStopTick = true;
-    networkNodeDrag = false;
-  }
-
-  if (visMode == "dynamic") {
-    networkGravity =  0.05;
-    netwokrLinkLength = 500;
-    networkLargeNodeLimit = 20;
-    netwokrCharge = -800;
-    networkStopTick = false;
-    networkNodeDrag = true;
-
-    //if we have not yet built the dynamic list
-    if ($("#dynamicListHolder").length<2) {
-      //get dynamic list ready
-      buildDynamicList();
-    }
-
-    $("#video").css("left","225px");
-
-    $("#dynamicListHolder, #dynamicSearchHolder").css("display","block")
-
-    //show a hint
-    if (dynamicPeople.length == 0) {
-
-      $("#dynamicHelp").fadeIn(10,function() {
-
-        $("#dynamicHelp").fadeOut(5000);
-
-      })
-    } else {
-      $("#dynamicClear").fadeIn(5000);
-    }
-  }
-
   //if it has already been defined
   if (force == null) {
     force = d3.layout.force()
       .size([$("#network").width() - 5, $("#network").height() - 5]);
   }
 
-  force.gravity(networkGravity);
-  force.linkStrength(function(d) {  return linkStrength(d);});
-  force.distance(netwokrLinkLength);
-  force.charge(netwokrCharge);
-  force.chargeDistance(visWidth/2);
-  
-  if (vis == null) {
-    zoom = d3.behavior.zoom()
-      .translate([0,0])
-      .scale(0.99)
-      .scaleExtent([0.25,6])	//how far it can zoom out and in
-      .on("zoom", redraw);
+  networkNodeDrag = false;
+  networkLargeNodeLimit = 20;
 
+  force.gravity(0);
+  force.charge(0);
+  force.friction(0.2);
+
+  if (vis == null) {
     vis = d3.select("#network").append("svg:svg")
       .attr("width", $("#network").width() - 10)
       .attr("height", $("#network").height() - 10)
-      .append('svg:g')
-      .call(zoom)//.call(d3.behavior.zoom().scaleExtent([0.25, 6]).on("zoom", redraw)) //.call(d3.behavior.zoom().on("zoom", redraw))
       .append('svg:g');
+    //.call(zoom);//.call(d3.behavior.zoom().scaleExtent([0.25, 6]).on("zoom", redraw)) //.call(d3.behavior.zoom().on("zoom", redraw))
 
     vis.append('svg:rect')
-      .attr('width', $("#network").width() + 1000)
-      .attr('height', $("#network").height() + 1000)
-      .attr('fill', 'white')
-      .attr('id', 'zoomCanvas')
-      .style("cursor",  "url(menu/openhand.png)")
-      .on("mousedown", function() {
-
-        //the grabbing css rules do not work with web-kit, so specifiy the cursor hand and use the css for firefox.
-        d3.select("#zoomCanvas").style("cursor",  "url(menu/closedhand.png)");
-        d3.select("#zoomCanvas").attr("class","grabbing");
-      })
-      .on("mouseup", function() {
-        d3.select("#zoomCanvas").style("cursor",  "url(menu/openhand.png)");
-        d3.select("#zoomCanvas").attr("class","");
-      });
+    //.attr('width', $("#network").width() + 1000)
+    //.attr('height', $("#network").height() + 1000)
+      .attr('width', $("#network").width())
+      .attr('height', $("#network").height())
+      .attr('id', 'zoomCanvas');
   }
-
-  vis.attr("transform",
-           "translate(" + trans + ")"
-           + " scale(" + scale + ")");
 }
 
 //process the triple data through the RDF jquery plugin to create an object
@@ -402,7 +218,7 @@ function buildTripleStore(data) {
                                    rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
                                    xml: 'http://www.w3.org/XML/1998/namespace',
                                    xsd: 'http://www.w3.org/2001/XMLSchema#'
-                                 } 
+                                 }
                                });
 
 
@@ -533,35 +349,6 @@ function dataAnalysis() {
   largestNodes.sort(function(a,b) {
     return b.flipFlop - a.flipFlop;
   });
-
-  if (visMode == "wave") {
-    //we want to pin some of the larger nodes to the outside in order to keep things readable, so figure our where to put them and store it in this obj array
-    for (n in largestNodes) {
-      var nudge = 0;
-      var r = visHeight/3;
-      var a = (186 / largestNodes.length) * n;
-
-      if (n == 0) {nudge = 50;}
-      if (n == 1) {nudge = -50;}
-
-      largestNodes[n].x = (visWidth/2) + (r+visWidth/4) * Math.cos(a);
-      largestNodes[n].y = (visHeight/2) + nudge - 10 + r * Math.sin(a);
-
-      /*
-
-        vis.append("circle")
-        .attr("class", "node")
-        .attr("cx", largestNodes[n].x)
-        .attr("cy", largestNodes[n].y)
-        .attr("r", 8)
-        .style("fill", function(d, i) { return fill(i & 3); })
-        .style("stroke", function(d, i) { return d3.rgb(fill(i & 3)).darker(2); })
-        .style("stroke-width", 1.5);
-
-      */
-
-    }
-  }
 }
 
 
@@ -615,7 +402,6 @@ function buildBase() {
     var label = "";
 
     if (nameObject.hasOwnProperty(id)) {
-
       if (nameObject[id]['http://xmlns.com/foaf/0.1/name']) {
         label = nameObject[id]['http://xmlns.com/foaf/0.1/name'][0].value;
       }
@@ -766,7 +552,7 @@ function filter(clear) {
     links = [];
     force.nodes([]);
     force.links([]);
-    restart();
+    //restart();
   }
 
   var workingNodes = [];
@@ -778,66 +564,6 @@ function filter(clear) {
     for (var key in connectionIndex) {
       if (connectionIndex[key].indexOf(usePerson) == -1 && key != usePerson) {
         nodesRemove[key] = true;
-      }
-    }
-  } else if (visMode == 'dynamic') {
-
-    console.log('dynamicPeople: ' + dynamicPeople);
-
-    var connected = [];
-    var connetedCounteed = {};
-
-    //we want to only add people if they are a selected person, or they have a connection that is shared by at least one person aready on the graph
-
-    for (x in dynamicPeople) {
-      //add everyones connections
-      for (y in connectionIndex[dynamicPeople[x]]) {
-        connected.push(connectionIndex[dynamicPeople[x]][y]);
-      }
-    }
-
-    for (x in connected) {
-      if (connetedCounteed.hasOwnProperty(connected[x])) {
-        connetedCounteed[connected[x]] = connetedCounteed[connected[x]] + 1;
-      } else {
-        connetedCounteed[connected[x]] = 1;
-      }
-    }
-
-    console.log('connetedCounteed: ' + connetedCounteed);
-
-    for (x in baseNodes) {
-
-      //is this node in the conenctions?
-      if (connetedCounteed.hasOwnProperty(baseNodes[x].id)) {
-
-        //yes, but do they have more than one entry, meaning that more than 1 person has them as a connection?
-        if (connetedCounteed[baseNodes[x].id] < 2) {
-
-          //no
-          //but are they one of the dynamic people?
-          if (dynamicPeople.indexOf(baseNodes[x].id) == -1) {
-            //no
-            nodesRemove[baseNodes[x].id] = true;
-          }
-        }
-      } else {
-
-        //no...but are they the person themselfs?
-        if (dynamicPeople.indexOf(baseNodes[x].id) == -1) {
-          //no, remove them
-          nodesRemove[baseNodes[x].id] = true;
-        }
-      }
-    }
-  } else {
-
-    //filter out people with too little number of conenctions. we use the connectionCounter from the buildBase function
-    for (var key in connectionCounter) {
-      if (connectionCounter.hasOwnProperty(key)) {
-        if (connectionCounter[key] < networkMinEdges) {
-          nodesRemove[key] = true;
-        }
       }
     }
   }
@@ -855,45 +581,43 @@ function filter(clear) {
     }
   }
 
-  if(visMode == 'dynamic') {
-    //for the dynmaic mode, we don't want a whole mess of edges cofusing things, since we are just intrested in how the added people are connected
-    var temp = [];
-    for (aLink in workingLinks) {
-      if (dynamicPeople.indexOf(workingLinks[aLink].source.id) != -1 || dynamicPeople.indexOf(workingLinks[aLink].target.id) != -1) {
-        temp.push(workingLinks[aLink]);
-      }
-    }
-    workingLinks = temp;
-
-  }
-
-  /*
-
+/*
     for (var i = nodesRemove.length - 1; i >= 0; i--) {
     nodes.splice(nodesRemove[i],1);
     }
     for (var i = linksRemove.length - 1; i >= 0; i--) {
-    links.splice(linksRemove[i],1);
+      links.splice(linksRemove[i],1);
     }
-  */
+*/
 
   //lock the large nodes to the pattern
   for (aNode in workingNodes) {
     workingNodes[aNode].lock = false;
     //workingNodes[aNode].y = visHeight / 2;
+<<<<<<< HEAD
     //workingNodes[aNode].x = Math.floor((Math.random()*visWidth)+1);
+=======
+    workingNodes[aNode].x = Math.floor((Math.random()*visWidth)+1);
+>>>>>>> test
     if (visMode != "person") {
       for (large in largestNodes) {
         if (largestNodes[large].node == workingNodes[aNode].id) {
           workingNodes[aNode].lockX = largestNodes[large].x;
           workingNodes[aNode].lockY = largestNodes[large].y;
           workingNodes[aNode].lock = true;
+
         }
       }
     }
 
     if (visMode == "person" && workingNodes[aNode].id == usePerson) {
       usePersonIndex = aNode;
+    }
+    if (workingNodes[aNode].id == 'http://data.artic.edu/whistler/person/James_McNeill_Whistler') {
+      whistlerPersonIndex = aNode;
+    }
+    if (workingNodes[aNode].id == 'http://data.artic.edu/whistler/person/Theodore_Casimir_Roussel') {
+      roussellPersonIndex = aNode;
     }
   }
 
@@ -908,76 +632,26 @@ function filter(clear) {
     links.push(workingLinks[aLink]);
   }
 
-  /*
-    if (visMode == 'dynamic') {
-    //we also dont want to double add nodes, we needed to leave them in up to this point so the new links could be drawn, but, now take them out
-    var temp = [];
-    for (r in nodes) {
-
-    var add = true;
-
-    //is it already in there?
-    for (n in temp) {
-    if (nodes[r].id == temp[n].id) {
-    add = false;
-    }
-    }
-
-    if (add) {
-    temp.push(nodes[r]);
-    }
-
-    }
-    nodes = temp;
-
-
-
-    }
-
-
-    console.log(nodes);
-  */
-
   restart();
 }
 
 function restart() {
 
-/*  vis.append("svg:defs").selectAll("marker")
-    .data(["FOAFknows"])
-    .enter().append("svg:marker")
-    .attr("id", String)
-    .attr("class","marker")
-    .attr("viewBox", "0 -5 10 10")
-    .attr("refX", 10)
-    .attr("refY", 0)
-    .attr("markerWidth", 10)
-    .attr("markerHeight", 10)
-    .attr("orient", "auto")
-    .append("svg:path")
-    .attr("d", "M0,-5L10,0L0,5")
-    .style("fill","#666")
-    .style("stroke-width",0);
-*/
-  
   vis.selectAll("line.link")
     .data(links)
     .enter().insert("line", "circle.node")
-    .style("stroke",function(d) {return edgeColor(d);})
-    .style("stroke-width",function(d) {return edgeStrokeWidth(d);})
-    .attr("class", function(d) {return "link " + d.customClass})
-    //.attr("marker-end", function(d) { return  (visMode == "person"||visMode == "dynamic") ? "url(#FOAFknows)" : "none"; })
-    .attr("x1", function(d) { return d.source.x; })
+    .attr("class", function(d) {return "link " + d.customClass});
+  //.attr("marker-end", function(d) { return  (visMode == "person"||visMode == "dynamic") ? "url(#FOAFknows)" : "none"; })
+  /*.attr("x1", function(d) { return d.source.x; })
     .attr("y1", function(d) { return d.source.y; })
     .attr("x2", function(d) { return d.target.x; })
-    .attr("y2", function(d) { return d.target.y; });
+    .attr("y2", function(d) { return d.target.y; });*/
 
   var node = vis.selectAll("g.node")
-    .data(nodes);
+      .data(nodes);
 
   var nodeEnter = node.enter().append("svg:g")
       .attr("class", "node")
-      .style("cursor","pointer")
       .attr("id", function(d) {  return "node_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
       /*.on("click",function(d) {
         //$("#network").fadeOut('fast',
@@ -995,18 +669,12 @@ function restart() {
   nodeEnter.append("circle")
     .attr("id", function(d) {return "backgroundCircle_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'');})
     .attr("class","backgroundCircle")
-    .attr("cx", function(d) { return 0; })
-    .attr("cy", function(d) { return 0; })
-    .attr("r", function(d) { return  returnNodeSize(d); })
-    .style("fill", "#000000")
-	.style("stroke", "#000000")
-    .style("stroke-width", function(d) {return returnNodeStrokeWidth(d);});
-	
+    .attr("r", function(d) { return  returnNodeSize(d); });
+
   nodeEnter.append("svg:image")
     .attr("id", function(d) {  return "imageCircle_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
     .attr("class","imageCircle")
     .attr("xlink:href", function(d) {
-
       var useId = $.trim(decodeURI(d.id).split("\/")[decodeURI(d.id).split("\/").length-1]);
       if (fileNames.indexOf(useId+'.png') == -1) {
         return "menu/whistler.png";
@@ -1017,91 +685,60 @@ function restart() {
     .attr("x", function(d) { return  (returnNodeSize(d)*-1); })
     .attr("y", function(d) { return  (returnNodeSize(d)*-1); })
     .attr("width", function(d) { return  (returnNodeSize(d)*2); })
+<<<<<<< HEAD
     .attr("height", function(d) { return  (returnNodeSize(d)*2); })
 	.style("opacity", function(d) { return returnNodeOpac(d);  })
 	.attr("visibility", function(d) { return returnNodeVisible(d);  });
 	
 	  nodeEnter.append("svg:text")
+=======
+    .attr("height", function(d) { return  (returnNodeSize(d)*2); });
+
+  nodeEnter.append("svg:text")
+>>>>>>> test
     .attr("id", function(d) {  return "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
-    .attr("font-size", function(d) {return returnNodeSize2(d) / 2})
-    .attr("class",  function(d) {return "circleText"})
-    .attr("font-family", "Verdana, Geneva, sans-serif")
-	  .style("text-transform", "uppercase")
-	  .style("letter-spacing", ".25em")
-    .attr("text-anchor","middle")
-    .attr("display",function(d) { return displayLabel(d);})
     .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
     .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8; })
-	  .style("fill", "#000000")
-	  .attr("visibility", "hidden")
+    .style("fill", "#000000")
     .text(function(d) { return d.label; });	//console.log('d.label', d.label);
 
-	nodeEnter.append("svg:rect")
+  nodeEnter.append("svg:rect")
     .attr("id", function(d) {  return "circleTextRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
     .attr("class",  function(d) {return "circleTextRect"})
-	  .attr("x", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().x; })
+    .attr("x", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().x; })
     .attr("y", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
     .attr("width", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width; })
-    .attr("height", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height; })
-	  .attr("stroke", "black")
-	  .attr("stroke-width", 10)
-	  .attr("visibility", "visible")
-	  .style("fill", "black");
+    .attr("height", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height; });
 
   nodeEnter.append("svg:text")
     .attr("id", function(d) {  return "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
-    .attr("font-size", function(d) {return returnNodeSize2(d) / 2})
-    .attr("class",  function(d) {return "circleText"})
-    .attr("font-family", "Verdana, Geneva, sans-serif")
-	  .style("text-transform", "uppercase")
-	  .style("letter-spacing", ".25em")
-    .attr("text-anchor","middle")
-    .attr("display",function(d) { return displayLabel(d);})
+    .attr("class",  "circleText")
     .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
     .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8; })
-	  .style("fill", "#ffffff")
-	  .attr("visibility", "visible")
-    .text(function(d) { return d.label; });	// console.log('d.label', d.label); 
+    .text(function(d) { return d.label; });
 
   nodeEnter.append("svg:text")
     .attr("id", function(d) {  return "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
-    .attr("font-size", function(d) {return returnNodeSize2(d) / 2})
     .attr("class",  "labelText")
-    .attr("font-family", "Verdana, Geneva, sans-serif")
-	  .style("text-transform", "uppercase")
-	  .style("letter-spacing", ".25em")
-    .attr("text-anchor","middle")
-    .attr("display",function(d) { return displayLabel(d);})
     .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
     .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+20; })
-	  .style("fill", "#000000")
-	  .attr("visibility", "hidden")
-    .text("ARTIST");	
-	
+    .attr("visibility", "hidden")
+    .text("ARTIST");
+
   nodeEnter.append("svg:rect")
     .attr("id", function(d) {  return "labelRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
-	  .attr("x", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().x; })
+    .attr("x", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().x; })
     .attr("y", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
     .attr("width", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width; })
     .attr("height", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height; })
-	  .attr("class",  "labelRect")
-	  .attr("stroke", "black")
-	  .attr("stroke-width", 10)
-	  .style("opacity", 0)
-	  .attr("visibility", "hidden")
-	  .style("fill", "black");
-	
-  nodeEnter.append("svg:text")
+    .attr("class",  "labelRect");
+
+ /* nodeEnter.append("svg:text")
     .attr("id", function(d) {  return "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
-    .attr("font-size", function(d) {return returnNodeSize2(d) / 2})
     .attr("class",  "labelText")
-    .attr("font-family", "Verdana, Geneva, sans-serif")
-	  .style("text-transform", "uppercase")
-	  .style("letter-spacing", ".25em")
-    .attr("text-anchor","middle")
-    .attr("display",function(d) { return displayLabel(d);})
     .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
     .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+20; })
+<<<<<<< HEAD
 	  .style("fill", "#ffffff")
 	  .style("opacity", 0)
 	  .attr("visibility", "hidden")
@@ -1265,116 +902,188 @@ function displayLabel(d) {
     return "block";
   } else {
     return (d.connections >= edgesInterval/1.5) ? "block" : "none";
+=======
+    .style("fill", "#ffffff")
+    .attr("visibility", "hidden")
+    .text("ARTIST");*/
+
+  for (aNode in nodes) {
+    nodes[aNode].width = $("#" + "node_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))[0].	getBBox().width;
+    nodes[aNode].height = $("#" + "node_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height;
+
+    nodes[aNode].x2 = nodes[aNode].x + nodes[aNode].width;
+    nodes[aNode].y2 = nodes[aNode].y + nodes[aNode].height;
+
+    if (visMode != 'person') {
+      if (nodes[aNode].id == 'http://data.artic.edu/whistler/person/James_McNeill_Whistler') {
+        nodes[aNode].x = visWidth/2 + 100;
+        nodes[aNode].y = visHeight/2;
+        nodes[aNode].fixed = true;
+      }
+      if (nodes[aNode].id == 'http://data.artic.edu/whistler/person/Theodore_Casimir_Roussel') {
+        nodes[aNode].x = visWidth/2 - 100;
+        nodes[aNode].y = visHeight/2;
+        nodes[aNode].fixed = true;
+      }
+    }
+    else {
+      if (nodes[aNode].id == usePerson) {
+        nodes[aNode].x = visWidth/2;
+        nodes[aNode].y = visHeight/2;
+        nodes[aNode].fixed = true;
+      }
+    }
+>>>>>>> test
   }
+
+  //controls the movement of the nodes
+  force.on("start", function(e) {
+    if (visMode == "person") {
+      nodes[usePersonIndex].x = visWidth/2;
+      nodes[usePersonIndex].y = visHeight/2;
+      nodes[usePersonIndex].fixed = true;
+      showPopup(nodes[usePersonIndex]);
+    }
+  });
+
+  force.start();
+
+  force.on("tick", function(e) {
+    // Collision detection stolen from: http://vallandingham.me/building_a_bubble_cloud.html
+    dampenedAlpha = e.alpha * 0.1;
+    jitter = 0.25;
+    ratio = 2.77; // xy ratio
+
+    vis.selectAll("g.node")
+      .each(gravity(dampenedAlpha))
+        .each(collide(jitter))
+          .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
+
+    vis.selectAll("line.link")
+      .attr("x1", function(d) { return d.source.x;})
+      .attr("y1", function(d) { return d.source.y; })
+      .attr("x2", function(d) { return d.target.x; })
+      .attr("y2", function(d) { return d.target.y; });
+  });
 }
 
-function returnNodeStrokeWidth(d) {
-/*
-  if (visMode == "person" || visMode == "dynamic") {
-    if (dynamicPeople.indexOf(d.id) != -1 || usePerson == d.id) {
-      return 5;
-    }
-  }
-*/
-  return 1.5
+function gravity(alpha) {
+  // start with the center of the display
+  cx = visWidth / 2;
+  cy = visHeight / 2;
+
+  // use alpha to affect how much to push
+  // towards the horizontal or vertical
+  ax = alpha / (8 * ratio);
+  ay = alpha;
+
+  // return a function that will modify the
+  // node's x and y values
+  return function(d) {
+    d.x += (cx - d.x) * ax;
+    d.y += (cy - d.y) * ay;
+  };
 }
 
-function returnNodeColor(d) {
-  if (visMode == "person" || visMode == "dynamic") {
-    if (dynamicPeople.indexOf(d.id) != -1 || usePerson == d.id) {
-      return "#FC0";
-    }
-  }
-  return "#666"
+function collide(jitter) {
+  var collisionPadding = 50;
+  // return a function that modifies
+  // the x and y of a node
+  return function(d) {
+    nodes.forEach(function(d2) {
+      // check that we aren't comparing a node
+      // with itself
+      if (d != d2) {
+        // use distance formula to find distance
+        //between two nodes
+        x = d.x - d2.x;
+        y = d.y - d2.y;
+        distance = Math.sqrt(x * x + y * y);
+        // find current minimum space between two nodes
+        // using the width of the nodes
+        minDistance = d.width*0.6 + d2.width*0.6 + collisionPadding;
+
+        // if the current distance is less then the minimum
+        // allowed then we need to push both nodes away from one another
+        if (distance < minDistance) {
+          // scale the distance based on the jitter variable
+          distance = (distance - minDistance) / distance * jitter;
+          // move our two nodes
+          moveX = x * distance * ratio;
+          moveY = y * distance;
+          if (moveX == 0) { moveX = 1; }
+          if (moveY == 0) { moveY = 1; }
+
+          if ((visMode != 'person' && (d.id == 'http://data.artic.edu/whistler/person/James_McNeill_Whistler' || d.id == 'http://data.artic.edu/whistler/person/Theodore_Casimir_Roussel'))
+             || (visMode == 'person' && (d.id == usePerson))) {
+            d2.x += moveX * 2;
+            d2.y += moveY * 2;
+          }
+          else if ((visMode != 'person' && (d2.id == 'http://data.artic.edu/whistler/person/James_McNeill_Whistler' || d2.id == 'http://data.artic.edu/whistler/person/Theodore_Casimir_Roussel'))
+             || (visMode == 'person' && (d2.id == usePerson))) {
+            d.x -= moveX * 2;
+            d.y -= moveY * 2;
+          }
+          else {
+            d.x -= moveX;
+            d.y -= moveY;
+            d2.x += moveX;
+            d2.y += moveY;
+          }
+
+          // Keep nodes within the bounds of the window
+          // Left side
+          if (d.x < d.width - collisionPadding/2) {
+            d.x = d.width - collisionPadding/2;
+          }
+          // Right side
+          if (d.x > visWidth - d.width/2 - collisionPadding) {
+            d.x = visWidth - d.width/2 - collisionPadding;
+          }
+          // Top
+          if (d.y < d.height - collisionPadding/2) {
+            d.y = d.height - collisionPadding/2;
+          }
+          // Bottom
+          if (d.y > visHeight - d.height - collisionPadding/2) {
+            d.y = visHeight - d.height - collisionPadding/2;
+          }
+        }
+      }
+    });
+  };
 }
 
 function returnNodeSize(d) {
-  /* original code here 2.9.ts
-  if (visMode == "person") {
-    if (d.id == usePerson) {
-      return 50;
-    } else {
-      return 15 + Math.round(d.connections/15);
-    }
-  } else if (visMode == "dynamic") {
-    if (dynamicPeople.indexOf(d.id) == -1) {
-      return 20;
-    } else {
-      return 35;
-    }
+  if (d.label == "James McNeill Whistler" || d.label == "Theodore Casimir Roussel") {
+    return 15;
   } else {
-    return Math.round(Math.sqrt(d.connections)*3 + (d.connections/6));
-  }*/
- if (d.label == "James McNeill Whistler" || d.label == "Theodore Casimir Roussel") {
-	  //console.log(d);
-		return 15;
-  } else {
-	return 5;
-  }
-}
-
-function returnNodeVisible(d) {
-	if (d.label == "James McNeill Whistler" || d.label == "Theodore Casimir Roussel") {
-		return "visible";
-  } else {
-	  return "hidden";
+    return 5;
   }
 }
 
 //replacing returnNodeSize for testing 2.10.ts
 function returnTextLoc(d) {
-	if (d.label == "James McNeill Whistler" || d.label == "Theodore Casimir Roussel") {
-		return 20;
-	} else {
-		return 15;
-	}
-}
-
-function returnNodeOpac(d) {
-	if (d.label == "James McNeill Whistler" || d.label == "Theodore Casimir Roussel") {
-		return 1;
-	} else {
-		return 0;
-	}
-}
-
-//replacing returnNodeSize for testing 2.10.ts
-function returnNodeSize2(d) {
-	return 15;
+  if (d.label == "James McNeill Whistler" || d.label == "Theodore Casimir Roussel") {
+    return 20;
+  } else {
+    return 15;
+  }
 }
 
 //wooo!, from https://groups.google.com/forum/?fromgroups#!topic/d3-js/ndyvibO7wDA
 function pointsBetween(circle1,circle2,standOff1,standOff2) {
   var x1 = circle1.x, y1 = circle1.y,
-  x2 = circle2.x, y2 = circle2.y,
-  dx = x2-x1, dy = y2-y1,
-  r1 = returnNodeSize(circle1) + (standOff1||0),
-  r2 = returnNodeSize(circle2) + (standOff2||0);
+      x2 = circle2.x, y2 = circle2.y,
+      dx = x2-x1, dy = y2-y1,
+      r1 = returnNodeSize(circle1) + (standOff1||0),
+      r2 = returnNodeSize(circle2) + (standOff2||0);
   if ( (r1+r2)*(r1+r2) >= dx*dx+dy*dy ) return [[0,0],[0,0]];
   var a = Math.atan2(dy,dx), c = Math.cos(a), s = Math.sin(a);
   return [
     [x1+c*r1,y1+s*r1],
     [x2-c*r2,y2-s*r2]
   ];
-}
-
-function hidePopup() {
-
-  //hidePopupTimer
-  jQuery("#popUp").css("display","none");
-
-  //var customClass = "link_" + currentNode.id.split("/")[currentNode.id.split("/").length-1].replace(/%|\(|\)|\.|\,/g,'');
-
-  d3.selectAll(".marker").attr("stroke-opacity",1).attr("fill-opacity",1)
-  d3.selectAll(".link").attr("stroke-opacity",1).style("fill-opacity",1).style("stroke-width",function(d) {return edgeStrokeWidth(d)});
-  d3.selectAll(".backgroundCircle").attr("fill-opacity",1).attr("stroke-opacity",1);
-  d3.selectAll(".imageCircle").attr("display","block");
-  d3.selectAll(".circleText").attr("fill-opacity",1).attr("stroke-opacity",1);
-  d3.selectAll(".circleTextRect").attr("fill-opacity",1).attr("stroke-opacity",1);
-  d3.selectAll(".labelText").attr("fill-opacity",1).attr("stroke-opacity",1);
-  d3.selectAll(".labelRect").attr("fill-opacity",1).attr("stroke-opacity",1);
-
-  popupShown = false;
 }
 
 function showPopup(d,cords) {
@@ -1400,15 +1109,10 @@ function showPopup(d,cords) {
           .attr("title", "<h2>James McNeill Whistler</h2><h3>1876–1942</h3><p>In 1899 Addams entered Whistler’s Académie Carmen in Paris, where he remained a student until it closed in 1901. There he met his future wife Inez Eleanor Bate—the massière, or principle student—who actually admitted Adams to the school. Whistler took the unusual step of making both official apprentices, and they remained faithful followers. Whistler greatly influenced both Addams’s decision to work in the medium of etching and his subject matter, which centered on crowds and architecture.</p>")
           .append(
             $("<div>")
-              .attr("id", "popup_headshotCont")
               .attr("class","popup-headshot-cont")
-              .attr("width", "100%")
-              .attr("height", "250px")
               .append(
                 $("<img>")
-                  .attr("width", "100%")
                   .attr("src", useImage)
-                  .attr("id", "popup_headshot")
                   .attr("class","popup-headshot")
               )
           )
@@ -1418,32 +1122,30 @@ function showPopup(d,cords) {
     jQuery('#popUp')
       .append(
         $('<a>')
-          .attr("href", "/linked-visions")
+          .attr("href", "/")
           .append(
             $("<div>")
               .attr("class", "popup-back")
               .text("BACK")
           )
       );
-    
+
     // Name and dates
     jQuery('#popUp')
       .append(
         $("<h2>")
-        .text("James McNeill Whistler")
+          .text("James McNeill Whistler")
       )
       .append(
         $("<h3>")
-        .text("1876–1942")
+          .text("1876–1942")
       );
 
     // Metadata
     jQuery('#popUp')
       .append(
         $("<div>")
-          .attr("id", "popup_metadata")
           .attr("class", "popup-metadata")
-          .attr("width", "30%")
           .append(
             $("<img>")
               .attr("width", "20px")
@@ -1459,9 +1161,7 @@ function showPopup(d,cords) {
     jQuery('#popUp')
       .append(
         $("<div>")
-          .attr("id", "popup_description")
           .attr("class", "popup-description")
-          .attr("width", "60%")
           .append(
             $("<img>")
               .attr("width", "20px")
@@ -1482,9 +1182,7 @@ function showPopup(d,cords) {
     jQuery('#popUp')
       .append(
         $("<div>")
-          .attr("id", "popup_works")
           .attr("class", "popup-works")
-          .attr("width", "90%")
           .append(
             $("<img>")
               .attr("width", "20px")
@@ -1494,7 +1192,7 @@ function showPopup(d,cords) {
           .append($("<br/>"))
           .append($("<p>").html("WORKS"))
       );
-    
+
     jQuery("#popUp")
       .css("left", "0px")
       .css("top", "0px");
@@ -1504,38 +1202,12 @@ function showPopup(d,cords) {
                                        jQuery('.cboxPhoto').attr('style','width:55%; height:auto; margin:100px');
                                        jQuery('.cboxPhoto').css({'float': 'right'});
                                      }});
-    
-    
+
+
     jQuery("#popUp").fadeIn(200);
 
     popupShown = true;
   }
-
-  
-/*
-  var descText = '';
-  if (descObject.hasOwnProperty(d.id)) {
-
-    if (descObject[d.id]['http://dbpedia.org/ontology/abstract']) {
-      var desc = descObject[d.id]['http://dbpedia.org/ontology/abstract'][0].value;
-      var r = /\\u([\d\w]{4})/gi;
-      desc = desc.replace(r, function (match, grp) {
-        return String.fromCharCode(parseInt(grp, 16)); } );
-      desc = unescape(desc);
-      descText = decodeURIComponent(desc);
-      descText = descText.replace(/&ndash;/gi,'-');
-      descText = descText.replace(/&amp;/gi,'&');
-
-      var link = d.id.replace('dbpedia','wikipedia').replace('resource','wiki');
-
-      descText = descText.substring(0,250) + '...' + '<br>' + '<a class="popup-link" target="_blank" href="' + link + '">From Wikipedia</a><br><br>';
-
-    } else {
-      descText = "";
-    }
-  }
-*/
-
 }
 
 
@@ -1551,224 +1223,6 @@ function showDialogPopup(person1,person2) {
       }
       return false;
     }
-  });
-
-  //max it out
-  $(".vex-content").css("width",$(window).width()-100);
-  $(".transcript-dialog-holder").css({height: $(window).height()-475});
-  $(".vex-dialog-button-secondary").hide();
-
-  //load the inital info about these two
-  $.get('/api/compare/<' + encodeURIComponent(person1) + '>/<' + encodeURIComponent(person2) + '>', function(realTalk) {
-
-    //load the transcript data for the context
-    $.get('/api/text/'+realTalk.transcript, function(transcript) {
-
-      //build the link to the transcript
-      $('.vex-content').first().append($("<a>").addClass('transcript-dialog-doc-link').text('Transcript Source').attr('target','_blank').attr('href',transcript.sourceURL));
-
-      //build the summary info from 52nd
-      if (realTalk.userBeingTalkedAbout.length != 0 || realTalk.userTalkingAbout.length != 0) {
-
-        var all = realTalk.userBeingTalkedAbout.concat(realTalk.userTalkingAbout);
-        console.log(all);
-
-        $('.vex-content').first().append(
-
-          $("<div>")
-            .addClass('transcript-dialog-holder-semantic')
-            .append($("<span>").html('Semantic data from <a targe="_blank" href="http://linkedjazz.org/52ndStreet/">52nd St Crowd</a>: '))
-        );
-
-        var added = [];
-
-        for (var a in all) {
-          var rel = all[a];
-
-          var source = rel.source.replace('<','').replace('>','') , target = rel.target.replace('<','').replace('>','') , relationship = "", color = "grey";
-
-          if (nameObject[source]) {
-            if (nameObject[source]['http://xmlns.com/foaf/0.1/name']) {
-              source = nameObject[source]['http://xmlns.com/foaf/0.1/name'][0]['value'];
-            }
-          }
-
-          if (nameObject[target]) {
-            if (nameObject[target]['http://xmlns.com/foaf/0.1/name']) {
-              target = nameObject[target]['http://xmlns.com/foaf/0.1/name'][0]['value'];
-            }
-          }
-
-          if (rel.value == '<http://purl.org/vocab/relationship/influencedBy>') {
-            relationship = "influenced by";
-            color = 'rgba(188, 143, 102, 0.25)';
-          } else if (rel.value == '<http://purl.org/vocab/relationship/mentorOf>') {
-            relationship = "mentored";
-            color = 'rgba(229, 142, 60, 0.25)';
-          } else if (rel.value == '<http://purl.org/vocab/relationship/knowsOf>') {
-            relationship = "knows of";
-            color = 'rgba(131, 149, 159, 0.25)';
-          } else if (rel.value == '<http://purl.org/vocab/relationship/acquaintanceOf>') {
-            relationship = "is acquaintance of";
-            color = 'rgba(77, 165, 213, 0.25)';
-          } else if (rel.value == '<http://purl.org/vocab/relationship/closeFriendOf>') {
-            relationship = "friend of";
-            color = 'rgba(43, 175, 247, 0.25)';
-          } else if (rel.value == '<http://purl.org/vocab/relationship/hasMet>') {
-            relationship = "has met";
-            color = 'rgba(108, 156, 182, 0.25)';
-          } else if (rel.value == '<http://purl.org/vocab/relationship/friendOf>') {
-            relationship = "friends with";
-            color = 'rgba(43, 175, 247, 0.25)';
-          } else if (rel.value == '<http://linkedjazz.org/ontology/inBandTogether>') {
-            relationship = "was in band together with";
-            color = 'rgba(159, 144, 131, 0.25)';
-          } else if (rel.value == '<http://linkedjazz.org/ontology/playedTogether>') {
-            relationship = "played together with";
-            color = 'rgba(159, 144, 131, 0.25)';
-          } else if (rel.value == '<http://linkedjazz.org/ontology/bandmember>') {
-            relationship = "was bandmember of";
-            color = 'rgba(159, 144, 131, 0.25)';
-          } else if (rel.value == '<http://linkedjazz.org/ontology/touredWith>') {
-            relationship = "toured with";
-            color = 'rgba(159, 144, 131, 0.25)';
-          } else if (rel.value == '<http://linkedjazz.org/ontology/bandLeaderOf>') {
-            relationship = "was band leader of";
-            color = 'rgba(159, 144, 131, 0.25)';
-          } else if (rel.value == '<http://purl.org/ontology/mo/collaborated_with>') {
-            relationship = "collaborated with";
-            color = 'rgba(159, 144, 131, 0.25)';
-          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_colleague_of>') {
-            relationship = "is colleague of";
-            color = 'rgba(159, 144, 131, 0.25)';
-          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_spouse_of>') {
-            relationship = "is spouse of";
-            color = 'rgba(188, 143, 102, 0.25)';
-          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_assistant_to>') {
-            relationship = "is assistant to";
-            color = 'rgba(229, 142, 60, 0.25)';
-          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_friend_of>') {
-            relationship = "is friend of";
-            color = 'rgba(131, 149, 159, 0.25)';
-          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_student_of>') {
-            relationship = "is student of";
-            color = 'rgba(77, 165, 213, 0.25)';
-          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_artist_of>') {
-            relationship = "is artist of";
-            color = 'rgba(43, 175, 247, 0.25)';
-          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_model_for>') {
-            relationship = "is model for";
-            color = 'rgba(108, 156, 182, 0.25)';
-          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_intimate_with>') {
-            relationship = "is intimate with";
-            color = 'rgba(43, 175, 247, 0.25)';
-          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_teacher_of>') {
-            relationship = "is teacher of";
-            color = 'rgba(159, 143, 60, 0.25)';
-          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_relative_of>') {
-            relationship = "is relative of";
-            color = 'rgba(188, 142, 159, 0.25)';
-          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_executor_for>') {
-            relationship = "is executor for";
-            color = 'rgba(229, 149, 213, 0.25)';
-          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_master_of>') {
-            relationship = "is master of";
-            color = 'rgba(131, 165, 247, 0.25)';
-          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_physician_to>') {
-            relationship = "is physician to";
-            color = 'rgba(77, 175, 182, 0.25)';
-          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_secretary_to>') {
-            relationship = "is secratory to";
-            color = 'rgba(43, 156, 247, 0.25)';
-          }
-
-          if (added.indexOf(source + ' ' + relationship + ' ' + target) == -1) {
-            $('.transcript-dialog-holder-semantic').first().append(
-              $("<span>")
-                .addClass('transcript-dialog-holder-semantic-label')
-                .html(source + ' ' + relationship + ' ' + target)
-                .css("background-color",color)
-            );
-            added.push(source + ' ' + relationship + ' ' + target)
-          }
-        }
-      }
-
-      var allAddedIds = [];
-
-      //we need to loop through all the occurances
-      for (var x in realTalk.occurances) {
-
-        var textId = parseInt(realTalk.occurances[x].id);
-        var type = realTalk.occurances[x].type;
-
-        if (allAddedIds.indexOf(textId)>-1) {
-          continue;
-        }
-
-        allAddedIds.push(textId);
-
-        if (type == 'A' && textId > 0) {
-          textId = textId-1 + ',' + textId;
-          allAddedIds.push(textId-1);
-          console.log(realTalk.occurances[x].type);
-        }
-
-        if (type == 'Q') {
-          allAddedIds.push(textId+1);
-          textId = (textId) + ',' + (textId+1);
-        }
-
-        $.get('/api/text/'+realTalk.transcript +'/' + textId, function(transcriptText) {
-
-          //it will likely be a pair of responses
-          for (t in transcriptText) {
-
-            //add the image in
-            $('.transcript-dialog-holder').first().append(
-              $("<div>")
-                .addClass( ( transcriptText[t].type == 'Q'  ) ? 'questionImage' : 'answerImage' )
-                .append(
-                  $("<img>")
-                    .attr('src',function() {
-                      var useImage = ""
-
-                      if (transcriptText[t].type == 'Q') {
-                        useImage = '/52new/img/no_image_square.png';
-                      } else {
-                        var uri = transcript.intervieweeURI.replace('<','').replace('>','');
-                        var useId = $.trim(uri.split("\/")[uri.split("\/").length-1]);
-
-                        if (fileNames.indexOf(useId+'.png') == -1) {
-                          useImage =  "/52new/img/no_image_square.png'";
-                        } else {
-                          useImage =  "/image/round/" + useId+'.png';
-                        }
-                      }
-
-                      return useImage;
-                    })
-                )
-                .append(
-                  $("<span>")
-                    .text( ( transcriptText[t].type == 'Q'  ) ? 'Interviewer' : transcript.interviewee)
-                )
-            );
-
-            $('.transcript-dialog-holder').first().append(
-              $("<div>")
-                .html( highlightText(transcriptText[t].text, [person1, person2]) )
-                .addClass('bubble')
-                .addClass(  ( transcriptText[t].type == 'Q'  ) ? 'question' : 'answer')
-            );
-
-            $('.transcript-dialog-holder').append($("<br>").css("clear","both"));
-          }
-
-          $('.transcript-dialog-holder').append($("<hr>").css("clear","both"));
-        });
-      }
-    });
   });
 }
 
@@ -1818,24 +1272,21 @@ function changeVisMode(changeTo) {
 
   //$("#network").fadeOut(function() {
 
-    //$("#network").css("visibility","hidden");
+  //$("#network").css("visibility","hidden");
 
-    //if the popup has been shown make sure its hidden before the next view
-    if (currentNode != null) {hidePopup();}
+  //showSpinner("Rendering<br>Network");
+  initalizeNetwork();
 
-    //showSpinner("Rendering<br>Network");
-    initalizeNetwork();
+  //we need to rest the zoom/pan
+  //zoom.translate([0,0]).scale(1);
+  vis.attr("transform", "translate(" + [0,0] + ")"  + " scale(" + 1 + ")");
 
-    //we need to rest the zoom/pan
-    zoom.translate([0,0]).scale(1);
-    vis.attr("transform", "translate(" + [0,0] + ")"  + " scale(" + 1 + ")");
+  zoomWidgetObjDoZoom = false;
+  //zoomWidgetObj.setValue(0,0.255555555);
 
-    zoomWidgetObjDoZoom = false;
-    zoomWidgetObj.setValue(0,0.255555555);
+  filter();
 
-    filter();
-
-    rendering = false;
+  rendering = false;
   //});
 }
 
@@ -1849,14 +1300,13 @@ function hideRelations() {
   d3.selectAll(".circleTextRect").attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", fill).attr("stroke", fill);
   d3.selectAll(".labelText").attr("fill-opacity",1).attr("stroke-opacity",1);
   d3.selectAll(".labelRect").attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", fill).attr("stroke", fill);
-  d3.selectAll(".link").attr("stroke-opacity",1).style("fill-opacity",1).style("stroke-width",function(d) {return edgeStrokeWidth(d)}).style("fill", fill).style("stroke", fill);
+  d3.selectAll(".link").attr("stroke-opacity",1).style("fill-opacity",1).style("fill", fill).style("stroke", fill);
 }
 
 function showRelations(rel) {
 
   // First we grey out everything
   var fill = "black";
-  //clearTimeout(hidePopupTimer);
   d3.selectAll(".backgroundCircle").attr("fill-opacity",0.03).attr("stroke-opacity",0.03).style("fill", fill).style("stroke", fill);
   d3.selectAll(".circleText").attr("fill-opacity",0.03).attr("stroke-opacity",0.03);
   d3.selectAll(".circleTextRect").attr("fill-opacity",0.03).attr("stroke-opacity",0.03).style("fill", fill).attr("stroke", fill);
@@ -1978,7 +1428,7 @@ function buildDynamicList() {
         .addClass("dynamicListItem")
         .data("label",listNodes[x].labelLast)
         .data("id",listNodes[x].id)
-        .click(function() { if (dynamicPeople.indexOf($(this).data("id")) == -1) {$("#dynamicClear").fadeIn(5000); $("#dynamicHelp").css("display","none"); usePerson = $(this).data("id"); dynamicPeople.push(usePerson); filter();}})
+        .click(function() { if (dynamicPeople.indexOf($(this).data("id")) == -1) {usePerson = $(this).data("id"); dynamicPeople.push(usePerson); filter();}})
         .append
       (
         $("<img>")
@@ -2010,8 +1460,6 @@ function buildDynamicList() {
     )
   }
 
-  $("#dynamicListHolder").html(domFragment);
-
   window.orginalDynamicListFragment = domFragment;
 }
 
@@ -2034,18 +1482,18 @@ function redraw(useScale) {
   //store the last event data
   trans = d3.event.translate;
   scale = d3.event.scale;
-  
+
   if (scale > 2) {
-	 //console.log(trans);
-  	 //console.log(scale);
-	 d3.selectAll(".backgroundCircle").style("fill", "#ffffff");
-	 d3.selectAll(".imageCircle").transition(800).style("opacity",1).attr("visibility","visible");
+    //console.log(trans);
+    //console.log(scale);
+    d3.selectAll(".backgroundCircle").style("fill", "#ffffff");
+    d3.selectAll(".imageCircle").transition(800).style("opacity",1).attr("visibility","visible");
   }
   if (scale > 3) {
-	 d3.selectAll(".labelText").transition(800).style("opacity",1).attr("visibility","visible");
-	 d3.selectAll(".labelRect").transition(800).style("opacity",1).attr("visibility","visible");  
+    d3.selectAll(".labelText").transition(800).style("opacity",1).attr("visibility","visible");
+    d3.selectAll(".labelRect").transition(800).style("opacity",1).attr("visibility","visible");
   }
-  
+
 
   //transform the vis
   vis.attr("transform",
@@ -2056,88 +1504,18 @@ function redraw(useScale) {
                                    "translate(" + 1/trans[0] + " " + y + ")"
                                    + " scale(" + 1/scale + ")");
   d3.selectAll(".circleTextRect").attr("transform",
-                                   "translate(" + 1/trans[0] + " " + y + ")"
-                                   + " scale(" + 1/scale + ")");
+                                       "translate(" + 1/trans[0] + " " + y + ")"
+                                       + " scale(" + 1/scale + ")");
   d3.selectAll(".labelText").attr("transform",
                                   "translate(" + 1/trans[0] + " " + y + ")"
                                   + " scale(" + 1/scale + ")");
   d3.selectAll(".labelRect").attr("transform",
-                                   "translate(" + 1/trans[0] + " " + y + ")"
+                                  "translate(" + 1/trans[0] + " " + y + ")"
                                   + " scale(" + 1/scale + ")");
 
   //we need to update the zoom slider, set the boolean to false so the slider change does not trigger a zoom change in the vis (from the slider callback function)
   zoomWidgetObjDoZoom = false;
   zoomWidgetObj.setValue(0,(scale/4));
-}
-
-function loadYouTube(useId) {
-
-  var filename = useId + '.meta';
-  $.get('img/' + filename, function(data) {
-
-    var objectCode = youTubeObject.replace(/\<id\>/ig,data);
-
-    $("#video").empty();
-    $("#video").append(
-      $("<a>")
-        .text("[x] Close")
-        .attr("href","#")
-        .attr("id", "youTubeClose")
-        .attr("title","Close Video")
-        .click(function(event) {
-          $("#video").empty();
-          event.stopPropagation();
-          event.preventDefault();
-        })
-    );
-    $("#video").append(objectCode);
-
-  });
-  //youTubeObject
-}
-
-function edgeStrokeWidth(d) {
-/*
-  if (visMode == "person" || visMode == "dynamic") {
-    if (nodes.length < 10) {
-      return 2;
-    }
-
-    if (nodes.length < 30) {
-      return 1;
-    }
-    if (nodes.length < 40) {
-      return 0.5;
-    }
-
-    return .3;
-  }
-*/
-  return 0.3;
-}
-
-
-function edgeColor(d) {
-  if (visMode == 'dynamic') {return "#666";}
-
-  if (typeof d.connections == 'undefined') {
-    d = d.source;
-  }
-
-  if (d.connections <= edgesAvg) {
-    //return "#bcbddc";
-	return "#666666";
-  }
-  if ((d.connections-edgesAvg)/edgesInterval <= 1.5) {
-    //return "#9ecae1";
-	return "#666666";
-  }
-  if ((d.connections-edgesAvg)/edgesInterval <= 2.5) {
-    //return "#74c476";
-	return "#666666";
-  }
-  //return "#fdae6b";
-  return "#666666";
 }
 
 function linkStrength(d) {
@@ -2161,6 +1539,7 @@ function linkStrength(d) {
   }
 
   if (visMode == "clique") {
+    return 0.1;
     //return Math.sqrt(d.source.connections)/8;
 
     //we want to find the combined simlarity between the two people
@@ -2198,5 +1577,4 @@ function windowResize() {
   }
   $("#network").css('width', visWidth + 'px');
   $("#network").css('height',visHeight + 'px');
-  $("#dynamicListHolder").css('height',visHeight - 110 + 'px');
 }
