@@ -82,21 +82,12 @@ jQuery(document).ready(function($) {
   /* Binds */
   $(window).resize(function() { windowResize();});
 
-  jQuery("#menu_fixed").mouseenter(function() {$(this).css("opacity",1); }).mouseleave(function() {$(this).css("opacity",0.15); }).click(function() {changeVisMode("wave"); });
-  jQuery("#menu_similar").mouseenter(function() {$(this).css("opacity",1); }).mouseleave(function() {$(this).css("opacity",0.15); }).click(function() {changeVisMode("clique"); });
-  jQuery("#menu_free").mouseenter(function() {$(this).css("opacity",1); }).mouseleave(function() {$(this).css("opacity",0.15); }).click(function() {changeVisMode("free"); });
-  jQuery("#menu_dynamic").mouseenter(function() {$(this).css("opacity",1); }).mouseleave(function() {$(this).css("opacity",0.15); }).click(function() {changeVisMode("dynamic"); });
-
-  jQuery("#filter_all").mouseenter(function() {$(this).css("opacity",1); }).mouseleave(function() {$(this).css("opacity",0.15); }).click(function() {hideRelations(); });
-  jQuery("#filter_family").mouseenter(function() {$(this).css("opacity",1); }).mouseleave(function() {$(this).css("opacity",0.15); }).click(function() {showRelations("family"); });
-  jQuery("#filter_friends").mouseenter(function() {$(this).css("opacity",1); }).mouseleave(function() {$(this).css("opacity",0.15); }).click(function() {showRelations("friends"); });
-  jQuery("#filter_colleagues").mouseenter(function() {$(this).css("opacity",1); }).mouseleave(function() {$(this).css("opacity",0.15); }).click(function() {showRelations("colleagues"); });
-  jQuery("#filter_mentors").mouseenter(function() {$(this).css("opacity",1); }).mouseleave(function() {$(this).css("opacity",0.15); }).click(function() {showRelations("mentors"); });
-  jQuery("#filter_employers").mouseenter(function() {$(this).css("opacity",1); }).mouseleave(function() {$(this).css("opacity",0.15); }).click(function() {showRelations("employers"); });
-
-  $("#dynamicSearchInput").keyup(function() {dynamicFilterList(); });
-  $("#dynamicSearchClear").click(function() {$("#dynamicSearchInput").val(''); dynamicFilterList(); });
-  $("#dynamicClear").click(function() {dynamicPeople = []; filter(); });
+  jQuery("#filter_all").click(function() {hideRelations(); });
+  jQuery("#filter_family").click(function() {showRelations("family"); });
+  jQuery("#filter_friends").click(function() {showRelations("friends"); });
+  jQuery("#filter_colleagues").click(function() {showRelations("colleagues"); });
+  jQuery("#filter_mentors").click(function() {showRelations("mentors"); });
+  jQuery("#filter_employers").click(function() {showRelations("employers"); });
 
   //$("#network").fadeOut();
 
@@ -184,8 +175,6 @@ function parseStateChangeVis() {
 
 function initalizeNetwork() {
 
-  $("#dynamicListHolder, #dynamicSearchHolder, #dynamicClear").css("display","none")
-
   //if it has already been defined
   if (force == null) {
     force = d3.layout.force()
@@ -211,9 +200,7 @@ function initalizeNetwork() {
     //.attr('height', $("#network").height() + 1000)
       .attr('width', $("#network").width())
       .attr('height', $("#network").height())
-      .attr('fill', 'white')
-      .attr('id', 'zoomCanvas')
-      .style("cursor",  "url(menu/openhand.png)");
+      .attr('id', 'zoomCanvas');
   }
 }
 
@@ -649,8 +636,6 @@ function restart() {
   vis.selectAll("line.link")
     .data(links)
     .enter().insert("line", "circle.node")
-    .style("stroke",function(d) {return edgeColor(d);})
-    .style("stroke-width",function(d) {return edgeStrokeWidth(d);})
     .attr("class", function(d) {return "link " + d.customClass});
   //.attr("marker-end", function(d) { return  (visMode == "person"||visMode == "dynamic") ? "url(#FOAFknows)" : "none"; })
   /*.attr("x1", function(d) { return d.source.x; })
@@ -663,7 +648,6 @@ function restart() {
 
   var nodeEnter = node.enter().append("svg:g")
       .attr("class", "node")
-      .style("cursor","pointer")
       .attr("id", function(d) {  return "node_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
       .on("click",function(d) {
         //$("#network").fadeOut('fast',
@@ -681,12 +665,7 @@ function restart() {
   nodeEnter.append("circle")
     .attr("id", function(d) {return "backgroundCircle_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'');})
     .attr("class","backgroundCircle")
-  //.attr("cx", function(d) { return 0; })
-  //.attr("cy", function(d) { return 0; })
-    .attr("r", function(d) { return  returnNodeSize(d); })
-    .style("fill", "#000000")
-    .style("stroke", "#000000")
-    .style("stroke-width", function(d) {return returnNodeStrokeWidth(d);});
+    .attr("r", function(d) { return  returnNodeSize(d); });
 
   nodeEnter.append("svg:image")
     .attr("id", function(d) {  return "imageCircle_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
@@ -702,23 +681,13 @@ function restart() {
     .attr("x", function(d) { return  (returnNodeSize(d)*-1); })
     .attr("y", function(d) { return  (returnNodeSize(d)*-1); })
     .attr("width", function(d) { return  (returnNodeSize(d)*2); })
-    .attr("height", function(d) { return  (returnNodeSize(d)*2); })
-  //.attr("visibility", function(d) { return returnNodeVisible(d);  })
-    .style("opacity", function(d) { return returnNodeOpac(d);  });
+    .attr("height", function(d) { return  (returnNodeSize(d)*2); });
 
   nodeEnter.append("svg:text")
     .attr("id", function(d) {  return "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
-    .attr("font-size", function(d) {return returnNodeSize2(d) / 2})
-    .attr("class",  function(d) {return "circleText"})
-    .attr("font-family", "Verdana, Geneva, sans-serif")
-    .style("text-transform", "uppercase")
-    .style("letter-spacing", ".25em")
-    .attr("text-anchor","middle")
-    .attr("display",function(d) { return displayLabel(d);})
     .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
     .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8; })
     .style("fill", "#000000")
-  //.attr("visibility", "hidden")
     .text(function(d) { return d.label; });	//console.log('d.label', d.label);
 
   nodeEnter.append("svg:rect")
@@ -727,39 +696,20 @@ function restart() {
     .attr("x", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().x; })
     .attr("y", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
     .attr("width", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width; })
-    .attr("height", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height; })
-    .attr("stroke", "black")
-    .attr("stroke-width", 10)
-  //.attr("visibility", "visible")
-    .style("fill", "black");
+    .attr("height", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height; });
 
   nodeEnter.append("svg:text")
     .attr("id", function(d) {  return "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
-    .attr("font-size", function(d) {return returnNodeSize2(d) / 2})
-    .attr("class",  function(d) {return "circleText"})
-    .attr("font-family", "Verdana, Geneva, sans-serif")
-    .style("text-transform", "uppercase")
-    .style("letter-spacing", ".25em")
-    .attr("text-anchor","middle")
-    .attr("display",function(d) { return displayLabel(d);})
+    .attr("class",  "circleText")
     .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
     .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8; })
-    .style("fill", "#ffffff")
-  //.attr("visibility", "hidden")
-    .text(function(d) { return d.label; });	//console.log('d.label', d.label);
+    .text(function(d) { return d.label; });
 
   nodeEnter.append("svg:text")
     .attr("id", function(d) {  return "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
-    .attr("font-size", function(d) {return returnNodeSize2(d) / 2})
     .attr("class",  "labelText")
-    .attr("font-family", "Verdana, Geneva, sans-serif")
-    .style("text-transform", "uppercase")
-    .style("letter-spacing", ".25em")
-    .attr("text-anchor","middle")
-    .attr("display",function(d) { return displayLabel(d);})
     .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
     .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+20; })
-    .style("fill", "#000000")
     .attr("visibility", "hidden")
     .text("ARTIST");
 
@@ -769,27 +719,16 @@ function restart() {
     .attr("y", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
     .attr("width", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width; })
     .attr("height", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height; })
-    .attr("class",  "labelRect")
-    .attr("stroke", "black")
-    .attr("stroke-width", 10)
-    .style("opacity", 0)
-    .attr("visibility", "hidden")
-    .style("fill", "black");
+    .attr("class",  "labelRect");
 
-  nodeEnter.append("svg:text")
+ /* nodeEnter.append("svg:text")
     .attr("id", function(d) {  return "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
-    .attr("font-size", function(d) {return returnNodeSize2(d) / 2})
     .attr("class",  "labelText")
-    .attr("font-family", "Verdana, Geneva, sans-serif")
-    .style("text-transform", "uppercase")
-    .style("letter-spacing", ".25em")
-    .attr("text-anchor","middle")
-    .attr("display",function(d) { return displayLabel(d);})
     .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
     .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+20; })
     .style("fill", "#ffffff")
     .attr("visibility", "hidden")
-    .text("ARTIST");
+    .text("ARTIST");*/
 
   for (aNode in nodes) {
     nodes[aNode].width = $("#" + "node_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))[0].	getBBox().width;
@@ -937,67 +876,11 @@ function collide(jitter) {
   };
 }
 
-function displayLabel(d) {
-  return "block";
-  /*
-    if (visMode == "person") {
-    return "block";
-    } else {
-    return (d.connections >= edgesInterval/1.5) ? "block" : "none";
-    }
-  */
-}
-
-function returnNodeStrokeWidth(d) {
-  /*
-    if (visMode == "person" || visMode == "dynamic") {
-    if (dynamicPeople.indexOf(d.id) != -1 || usePerson == d.id) {
-    return 5;
-    }
-    }
-  */
-  return 1.5
-}
-
-function returnNodeColor(d) {
-  if (visMode == "person" || visMode == "dynamic") {
-    if (dynamicPeople.indexOf(d.id) != -1 || usePerson == d.id) {
-      return "#FC0";
-    }
-  }
-  return "#666"
-}
-
 function returnNodeSize(d) {
-  /* original code here 2.9.ts
-     if (visMode == "person") {
-     if (d.id == usePerson) {
-     return 50;
-     } else {
-     return 15 + Math.round(d.connections/15);
-     }
-     } else if (visMode == "dynamic") {
-     if (dynamicPeople.indexOf(d.id) == -1) {
-     return 20;
-     } else {
-     return 35;
-     }
-     } else {
-     return Math.round(Math.sqrt(d.connections)*3 + (d.connections/6));
-     }*/
   if (d.label == "James McNeill Whistler" || d.label == "Theodore Casimir Roussel") {
-    //console.log(d);
     return 15;
   } else {
     return 5;
-  }
-}
-
-function returnNodeVisible(d) {
-  if (d.label == "James McNeill Whistler" || d.label == "Theodore Casimir Roussel") {
-    return "visible";
-  } else {
-    return "hidden";
   }
 }
 
@@ -1008,19 +891,6 @@ function returnTextLoc(d) {
   } else {
     return 15;
   }
-}
-
-function returnNodeOpac(d) {
-  if (d.label == "James McNeill Whistler" || d.label == "Theodore Casimir Roussel") {
-    return 1;
-  } else {
-    return 0;
-  }
-}
-
-//replacing returnNodeSize for testing 2.10.ts
-function returnNodeSize2(d) {
-  return 15;
 }
 
 //wooo!, from https://groups.google.com/forum/?fromgroups#!topic/d3-js/ndyvibO7wDA
@@ -1036,22 +906,6 @@ function pointsBetween(circle1,circle2,standOff1,standOff2) {
     [x1+c*r1,y1+s*r1],
     [x2-c*r2,y2-s*r2]
   ];
-}
-
-function hidePopup() {
-
-  jQuery("#popUp").css("display","none");
-
-  d3.selectAll(".marker").attr("stroke-opacity",1).attr("fill-opacity",1)
-  d3.selectAll(".link").attr("stroke-opacity",1).style("fill-opacity",1).style("stroke-width",function(d) {return edgeStrokeWidth(d)});
-  d3.selectAll(".backgroundCircle").attr("fill-opacity",1).attr("stroke-opacity",1);
-  d3.selectAll(".imageCircle").attr("display","block");
-  d3.selectAll(".circleText").attr("fill-opacity",1).attr("stroke-opacity",1);
-  d3.selectAll(".circleTextRect").attr("fill-opacity",1).attr("stroke-opacity",1);
-  d3.selectAll(".labelText").attr("fill-opacity",1).attr("stroke-opacity",1);
-  d3.selectAll(".labelRect").attr("fill-opacity",1).attr("stroke-opacity",1);
-
-  popupShown = false;
 }
 
 function showPopup(d,cords) {
@@ -1077,15 +931,10 @@ function showPopup(d,cords) {
           .attr("title", "<h2>James McNeill Whistler</h2><h3>1876–1942</h3><p>In 1899 Addams entered Whistler’s Académie Carmen in Paris, where he remained a student until it closed in 1901. There he met his future wife Inez Eleanor Bate—the massière, or principle student—who actually admitted Adams to the school. Whistler took the unusual step of making both official apprentices, and they remained faithful followers. Whistler greatly influenced both Addams’s decision to work in the medium of etching and his subject matter, which centered on crowds and architecture.</p>")
           .append(
             $("<div>")
-              .attr("id", "popup_headshotCont")
               .attr("class","popup-headshot-cont")
-              .attr("width", "100%")
-              .attr("height", "250px")
               .append(
                 $("<img>")
-                  .attr("width", "100%")
                   .attr("src", useImage)
-                  .attr("id", "popup_headshot")
                   .attr("class","popup-headshot")
               )
           )
@@ -1095,7 +944,7 @@ function showPopup(d,cords) {
     jQuery('#popUp')
       .append(
         $('<a>')
-          .attr("href", "/linked-visions")
+          .attr("href", "/")
           .append(
             $("<div>")
               .attr("class", "popup-back")
@@ -1118,9 +967,7 @@ function showPopup(d,cords) {
     jQuery('#popUp')
       .append(
         $("<div>")
-          .attr("id", "popup_metadata")
           .attr("class", "popup-metadata")
-          .attr("width", "30%")
           .append(
             $("<img>")
               .attr("width", "20px")
@@ -1136,9 +983,7 @@ function showPopup(d,cords) {
     jQuery('#popUp')
       .append(
         $("<div>")
-          .attr("id", "popup_description")
           .attr("class", "popup-description")
-          .attr("width", "60%")
           .append(
             $("<img>")
               .attr("width", "20px")
@@ -1159,9 +1004,7 @@ function showPopup(d,cords) {
     jQuery('#popUp')
       .append(
         $("<div>")
-          .attr("id", "popup_works")
           .attr("class", "popup-works")
-          .attr("width", "90%")
           .append(
             $("<img>")
               .attr("width", "20px")
@@ -1187,32 +1030,6 @@ function showPopup(d,cords) {
 
     popupShown = true;
   }
-
-
-  /*
-    var descText = '';
-    if (descObject.hasOwnProperty(d.id)) {
-
-    if (descObject[d.id]['http://dbpedia.org/ontology/abstract']) {
-    var desc = descObject[d.id]['http://dbpedia.org/ontology/abstract'][0].value;
-    var r = /\\u([\d\w]{4})/gi;
-    desc = desc.replace(r, function (match, grp) {
-    return String.fromCharCode(parseInt(grp, 16)); } );
-    desc = unescape(desc);
-    descText = decodeURIComponent(desc);
-    descText = descText.replace(/&ndash;/gi,'-');
-    descText = descText.replace(/&amp;/gi,'&');
-
-    var link = d.id.replace('dbpedia','wikipedia').replace('resource','wiki');
-
-    descText = descText.substring(0,250) + '...' + '<br>' + '<a class="popup-link" target="_blank" href="' + link + '">From Wikipedia</a><br><br>';
-
-    } else {
-    descText = "";
-    }
-    }
-  */
-
 }
 
 
@@ -1228,224 +1045,6 @@ function showDialogPopup(person1,person2) {
       }
       return false;
     }
-  });
-
-  //max it out
-  $(".vex-content").css("width",$(window).width()-100);
-  $(".transcript-dialog-holder").css({height: $(window).height()-475});
-  $(".vex-dialog-button-secondary").hide();
-
-  //load the inital info about these two
-  $.get('/api/compare/<' + encodeURIComponent(person1) + '>/<' + encodeURIComponent(person2) + '>', function(realTalk) {
-
-    //load the transcript data for the context
-    $.get('/api/text/'+realTalk.transcript, function(transcript) {
-
-      //build the link to the transcript
-      $('.vex-content').first().append($("<a>").addClass('transcript-dialog-doc-link').text('Transcript Source').attr('target','_blank').attr('href',transcript.sourceURL));
-
-      //build the summary info from 52nd
-      if (realTalk.userBeingTalkedAbout.length != 0 || realTalk.userTalkingAbout.length != 0) {
-
-        var all = realTalk.userBeingTalkedAbout.concat(realTalk.userTalkingAbout);
-        console.log(all);
-
-        $('.vex-content').first().append(
-
-          $("<div>")
-            .addClass('transcript-dialog-holder-semantic')
-            .append($("<span>").html('Semantic data from <a targe="_blank" href="http://linkedjazz.org/52ndStreet/">52nd St Crowd</a>: '))
-        );
-
-        var added = [];
-
-        for (var a in all) {
-          var rel = all[a];
-
-          var source = rel.source.replace('<','').replace('>','') , target = rel.target.replace('<','').replace('>','') , relationship = "", color = "grey";
-
-          if (nameObject[source]) {
-            if (nameObject[source]['http://xmlns.com/foaf/0.1/name']) {
-              source = nameObject[source]['http://xmlns.com/foaf/0.1/name'][0]['value'];
-            }
-          }
-
-          if (nameObject[target]) {
-            if (nameObject[target]['http://xmlns.com/foaf/0.1/name']) {
-              target = nameObject[target]['http://xmlns.com/foaf/0.1/name'][0]['value'];
-            }
-          }
-
-          if (rel.value == '<http://purl.org/vocab/relationship/influencedBy>') {
-            relationship = "influenced by";
-            color = 'rgba(188, 143, 102, 0.25)';
-          } else if (rel.value == '<http://purl.org/vocab/relationship/mentorOf>') {
-            relationship = "mentored";
-            color = 'rgba(229, 142, 60, 0.25)';
-          } else if (rel.value == '<http://purl.org/vocab/relationship/knowsOf>') {
-            relationship = "knows of";
-            color = 'rgba(131, 149, 159, 0.25)';
-          } else if (rel.value == '<http://purl.org/vocab/relationship/acquaintanceOf>') {
-            relationship = "is acquaintance of";
-            color = 'rgba(77, 165, 213, 0.25)';
-          } else if (rel.value == '<http://purl.org/vocab/relationship/closeFriendOf>') {
-            relationship = "friend of";
-            color = 'rgba(43, 175, 247, 0.25)';
-          } else if (rel.value == '<http://purl.org/vocab/relationship/hasMet>') {
-            relationship = "has met";
-            color = 'rgba(108, 156, 182, 0.25)';
-          } else if (rel.value == '<http://purl.org/vocab/relationship/friendOf>') {
-            relationship = "friends with";
-            color = 'rgba(43, 175, 247, 0.25)';
-          } else if (rel.value == '<http://linkedjazz.org/ontology/inBandTogether>') {
-            relationship = "was in band together with";
-            color = 'rgba(159, 144, 131, 0.25)';
-          } else if (rel.value == '<http://linkedjazz.org/ontology/playedTogether>') {
-            relationship = "played together with";
-            color = 'rgba(159, 144, 131, 0.25)';
-          } else if (rel.value == '<http://linkedjazz.org/ontology/bandmember>') {
-            relationship = "was bandmember of";
-            color = 'rgba(159, 144, 131, 0.25)';
-          } else if (rel.value == '<http://linkedjazz.org/ontology/touredWith>') {
-            relationship = "toured with";
-            color = 'rgba(159, 144, 131, 0.25)';
-          } else if (rel.value == '<http://linkedjazz.org/ontology/bandLeaderOf>') {
-            relationship = "was band leader of";
-            color = 'rgba(159, 144, 131, 0.25)';
-          } else if (rel.value == '<http://purl.org/ontology/mo/collaborated_with>') {
-            relationship = "collaborated with";
-            color = 'rgba(159, 144, 131, 0.25)';
-          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_colleague_of>') {
-            relationship = "is colleague of";
-            color = 'rgba(159, 144, 131, 0.25)';
-          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_spouse_of>') {
-            relationship = "is spouse of";
-            color = 'rgba(188, 143, 102, 0.25)';
-          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_assistant_to>') {
-            relationship = "is assistant to";
-            color = 'rgba(229, 142, 60, 0.25)';
-          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_friend_of>') {
-            relationship = "is friend of";
-            color = 'rgba(131, 149, 159, 0.25)';
-          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_student_of>') {
-            relationship = "is student of";
-            color = 'rgba(77, 165, 213, 0.25)';
-          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_artist_of>') {
-            relationship = "is artist of";
-            color = 'rgba(43, 175, 247, 0.25)';
-          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_model_for>') {
-            relationship = "is model for";
-            color = 'rgba(108, 156, 182, 0.25)';
-          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_intimate_with>') {
-            relationship = "is intimate with";
-            color = 'rgba(43, 175, 247, 0.25)';
-          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_teacher_of>') {
-            relationship = "is teacher of";
-            color = 'rgba(159, 143, 60, 0.25)';
-          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_relative_of>') {
-            relationship = "is relative of";
-            color = 'rgba(188, 142, 159, 0.25)';
-          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_executor_for>') {
-            relationship = "is executor for";
-            color = 'rgba(229, 149, 213, 0.25)';
-          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_master_of>') {
-            relationship = "is master of";
-            color = 'rgba(131, 165, 247, 0.25)';
-          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_physician_to>') {
-            relationship = "is physician to";
-            color = 'rgba(77, 175, 182, 0.25)';
-          } else if (rel.value == '<http://data.artic.edu/whistler/predicate/is_secretary_to>') {
-            relationship = "is secratory to";
-            color = 'rgba(43, 156, 247, 0.25)';
-          }
-
-          if (added.indexOf(source + ' ' + relationship + ' ' + target) == -1) {
-            $('.transcript-dialog-holder-semantic').first().append(
-              $("<span>")
-                .addClass('transcript-dialog-holder-semantic-label')
-                .html(source + ' ' + relationship + ' ' + target)
-                .css("background-color",color)
-            );
-            added.push(source + ' ' + relationship + ' ' + target)
-          }
-        }
-      }
-
-      var allAddedIds = [];
-
-      //we need to loop through all the occurances
-      for (var x in realTalk.occurances) {
-
-        var textId = parseInt(realTalk.occurances[x].id);
-        var type = realTalk.occurances[x].type;
-
-        if (allAddedIds.indexOf(textId)>-1) {
-          continue;
-        }
-
-        allAddedIds.push(textId);
-
-        if (type == 'A' && textId > 0) {
-          textId = textId-1 + ',' + textId;
-          allAddedIds.push(textId-1);
-          console.log(realTalk.occurances[x].type);
-        }
-
-        if (type == 'Q') {
-          allAddedIds.push(textId+1);
-          textId = (textId) + ',' + (textId+1);
-        }
-
-        $.get('/api/text/'+realTalk.transcript +'/' + textId, function(transcriptText) {
-
-          //it will likely be a pair of responses
-          for (t in transcriptText) {
-
-            //add the image in
-            $('.transcript-dialog-holder').first().append(
-              $("<div>")
-                .addClass( ( transcriptText[t].type == 'Q'  ) ? 'questionImage' : 'answerImage' )
-                .append(
-                  $("<img>")
-                    .attr('src',function() {
-                      var useImage = ""
-
-                      if (transcriptText[t].type == 'Q') {
-                        useImage = '/52new/img/no_image_square.png';
-                      } else {
-                        var uri = transcript.intervieweeURI.replace('<','').replace('>','');
-                        var useId = $.trim(uri.split("\/")[uri.split("\/").length-1]);
-
-                        if (fileNames.indexOf(useId+'.png') == -1) {
-                          useImage =  "/52new/img/no_image_square.png'";
-                        } else {
-                          useImage =  "/image/round/" + useId+'.png';
-                        }
-                      }
-
-                      return useImage;
-                    })
-                )
-                .append(
-                  $("<span>")
-                    .text( ( transcriptText[t].type == 'Q'  ) ? 'Interviewer' : transcript.interviewee)
-                )
-            );
-
-            $('.transcript-dialog-holder').first().append(
-              $("<div>")
-                .html( highlightText(transcriptText[t].text, [person1, person2]) )
-                .addClass('bubble')
-                .addClass(  ( transcriptText[t].type == 'Q'  ) ? 'question' : 'answer')
-            );
-
-            $('.transcript-dialog-holder').append($("<br>").css("clear","both"));
-          }
-
-          $('.transcript-dialog-holder').append($("<hr>").css("clear","both"));
-        });
-      }
-    });
   });
 }
 
@@ -1523,7 +1122,7 @@ function hideRelations() {
   d3.selectAll(".circleTextRect").attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", fill).attr("stroke", fill);
   d3.selectAll(".labelText").attr("fill-opacity",1).attr("stroke-opacity",1);
   d3.selectAll(".labelRect").attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", fill).attr("stroke", fill);
-  d3.selectAll(".link").attr("stroke-opacity",1).style("fill-opacity",1).style("stroke-width",function(d) {return edgeStrokeWidth(d)}).style("fill", fill).style("stroke", fill);
+  d3.selectAll(".link").attr("stroke-opacity",1).style("fill-opacity",1).style("fill", fill).style("stroke", fill);
 }
 
 function showRelations(rel) {
@@ -1651,7 +1250,7 @@ function buildDynamicList() {
         .addClass("dynamicListItem")
         .data("label",listNodes[x].labelLast)
         .data("id",listNodes[x].id)
-        .click(function() { if (dynamicPeople.indexOf($(this).data("id")) == -1) {$("#dynamicClear").fadeIn(5000); $("#dynamicHelp").css("display","none"); usePerson = $(this).data("id"); dynamicPeople.push(usePerson); filter();}})
+        .click(function() { if (dynamicPeople.indexOf($(this).data("id")) == -1) {usePerson = $(this).data("id"); dynamicPeople.push(usePerson); filter();}})
         .append
       (
         $("<img>")
@@ -1682,8 +1281,6 @@ function buildDynamicList() {
       )
     )
   }
-
-  $("#dynamicListHolder").html(domFragment);
 
   window.orginalDynamicListFragment = domFragment;
 }
@@ -1741,50 +1338,6 @@ function redraw(useScale) {
   //we need to update the zoom slider, set the boolean to false so the slider change does not trigger a zoom change in the vis (from the slider callback function)
   zoomWidgetObjDoZoom = false;
   zoomWidgetObj.setValue(0,(scale/4));
-}
-
-function edgeStrokeWidth(d) {
-  /*
-    if (visMode == "person" || visMode == "dynamic") {
-    if (nodes.length < 10) {
-    return 2;
-    }
-
-    if (nodes.length < 30) {
-    return 1;
-    }
-    if (nodes.length < 40) {
-    return 0.5;
-    }
-
-    return .3;
-    }
-  */
-  return 0.3;
-}
-
-
-function edgeColor(d) {
-  if (visMode == 'dynamic') {return "#666";}
-
-  if (typeof d.connections == 'undefined') {
-    d = d.source;
-  }
-
-  if (d.connections <= edgesAvg) {
-    //return "#bcbddc";
-    return "#666666";
-  }
-  if ((d.connections-edgesAvg)/edgesInterval <= 1.5) {
-    //return "#9ecae1";
-    return "#666666";
-  }
-  if ((d.connections-edgesAvg)/edgesInterval <= 2.5) {
-    //return "#74c476";
-    return "#666666";
-  }
-  //return "#fdae6b";
-  return "#666666";
 }
 
 function linkStrength(d) {
@@ -1846,5 +1399,4 @@ function windowResize() {
   }
   $("#network").css('width', visWidth + 'px');
   $("#network").css('height',visHeight + 'px');
-  $("#dynamicListHolder").css('height',visHeight - 110 + 'px');
 }
