@@ -64,7 +64,6 @@ var roussellPersonIndex = 0;    //the index pos of the James_McNeill_whistler in
 
 
 jQuery(document).ready(function($) {
-  $("#gephi").hide();
 
   // Bind to StateChange Event
   History.Adapter.bind(window,'statechange',function() { // Note: We are using statechange instead of popstate
@@ -135,6 +134,78 @@ jQuery(document).ready(function($) {
       .error(function() { alert("There was an error in accessing the data file. Please try again."); });
 
   }, 10, []);
+  
+  //add the zoom widget
+  jQuery("#network").append(
+    jQuery("<div>")
+      .attr("id","zoomWidget")
+      .addClass("dragdealer")
+      .append(
+        jQuery("<div>")
+          .addClass("handle")
+          .append(
+            jQuery("<div>")
+              .text("-")
+          )
+      )
+      .append(
+        jQuery("<div>")
+          .addClass("zoomWidgetRail")
+      )
+      .append(
+        jQuery("<div>")
+          .addClass("zoomWidgetEndcaps")
+          .attr("id","woomWidgetZoomOut")
+          .css("top","-17px")
+          .append(
+            jQuery("<div>")
+              .text("-")
+          )
+      )
+      .append(
+        jQuery("<div>")
+          .addClass("zoomWidgetEndcaps")
+          .attr("id","woomWidgetZoomIn")
+          .css("top","145px")
+          .append(
+            jQuery("<div>")
+              .text("+")
+          )
+      )
+
+  );
+
+  jQuery("#zoomWidget").mouseenter(function() {console.log('whhyyy'); zoomWidgetObjDoZoom = true; });
+
+  zoomWidgetObj = new Dragdealer('zoomWidget',
+                                 {
+                                   horizontal: false,
+                                   vertical: true,
+                                   y: 0.255555555,
+                                   animationCallback: function(x, y)
+                                   {
+                                     //if the value is the same as the intial value exit, to prevent a zoom even being called onload
+                                     if (y==0.255555555) {return false;}
+                                     //prevent too muuch zooooom
+                                     if (y<0.05) {return false;}
+
+
+                                     //are we  zooming based on a call from interaction with the slider, or is this callback being triggerd by the mouse event updating the slider position.
+                                     if (zoomWidgetObjDoZoom == true) {
+
+                                       y =y *4;
+
+                                       //this is how it works now until i figure out how to handle this better.
+                                       //translate to the middle of the vis and apply the zoom level
+                                       vis.attr("transform", "translate(" + [(visWidth/2)-(visWidth*y/2),(visHeight/2)-(visHeight*y/2)] + ")"  + " scale(" + y+ ")");
+                                       //store the new data into the zoom object so it is ready for mouse events
+                                       zoom.translate([(visWidth/2)-(visWidth*y/2),(visHeight/2)-(visHeight*y/2)]).scale(y);
+                                     }
+
+
+
+                                   }
+                                 });
 
 });
 
@@ -174,10 +245,9 @@ function parseStateChangeVis() {
 }
 
 function initalizeNetwork() {
-
   //if it has already been defined
   if (force == null) {
-    force = d3.layout.force()
+	  force = d3.layout.force()
       .size([$("#network").width() - 5, $("#network").height() - 5]);
   }
 
@@ -189,19 +259,35 @@ function initalizeNetwork() {
   force.friction(0.2);
 
   if (vis == null) {
-    vis = d3.select("#network").append("svg:svg")
+	  zoom = d3.behavior.zoom()
+      .translate([0,0])
+      .scale(0.99)
+      .scaleExtent([0.25,6])	//how far it can zoom out and in
+      .on("zoom", redraw);
+	  
+	  vis = d3.select("#network").append("svg:svg")
       .attr("width", $("#network").width() - 10)
       .attr("height", $("#network").height() - 10)
-      .append('svg:g');
-    //.call(zoom);//.call(d3.behavior.zoom().scaleExtent([0.25, 6]).on("zoom", redraw)) //.call(d3.behavior.zoom().on("zoom", redraw))
-
-    vis.append('svg:rect')
+      .append('svg:g')
+      .call(zoom);//.call(d3.behavior.zoom().scaleExtent([0.25, 6]).on("zoom", redraw)) //.call(d3.behavior.zoom().on("zoom", redraw))
+	  
+	  vis.append('svg:rect')
     //.attr('width', $("#network").width() + 1000)
     //.attr('height', $("#network").height() + 1000)
       .attr('width', $("#network").width())
       .attr('height', $("#network").height())
-      .attr('id', 'zoomCanvas');
+      .attr('id', 'zoomCanvas')
+	  .on("mousedown", function() {
+ 	  //the grabbing css rules do not work with web-kit, so specifiy the cursor hand and use the css for firefox.
+	  	d3.select("#zoomCanvas").style("cursor",  "url(menu/closedhand.png)");
+        d3.select("#zoomCanvas").attr("class","grabbing");
+       })
+      .on("mouseup", function() {
+        d3.select("#zoomCanvas").style("cursor",  "url(menu/openhand.png)");
+        d3.select("#zoomCanvas").attr("class","");
+       });
   }
+  vis.attr("transform", "translate(" + trans + ")" + " scale(" + scale + ")");
 }
 
 //process the triple data through the RDF jquery plugin to create an object
@@ -547,7 +633,6 @@ function filter(clear) {
     vis.selectAll("g.node").remove();
     vis.selectAll("line.link").remove();
 
-
     nodes = [];
     links = [];
     force.nodes([]);
@@ -682,28 +767,31 @@ function restart() {
     .attr("y", function(d) { return  (returnNodeSize(d)*-1); })
     .attr("width", function(d) { return  (returnNodeSize(d)*2); })
     .attr("height", function(d) { return  (returnNodeSize(d)*2); });
-
-  nodeEnter.append("svg:text")
-    .attr("id", function(d) {  return "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
-    .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
-    .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8; })
-    .style("fill", "#000000")
-    .text(function(d) { return d.label; });	//console.log('d.label', d.label);
-
-  nodeEnter.append("svg:rect")
+	
+	nodeEnter.append("svg:rect")
     .attr("id", function(d) {  return "circleTextRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
-    .attr("class",  function(d) {return "circleTextRect"})
-    .attr("x", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().x; })
-    .attr("y", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
-    .attr("width", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width; })
-    .attr("height", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height; });
-
-  nodeEnter.append("svg:text")
+	.attr("rx", 6)
+    .attr("ry", 6)
+    .attr("class",  "circleTextRect");
+	
+	nodeEnter.append("svg:text")
     .attr("id", function(d) {  return "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
     .attr("class",  "circleText")
     .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
     .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8; })
     .text(function(d) { return d.label; });
+
+  	nodeEnter.selectAll(".circleTextRect")
+    .attr("x", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().x; })
+    .attr("y", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
+    .attr("width", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width; })
+    .attr("height", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height; });
+
+  nodeEnter.append("svg:rect")
+    .attr("id", function(d) {  return "labelRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
+	.attr("rx", 6)
+    .attr("ry", 6)
+	.attr("class",  "labelRect");
 
   nodeEnter.append("svg:text")
     .attr("id", function(d) {  return "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
@@ -713,22 +801,11 @@ function restart() {
     .attr("visibility", "hidden")
     .text("ARTIST");
 
-  nodeEnter.append("svg:rect")
-    .attr("id", function(d) {  return "labelRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
+  nodeEnter.selectAll(".labelRect")
     .attr("x", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().x; })
     .attr("y", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
     .attr("width", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width; })
-    .attr("height", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height; })
-    .attr("class",  "labelRect");
-
- /* nodeEnter.append("svg:text")
-    .attr("id", function(d) {  return "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
-    .attr("class",  "labelText")
-    .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
-    .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+20; })
-    .style("fill", "#ffffff")
-    .attr("visibility", "hidden")
-    .text("ARTIST");*/
+    .attr("height", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height; });
 
   for (aNode in nodes) {
     nodes[aNode].width = $("#" + "node_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))[0].	getBBox().width;
@@ -765,6 +842,10 @@ function restart() {
       nodes[usePersonIndex].y = visHeight/2;
       nodes[usePersonIndex].fixed = true;
       showPopup(nodes[usePersonIndex]);
+	  $("#title").hide();
+	  $("#about").hide();
+	  d3.selectAll("#filter_family, #filter_friends, #filter_colleagues, #filter_mentors, #filter_employers").style("visibility", "visible");
+	  d3.selectAll("#network rect").style("fill", "white");
     }
   });
 
@@ -773,7 +854,7 @@ function restart() {
   force.on("tick", function(e) {
     // Collision detection stolen from: http://vallandingham.me/building_a_bubble_cloud.html
     dampenedAlpha = e.alpha * 0.1;
-    jitter = 0.25;
+    jitter = 0.3;
     ratio = 2.77; // xy ratio
 
     vis.selectAll("g.node")
@@ -796,7 +877,7 @@ function gravity(alpha) {
 
   // use alpha to affect how much to push
   // towards the horizontal or vertical
-  ax = alpha / (8 * ratio);
+  ax = alpha / 8;
   ay = alpha;
 
   // return a function that will modify the
@@ -808,7 +889,7 @@ function gravity(alpha) {
 }
 
 function collide(jitter) {
-  var collisionPadding = 50;
+  var collisionPadding = 4;
   // return a function that modifies
   // the x and y of a node
   return function(d) {
@@ -852,7 +933,7 @@ function collide(jitter) {
             d2.x += moveX;
             d2.y += moveY;
           }
-
+/*
           // Keep nodes within the bounds of the window
           // Left side
           if (d.x < d.width - collisionPadding/2) {
@@ -869,7 +950,7 @@ function collide(jitter) {
           // Bottom
           if (d.y > visHeight - d.height - collisionPadding/2) {
             d.y = visHeight - d.height - collisionPadding/2;
-          }
+          }*/
         }
       }
     });
@@ -880,7 +961,7 @@ function returnNodeSize(d) {
   if (d.label == "James McNeill Whistler" || d.label == "Theodore Casimir Roussel") {
     return 15;
   } else {
-    return 5;
+    return 4;
   }
 }
 
@@ -979,7 +1060,7 @@ function showPopup(d,cords) {
           .append($("<p>").html("OCCUPATION<br/>Printmaker<br/>Painter"))
       );
 
-    // Desciption
+    // Description
     jQuery('#popUp')
       .append(
         $("<div>")
@@ -1032,22 +1113,6 @@ function showPopup(d,cords) {
   }
 }
 
-
-function showDialogPopup(person1,person2) {
-  jQuery("#popUp").fadeOut(100)
-
-  vex.dialog.open({
-    message: 'Transcript Dialog',
-    input: '<div class="transcript-dialog-holder"></div>',
-    callback: function(data) {
-      if (data === false) {
-        return console.log('Cancelled');
-      }
-      return false;
-    }
-  });
-}
-
 function highlightText(text, uris) {
 
   for (var n in uris) {
@@ -1079,17 +1144,6 @@ function changeVisMode(changeTo) {
     History.pushState({state:changeTo}, changeTo +" Mode", "?mode=" + changeTo);
   }
 
-  //set the gephi download link
-  if (changeTo == 'person') {
-    $("#gephi").show();
-    $("#gephi").attr("href", 'http://linkedjazz.org/api/relationships/ego/%3C' + encodeURIComponent(usePerson) + '%3E/gexf');
-  } else if (changeTo != 'dynamic') {
-    $("#gephi").show();
-    $("#gephi").attr("href", 'http://linkedjazz.org/api/relationships/all/gexf');
-  } else {
-    $("#gephi").hide();
-  }
-
   visMode = changeTo;
 
   //$("#network").fadeOut(function() {
@@ -1100,11 +1154,11 @@ function changeVisMode(changeTo) {
   initalizeNetwork();
 
   //we need to rest the zoom/pan
-  //zoom.translate([0,0]).scale(1);
+  zoom.translate([0,0]).scale(1);
   vis.attr("transform", "translate(" + [0,0] + ")"  + " scale(" + 1 + ")");
 
   zoomWidgetObjDoZoom = false;
-  //zoomWidgetObj.setValue(0,0.255555555);
+  zoomWidgetObj.setValue(0,0.255555555);
 
   filter();
 
@@ -1141,28 +1195,28 @@ function showRelations(rel) {
   var relationsToShow = [];
   if (rel == "friends") {
     relationsToShow.push("http://data.artic.edu/whistler/predicate/is_friend_of");
-    fill = "#ff9019";
+    fill = "#E9967A";
   }
   else if (rel == "family") {
     relationsToShow.push("http://data.artic.edu/whistler/predicate/is_relative_of");
     relationsToShow.push("http://data.artic.edu/whistler/predicate/is_spouse_of");
-    fill = "#79c942";
+    fill = "#E9967A";
   }
   else if (rel == "colleagues") {
     relationsToShow.push("http://data.artic.edu/whistler/predicate/is_colleague_of");
-    fill = "#e33b61";
+    fill = "#E9967A";
   }
   else if (rel == "mentors") {
     relationsToShow.push("http://data.artic.edu/whistler/predicate/is_student_of");
     relationsToShow.push("http://data.artic.edu/whistler/predicate/is_teacher_of");
-    fill = "#ff9900";
+    fill = "#E9967A";
   }
   else if (rel == "employers") {
     relationsToShow.push("http://data.artic.edu/whistler/predicate/is_master_of");
     relationsToShow.push("http://data.artic.edu/whistler/predicate/is_assistant_to");
     relationsToShow.push("http://data.artic.edu/whistler/predicate/is_artist_of");
     relationsToShow.push("http://data.artic.edu/whistler/predicate/is_model_for");
-    fill = "#ff9019";
+    fill = "#E9967A";
   }
 
   var nodesShown = [];
@@ -1338,43 +1392,6 @@ function redraw(useScale) {
   //we need to update the zoom slider, set the boolean to false so the slider change does not trigger a zoom change in the vis (from the slider callback function)
   zoomWidgetObjDoZoom = false;
   zoomWidgetObj.setValue(0,(scale/4));
-}
-
-function linkStrength(d) {
-
-  if (visMode == "free") {
-    //return Math.sqrt(d.source.connections)/15;
-    //return 0;
-    return (d.source.connections / largestConnection) / 500;
-  }
-
-  if (visMode == "wave") {
-    return Math.sqrt(d.source.connections)/9;
-  }
-  if (visMode == "person") {
-    return 1;
-    //return 0.2;
-  }
-
-  if (visMode == "dynamic") {
-    return 0.01;
-  }
-
-  if (visMode == "clique") {
-    return 0.1;
-    //return Math.sqrt(d.source.connections)/8;
-
-    //we want to find the combined simlarity between the two people
-    var p1 = d.source.id;
-    var p2 = d.target.id;
-
-    var strength = 0;
-
-    if (simlarityIndex[p1].hasOwnProperty(p2)) {strength = simlarityIndex[p1][p2];}
-    if (simlarityIndex[p2].hasOwnProperty(p1)) {strength = strength+simlarityIndex[p2][p1];}
-
-    return (strength / (largestSimilarity*2));
-  }
 }
 
 function showSpinner(text) {
