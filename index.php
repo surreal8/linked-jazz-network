@@ -90,6 +90,8 @@ if ($handle = opendir('image/headshot/')) {
 
 <body>
 <a href="/"><img src="menu/logo.png" id="logo"></a>
+<div id="title">WHISTLER AND ROUSSEL <br /> <span class="subtitle">LINKED VISIONS</span></div>
+<a href="#" id="about">ABOUT</a>
 
 <div id="network">
     <div id="popUp">
@@ -109,11 +111,6 @@ if ($handle = opendir('image/headshot/')) {
     <span>LOADING</span>
 </div>
 <div id="video"></div>
-
-<a id="gephi" href="#" title="Download this network as a Gephi file.">
-  <img src="img/icon-gephi.png" title="Download this network as a Gephi file."> 
-</a>
-
 
 </body>
 </html>
