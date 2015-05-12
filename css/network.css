@@ -1,8 +1,115 @@
+@font-face {
+    font-family: akkuratreg;
+    src: url(fonts/lineto-akkurat-regular.woff);
+}
+
+@font-face {
+    font-family: akkuratbold;
+    src: url(fonts/lineto-akkurat-bold.woff);
+}
+
+@font-face {
+    font-family: akkuratmono;
+    src: url(fonts/lineto-akkuratmono-regular.woff);
+}
+
+@font-face {
+    font-family: caslonitalic;
+    src: url(fonts/2E1150_1_0.woff);
+}
+
+@font-face {
+    font-family: caslon;
+    src: url(fonts/2E1150_0_0.woff);
+}
+
 body{
 	margin: 0;
 	padding: 0;
 	background-color:#fff;
-	font-family: 'Ideal Sans 3r','Ideal Sans SSm A','Ideal Sans SSm B',sans-serif !important; 
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+#landing {
+  background-color: #000000;
+  margin: 0 auto;
+  text-align: center;
+}
+
+#landingimages {
+}
+
+#welcome {
+  width: 25%;
+  height: 840px;
+  background-color: #ffffff;
+  z-index: 50;
+  top: -1050px;
+  position: relative;
+  margin: 0 auto;
+  background: -webkit-linear-gradient(#ffffff 45%, #eeeeee 55%); /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient(#ffffff 45%, #eeeeee 55%); /* For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient(#ffffff 45%, #eeeeee 55%); /* For Firefox 3.6 to 15 */
+  background: linear-gradient(#ffffff 45%, #eeeeee 55%); /* Standard syntax (must be last) */
+}
+
+#landingimages .landingimages{
+	width: 100%;
+}
+
+#landingimages .landinglogo{
+  position: absolute;
+  z-index: 50;
+  top: 30px;
+  left: 30px;	
+}
+
+#titlewelcome {
+  text-align: center;
+  top: 48px;
+  position: relative;
+  font-size: 32px;
+  letter-spacing: 22px;
+  line-height: 1.8em;
+  color: #000000;
+  font-family: akkuratmono, sans-serif;
+}
+
+#titledesc {
+	top: 350px;
+  	position: absolute;
+  	padding: 50px;
+  	text-align: left;
+  	font-size: 16px;
+	line-height: 2em;
+	font-family: caslon, sans-serif;
+}
+
+#divider {
+	color: #E9967A;
+	text-align:left;
+	line-height:.5em;
+}
+
+#begin{
+  position: relative;
+  bottom: -50%;
+  width: 75px;
+  margin: 0 auto;
+  text-align: center;
+  color: #ffffff;
+  display: block;
+  background-color: #E9967A;;
+  border-radius: 6px;
+  padding: 15px 30px;
+  font-size: 15px;
+  letter-spacing: 2px;
+  font-family: akkuratreg, sans-serif;
+}
+
+#begin a, a:visited {
+	color: #ffffff;
+	text-decoration: none;
 }
 
 h1 {
@@ -18,12 +125,11 @@ h1 {
 	letter-spacing: 15px;
 	line-height: 1.5em;
 	color: #000000;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: akkuratmono, sans-serif;
 }
 
 .subtitle {
 	color: #E9967A;
-	
 }
 
 #about{
@@ -39,6 +145,7 @@ h1 {
   padding: 15px 30px;
   font-size: 15px;
   letter-spacing: 2px;
+  font-family: akkuratreg, sans-serif;
 }
 
 a {
@@ -51,10 +158,10 @@ a:hover {
 svg {
 	position:absolute;
 	top: 120px;
-    background: -webkit-linear-gradient(#cccccc -50%, #ffffff 15%); /* For Safari 5.1 to 6.0 */
-    background: -o-linear-gradient(#cccccc -50%, #ffffff 15%); /* For Opera 11.1 to 12.0 */
-    background: -moz-linear-gradient(#cccccc -50%, #ffffff 15%); /* For Firefox 3.6 to 15 */
-    background: linear-gradient(#cccccc -50%, #ffffff 15%); /* Standard syntax (must be last) */
+    background: -webkit-linear-gradient(#eeeeee 0%, #ffffff 3%); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(#eeeeee 0%, #ffffff 3%); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(#eeeeee 0%, #ffffff 3%); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(#eeeeee 0%, #ffffff 3%); /* Standard syntax (must be last) */
 }
 
 #network{
@@ -175,7 +282,7 @@ circle {
 
 text {
 	font-size: 7.5px;
-	font-family: Verdana, Geneva, sans-serif;
+	font-family: akkuratbold, sans-serif;
 	text-transform: uppercase;
 	letter-spacing: .25em;
 	text-anchor: middle;
@@ -242,7 +349,7 @@ text.circleText {
   overflow:hidden;
   margin-bottom: 20px;
   width: 100%;
-  height: 250px;
+  height: 300px;
 }
 
 .popup-headshot {
@@ -399,26 +506,42 @@ text.circleText {
 #zoomWidget{
 	position:absolute;
 	height:145px;
-	width:16px;
+	width:44px;
 	right:10px;
-	top:125px;
+	top:525px;
 	visibility:visible;
-	
+	background-color: #ffffff;
+	border-color: #cccccc;
+	border-width: 2px;
+	border-style: solid;
+	border-radius: 24px;
 }
 
 .zoomWidgetEndcaps{
-	width:16px;
-	height:16px;
-    -moz-border-radius:2px;-ie-border-radius:2px;-webkit-border-radius:2px;-o-border-radius:2px;border-radius:2px;
-	box-shadow:1px 0 3px #979797;
+	width:34px;
+	height:34px;
+    -moz-border-radius:20px;-ie-border-radius:20px;-webkit-border-radius:20px;-o-border-radius:20px;border-radius:20px;
 	position:absolute; 
 	cursor: pointer;
-	background:#fff;
-	color: #979797;
+	background:#000;
+	color: #ffffff;
 	z-index:1100;
 	border:1px solid #999;	
 	right:-2px;	
 }
+
+#woomWidgetZoomOut{
+	position:relative;
+	top: 65px;
+	left: 4px;
+}
+
+#woomWidgetZoomIn{
+	position:relative;
+	top: 54px;	
+	left: 4px;
+}
+
 .zoomWidgetEndcaps div{
 	position:absolute;
 	font-size:22px;
@@ -432,8 +555,13 @@ text.circleText {
 #woomWidgetZoomOut div{
 	font-size:28px;
 	left:3px;
-	top:-10px;	
-	
+	top:-1px;		
+}
+
+#woomWidgetZoomIn div{
+	font-size:38px;
+	left:6px;
+	top:-4px;		
 }
 
 .zoomWidgetRail{
@@ -447,6 +575,7 @@ text.circleText {
 	position:absolute;
 	height:100%;
 	z-index:1;
+	display: none;
 }
 
 .dragdealer {
@@ -467,6 +596,7 @@ text.circleText {
 	text-shadow: 0 1px 0 rgba(151, 151, 151, 0.5);
 	text-align: center;	
 	z-index:1000;
+	display: none;
 }
 .handle div{
 	position:absolute;

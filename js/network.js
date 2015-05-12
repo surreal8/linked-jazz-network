@@ -31,8 +31,8 @@ var baseLinks = [];             // links
 
 var force = null;               //the d3 force object
 var vis = null                  //the visualization
-var visWidth = 1000;            //width and height of the network canvas, in px
-var visHeight = 500;
+var visWidth = $(window).width(); //width and height of the network canvas, in px
+var visHeight = $(window).height();
 
 var connectionCounter = {};     //holds each id as a property name w/ the value = # of connections they have
 
@@ -155,21 +155,19 @@ jQuery(document).ready(function($) {
       .append(
         jQuery("<div>")
           .addClass("zoomWidgetEndcaps")
-          .attr("id","woomWidgetZoomOut")
-          .css("top","-17px")
-          .append(
-            jQuery("<div>")
-              .text("-")
-          )
-      )
-      .append(
-        jQuery("<div>")
-          .addClass("zoomWidgetEndcaps")
           .attr("id","woomWidgetZoomIn")
-          .css("top","145px")
           .append(
             jQuery("<div>")
               .text("+")
+          )
+      )
+	  .append(
+        jQuery("<div>")
+          .addClass("zoomWidgetEndcaps")
+          .attr("id","woomWidgetZoomOut")
+          .append(
+            jQuery("<div>")
+              .html("&mdash;")
           )
       )
 
@@ -254,15 +252,20 @@ function initalizeNetwork() {
   networkNodeDrag = false;
   networkLargeNodeLimit = 20;
 
-  force.gravity(0);
-  force.charge(0);
-  force.friction(0.2);
+  force.linkStrength(0.1)
+    .friction(0.9)
+    .linkDistance(100)
+    .charge(0)
+    .gravity(0)
+    //.theta(0.8)
+    .alpha(0.1);
+    //force.friction(0.2);
 
   if (vis == null) {
 	  zoom = d3.behavior.zoom()
       .translate([0,0])
       .scale(0.99)
-      .scaleExtent([0.25,6])	//how far it can zoom out and in
+      .scaleExtent([1,3])	//how far it can zoom out and in
       .on("zoom", redraw);
 	  
 	  vis = d3.select("#network").append("svg:svg")
@@ -270,6 +273,14 @@ function initalizeNetwork() {
       .attr("height", $("#network").height() - 10)
       .append('svg:g')
       .call(zoom);//.call(d3.behavior.zoom().scaleExtent([0.25, 6]).on("zoom", redraw)) //.call(d3.behavior.zoom().on("zoom", redraw))
+	  
+	  vis.append('defs')
+	  .append('clipPath')
+	  .attr("id", "myClip")
+	  .append('circle')
+	  .attr("cx", "0")
+	  .attr("cy", "0")
+	  .attr("r", "15");
 	  
 	  vis.append('svg:rect')
     //.attr('width', $("#network").width() + 1000)
@@ -739,6 +750,7 @@ function restart() {
         //                    function() {
         usePerson = d.id;
         changeVisMode("person");
+		
         //                  }
         //               );
       });
@@ -755,10 +767,11 @@ function restart() {
   nodeEnter.append("svg:image")
     .attr("id", function(d) {  return "imageCircle_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
     .attr("class","imageCircle")
+	.attr("clip-path","url(#myClip)")
     .attr("xlink:href", function(d) {
       var useId = $.trim(decodeURI(d.id).split("\/")[decodeURI(d.id).split("\/").length-1]);
       if (fileNames.indexOf(useId+'.png') == -1) {
-        return "menu/whistler.png";
+        return "/image/round/Edgar_Degas.png";
       } else {
         return "/image/round/" + useId+'.png';
       }
@@ -786,7 +799,7 @@ function restart() {
     .attr("y", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
     .attr("width", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width; })
     .attr("height", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height; });
-
+/*
   nodeEnter.append("svg:rect")
     .attr("id", function(d) {  return "labelRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
 	.attr("rx", 6)
@@ -806,7 +819,7 @@ function restart() {
     .attr("y", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
     .attr("width", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width; })
     .attr("height", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height; });
-
+*/
   for (aNode in nodes) {
     nodes[aNode].width = $("#" + "node_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))[0].	getBBox().width;
     nodes[aNode].height = $("#" + "node_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height;
@@ -838,7 +851,7 @@ function restart() {
   //controls the movement of the nodes
   force.on("start", function(e) {
     if (visMode == "person") {
-      nodes[usePersonIndex].x = visWidth/2;
+      nodes[usePersonIndex].x = (visWidth + 540)/2;
       nodes[usePersonIndex].y = visHeight/2;
       nodes[usePersonIndex].fixed = true;
       showPopup(nodes[usePersonIndex]);
@@ -850,16 +863,15 @@ function restart() {
   });
 
   force.start();
-
   force.on("tick", function(e) {
     // Collision detection stolen from: http://vallandingham.me/building_a_bubble_cloud.html
-    dampenedAlpha = e.alpha * 0.1;
+    dampenedAlpha = e.alpha * .5;
     jitter = 0.3;
     ratio = 2.77; // xy ratio
 
     vis.selectAll("g.node")
       .each(gravity(dampenedAlpha))
-        .each(collide(jitter))
+      	.each(collide(jitter))
           .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
 
     vis.selectAll("line.link")
@@ -877,7 +889,7 @@ function gravity(alpha) {
 
   // use alpha to affect how much to push
   // towards the horizontal or vertical
-  ax = alpha / 8;
+  ax = alpha / 2;
   ay = alpha;
 
   // return a function that will modify the
@@ -933,24 +945,6 @@ function collide(jitter) {
             d2.x += moveX;
             d2.y += moveY;
           }
-/*
-          // Keep nodes within the bounds of the window
-          // Left side
-          if (d.x < d.width - collisionPadding/2) {
-            d.x = d.width - collisionPadding/2;
-          }
-          // Right side
-          if (d.x > visWidth - d.width/2 - collisionPadding) {
-            d.x = visWidth - d.width/2 - collisionPadding;
-          }
-          // Top
-          if (d.y < d.height - collisionPadding/2) {
-            d.y = d.height - collisionPadding/2;
-          }
-          // Bottom
-          if (d.y > visHeight - d.height - collisionPadding/2) {
-            d.y = visHeight - d.height - collisionPadding/2;
-          }*/
         }
       }
     });
@@ -999,15 +993,16 @@ function showPopup(d,cords) {
     var useId = $.trim(decodeURI(d.id).split("\/")[decodeURI(d.id).split("\/").length-1]);
 
     if (headshotFileNames.indexOf(useId+'.png') == -1) {
-      var useImage = 'menu/no_headshot.png';
+      var bannerImage = 'menu/headshottryagain1_icon.png';
+	  var largeImage = 'menu/headshottryagain1.png';
     } else {
-      var useImage = '/image/headshot/' + useId+'.png'
+      var bannerImage = '/image/headshot/' + useId+'.png'
     }
 
     jQuery('#popUp')
       .append(
         $("<a>")
-          .attr("href", useImage)
+          .attr("href", largeImage)
           .attr("class", "cboxElement")
           .attr("title", "<h2>James McNeill Whistler</h2><h3>1876–1942</h3><p>In 1899 Addams entered Whistler’s Académie Carmen in Paris, where he remained a student until it closed in 1901. There he met his future wife Inez Eleanor Bate—the massière, or principle student—who actually admitted Adams to the school. Whistler took the unusual step of making both official apprentices, and they remained faithful followers. Whistler greatly influenced both Addams’s decision to work in the medium of etching and his subject matter, which centered on crowds and architecture.</p>")
           .append(
@@ -1015,7 +1010,7 @@ function showPopup(d,cords) {
               .attr("class","popup-headshot-cont")
               .append(
                 $("<img>")
-                  .attr("src", useImage)
+                  .attr("src", bannerImage)
                   .attr("class","popup-headshot")
               )
           )
@@ -1025,7 +1020,7 @@ function showPopup(d,cords) {
     jQuery('#popUp')
       .append(
         $('<a>')
-          .attr("href", "/")
+          .attr("href", "network.php")
           .append(
             $("<div>")
               .attr("class", "popup-back")
@@ -1411,7 +1406,8 @@ function windowResize() {
   visWidth = $(window).width();
   visHeight = $(window).height();
   if (visMode == "person") {
-    visWidth -= 540;
+    visWidth += 540;
+	visHeight -= 500;
     $("#network").css('float', 'right');
   }
   $("#network").css('width', visWidth + 'px');
