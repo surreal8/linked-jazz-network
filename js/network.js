@@ -735,6 +735,7 @@ function restart() {
       .attr("class", "node")
       .attr("id", function(d) {  return "node_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
       .on("click",function(d) {
+        force.stop();
         //$("#network").fadeOut('fast',
         //                    function() {
         usePerson = d.id;
@@ -842,10 +843,10 @@ function restart() {
       nodes[usePersonIndex].y = visHeight/2;
       nodes[usePersonIndex].fixed = true;
       showPopup(nodes[usePersonIndex]);
-	  $("#title").hide();
-	  $("#about").hide();
-	  d3.selectAll("#filter_family, #filter_friends, #filter_colleagues, #filter_mentors, #filter_employers").style("visibility", "visible");
-	  d3.selectAll("#network rect").style("fill", "white");
+	    $("#title").hide();
+	    $("#about").hide();
+	    d3.selectAll("#filter_family, #filter_friends, #filter_colleagues, #filter_mentors, #filter_employers").style("visibility", "visible");
+	    d3.selectAll("#network rect").style("fill", "white");
     }
   });
 
@@ -1004,12 +1005,40 @@ function showPopup(d,cords) {
       var useImage = '/image/headshot/' + useId+'.png'
     }
 
+    var abstract = "";
+    var birthPlace = "";
+    var birthDate = "";
+    var deathPlace = "";
+    var deathDate = "";
+    var occupation = "";
+
+    if (descObject.hasOwnProperty(usePerson)) {
+      if (descObject[usePerson]['http://dbpedia.org/ontology/abstract']) {
+        abstract = descObject[usePerson]['http://dbpedia.org/ontology/abstract'][0].value;
+      }
+      if (descObject[usePerson]['http://dbpedia.org/ontology/birthPlace']) {
+        birthPlace = descObject[usePerson]['http://dbpedia.org/ontology/birthPlace'][0].value;
+      }
+      if (descObject[usePerson]['http://dbpedia.org/ontology/birthDate']) {
+        birthDate = descObject[usePerson]['http://dbpedia.org/ontology/birthDate'][0].value;
+      }
+      if (descObject[usePerson]['http://dbpedia.org/ontology/deathPlace']) {
+        deathPlace = descObject[usePerson]['http://dbpedia.org/ontology/deathPlace'][0].value;
+      }
+      if (descObject[usePerson]['http://dbpedia.org/ontology/deathDate']) {
+        deathDate = descObject[usePerson]['http://dbpedia.org/ontology/deathDate'][0].value;
+      }
+      if (descObject[usePerson]['http://dbpedia.org/ontology/occupation']) {
+        occupation = descObject[usePerson]['http://dbpedia.org/ontology/occupation'][0].value;
+      }
+    }
+
     jQuery('#popUp')
       .append(
         $("<a>")
           .attr("href", useImage)
           .attr("class", "cboxElement")
-          .attr("title", "<h2>James McNeill Whistler</h2><h3>1876–1942</h3><p>In 1899 Addams entered Whistler’s Académie Carmen in Paris, where he remained a student until it closed in 1901. There he met his future wife Inez Eleanor Bate—the massière, or principle student—who actually admitted Adams to the school. Whistler took the unusual step of making both official apprentices, and they remained faithful followers. Whistler greatly influenced both Addams’s decision to work in the medium of etching and his subject matter, which centered on crowds and architecture.</p>")
+          .attr("title", "<h2>" + nodes[usePersonIndex].label + "</h2><h3>" + birthDate + "–" + deathDate + "</h3><p>" + abstract + "</p>")
           .append(
             $("<div>")
               .attr("class","popup-headshot-cont")
@@ -1037,11 +1066,11 @@ function showPopup(d,cords) {
     jQuery('#popUp')
       .append(
         $("<h2>")
-          .text("James McNeill Whistler")
+          .text(nodes[usePersonIndex].label)
       )
       .append(
         $("<h3>")
-          .text("1876–1942")
+          .text(birthDate + "–" + deathDate)
       );
 
     // Metadata
@@ -1056,8 +1085,8 @@ function showPopup(d,cords) {
               .attr("src", "menu/dash.png")
           )
           .append($("<br/>"))
-          .append($("<p>").html("BIRTHPLACE<br/>Woodbury, New Jersey"))
-          .append($("<p>").html("OCCUPATION<br/>Printmaker<br/>Painter"))
+          .append($("<p>").html("BIRTHPLACE<br/>" + birthPlace))
+          .append($("<p>").html("OCCUPATION<br/>" + occupation))
       );
 
     // Description
@@ -1072,7 +1101,7 @@ function showPopup(d,cords) {
               .attr("src", "menu/dash.png")
           )
           .append($("<br/>"))
-          .append($("<p>").html("In 1899 Addams entered Whistler’s Académie Carmen in Paris, where he remained a student until it closed in 1901. There he met his future wife Inez Eleanor Bate—the massière, or principle student—who actually admitted Adams to the school. Whistler took the unusual step of making both official apprentices, and they remained faithful followers. Whistler greatly influenced both Addams’s decision to work in the medium of etching and his subject matter, which centered on crowds and architecture."))
+          .append($("<p>").html(abstract))
       );
 
     jQuery('#popUp')
@@ -1109,7 +1138,7 @@ function showPopup(d,cords) {
 
     jQuery("#popUp").fadeIn(200);
 
-    popupShown = true;
+    //popupShown = true;
   }
 }
 
