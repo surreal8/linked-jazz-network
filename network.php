@@ -4,7 +4,7 @@
   This is a simple php snipt it scrape the image directory for images that are available and their metadata (youtube videos)
   TODO: Script to put all images into a css style sheet as base64 data
 */
-if ($handle = opendir('image/round/')) {
+if ($handle = opendir('images/headshotIcon/')) {
 	$jsFileNames='';
 	$jsMetaNames='';
   while (false !== ($entry = readdir($handle))) {
@@ -27,7 +27,7 @@ if ($handle = opendir('image/round/')) {
   closedir($handle);
 }
 
-if ($handle = opendir('image/headshot/')) {
+if ($handle = opendir('images/headshot/')) {
 	$jsHeadshotFileNames='';
   while (false !== ($entry = readdir($handle))) {
     if ($entry != "." && $entry != "..") {

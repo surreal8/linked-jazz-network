@@ -269,8 +269,8 @@ function initalizeNetwork() {
       .on("zoom", redraw);
 	  
 	  vis = d3.select("#network").append("svg:svg")
-      .attr("width", $("#network").width() - 10)
-      .attr("height", $("#network").height() - 10)
+      .attr("width", visWidth - 10)
+      .attr("height", visHeight - 10)
       .append('svg:g')
       .call(zoom);//.call(d3.behavior.zoom().scaleExtent([0.25, 6]).on("zoom", redraw)) //.call(d3.behavior.zoom().on("zoom", redraw))
 	  
@@ -285,8 +285,8 @@ function initalizeNetwork() {
 	  vis.append('svg:rect')
     //.attr('width', $("#network").width() + 1000)
     //.attr('height', $("#network").height() + 1000)
-      .attr('width', $("#network").width())
-      .attr('height', $("#network").height())
+      .attr('width', visWidth)
+      .attr('height', visHeight)
       .attr('id', 'zoomCanvas')
 	  .on("mousedown", function() {
  	  //the grabbing css rules do not work with web-kit, so specifiy the cursor hand and use the css for firefox.
@@ -768,13 +768,13 @@ function restart() {
   nodeEnter.append("svg:image")
     .attr("id", function(d) {  return "imageCircle_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
     .attr("class","imageCircle")
-	.attr("clip-path","url(#myClip)")
+	  .attr("clip-path","url(#myClip)")
     .attr("xlink:href", function(d) {
       var useId = $.trim(decodeURI(d.id).split("\/")[decodeURI(d.id).split("\/").length-1]);
       if (fileNames.indexOf(useId+'.png') == -1) {
-        return "/image/round/Edgar_Degas.png";
+        return "menu/no_image.png";
       } else {
-        return "/images/round/" + useId+'.png';
+        return "images/headshotIcon/" + useId+'.png';
       }
     })
     .attr("x", function(d) { return  (returnNodeSize(d)*-1); })
@@ -784,7 +784,7 @@ function restart() {
 	
 	nodeEnter.append("svg:rect")
     .attr("id", function(d) {  return "circleTextRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
-	.attr("rx", 6)
+	  .attr("rx", 6)
     .attr("ry", 6)
     .attr("class",  "circleTextRect");
 	
@@ -795,7 +795,7 @@ function restart() {
     .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8; })
     .text(function(d) { return d.label; });
 
-  	nodeEnter.selectAll(".circleTextRect")
+  nodeEnter.selectAll(".circleTextRect")
     .attr("x", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().x; })
     .attr("y", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
     .attr("width", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width; })
@@ -839,18 +839,32 @@ function restart() {
         nodes[aNode].y = visHeight/2;
         nodes[aNode].fixed = true;
       }
+      vis.selectAll("#circleTextRect_James_McNeill_Whistler")
+        .attr("class", "circleTextRectHighlight");
+      vis.selectAll("#circleTextRect_Theodore_Casimir_Roussel")
+        .attr("class", "circleTextRectHighlight");
     }
     else {
       if (nodes[aNode].id == usePerson) {
         nodes[aNode].x = visWidth/2;
         nodes[aNode].y = visHeight/2;
+        vis.selectAll("#node_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))
+          .attr("transform", function(d) { return "translate(" + (visWidth + 540)/2 + "," + visHeight/2 + ")";});
         nodes[aNode].fixed = true;
+        showPopup(nodes[aNode]);
+	      $("#title").hide();
+	      $("#about").hide();
+	      d3.selectAll("#filter_family, #filter_friends, #filter_colleagues, #filter_mentors, #filter_employers").style("visibility", "visible");
+	      d3.selectAll("#network rect").style("fill", "white");
+        vis.selectAll("#circleTextRect_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))
+          .attr("class", "circleTextRectHighlight");
       }
     }
   }
 
   //controls the movement of the nodes
-  force.on("start", function(e) {
+  force.on("start", function() {
+    console.log('what');
     if (visMode == "person") {
       nodes[usePersonIndex].x = (visWidth + 540)/2;
       nodes[usePersonIndex].y = visHeight/2;
@@ -1118,7 +1132,6 @@ function showPopup(d,cords) {
         $("<a>")
           .attr("href", headshotLarge)
           .attr("class", "cboxElement")
-          .attr("title", "<h2>" + nodes[usePersonIndex].label + "</h2><h3>" + birthDate + "–" + deathDate + "</h3><p>" + abstract + "</p>")
           .append(
             $("<div>")
               .attr("class","popup-headshot-cont")
@@ -1126,6 +1139,7 @@ function showPopup(d,cords) {
                 $("<img>")
                   .attr("src", headshotBanner)
                   .attr("class","popup-headshot")
+                  .attr("alt", "<h2>" + nodes[usePersonIndex].label + "</h2><h4>" + birthDate + "–" + deathDate + "</h4><p>" + abstract + "</p>")
               )
           )
       );
@@ -1150,7 +1164,7 @@ function showPopup(d,cords) {
       )
       .append(
         $("<h3>")
-          .text(birthDate + "–" + deathDate)
+          .text(birthPlace + ", " + birthDate + "–" + deathPlace +", " + deathDate)
       );
 
     // Metadata
@@ -1165,8 +1179,8 @@ function showPopup(d,cords) {
               .attr("src", "menu/dash.png")
           )
           .append($("<br/>"))
-          .append($("<p>").html("BIRTHPLACE<br/>" + birthPlace))
-          .append($("<p>").html("OCCUPATION<br/>" + occupation))
+          .append($("<h4>").text("OCCUPATION"))
+          .append($("<p>").html(occupation))
       );
 
     // Description
@@ -1180,7 +1194,6 @@ function showPopup(d,cords) {
               .attr("height", "4px")
               .attr("src", "menu/dash.png")
           )
-          .append($("<br/>"))
           .append($("<p>").html(abstract))
       );
 
@@ -1202,8 +1215,7 @@ function showPopup(d,cords) {
             .attr("height", "4px")
             .attr("src", "menu/dash.png")
         )
-        .append($("<br/>"))
-        .append($("<p>").html("WORKS"))
+        .append($("<h4>").html("WORKS"))
     );
 
     // Works
@@ -1212,7 +1224,6 @@ function showPopup(d,cords) {
         $("<a>")
           .attr("href", artwork1Large)
           .attr("class", "cboxElement")
-          .attr("title", "<h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork1Title + "</h3><p>" + artwork1Date + "</p><p>" + artwork1Desc + "</p>" )
           .append(
             $("<span>")
               .attr("class", "popup-row")
@@ -1221,6 +1232,7 @@ function showPopup(d,cords) {
                   .attr("width", "180px")
                   .attr("class", "popup-artwork")
                   .attr("src", artwork1Large)
+                  .attr("alt", "<h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork1Title + "</h3><p>" + artwork1Date + "</p><p>" + artwork1Desc + "</p>" )
               )
               .append(
                 $("<span>")
@@ -1245,7 +1257,6 @@ function showPopup(d,cords) {
         $("<a>")
           .attr("href", artwork2Large)
           .attr("class", "cboxElement")
-          .attr("title", "<h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork2Title + "</h3><p>" + artwork2Date + "</p><p>" + artwork2Desc + "</p>" )
           .append(
             $("<span>")
               .attr("class", "popup-row")
@@ -1254,6 +1265,7 @@ function showPopup(d,cords) {
                   .attr("width", "180px")
                   .attr("class", "popup-artwork")
                   .attr("src", artwork2Large)
+                  .attr("alt", "<h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork2Title + "</h3><h4>" + artwork2Date + "</h4><p>" + artwork2Desc + "</p>" )
               )
               .append(
                 $("<span>")
@@ -1278,7 +1290,6 @@ function showPopup(d,cords) {
         $("<a>")
           .attr("href", artwork3Large)
           .attr("class", "cboxElement")
-          .attr("title", "<h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork3Title + "</h3><p>" + artwork3Date + "</p><p>" + artwork3Desc + "</p>" )
           .append(
             $("<span>")
               .attr("class", "popup-row")
@@ -1287,6 +1298,7 @@ function showPopup(d,cords) {
                   .attr("width", "180px")
                   .attr("class", "popup-artwork")
                   .attr("src", artwork3Large)
+                  .attr("alt", "<h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork3Title + "</h3><p>" + artwork3Date + "</p><p>" + artwork3Desc + "</p>" )
               )
               .append(
                 $("<span>")
@@ -1311,7 +1323,6 @@ function showPopup(d,cords) {
         $("<a>")
           .attr("href", artwork4Large)
           .attr("class", "cboxElement")
-          .attr("title", "<h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork4Title + "</h3><p>" + artwork4Date + "</p><p>" + artwork4Desc + "</p>" )
           .append(
             $("<span>")
               .attr("class", "popup-row")
@@ -1320,6 +1331,7 @@ function showPopup(d,cords) {
                   .attr("width", "180px")
                   .attr("class", "popup-artwork")
                   .attr("src", artwork4Large)
+                  .attr("alt", "<h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork4Title + "</h3><p>" + artwork4Date + "</p><p>" + artwork4Desc + "</p>" )
               )
               .append(
                 $("<span>")
@@ -1347,6 +1359,7 @@ function showPopup(d,cords) {
       .css("top", "0px");
 
     jQuery('.cboxElement').colorbox({transition:"fade", width:"100%", height:"100%",
+                                     title: function(){ return jQuery(this).find('img').attr('alt');},
                                      onComplete:function () {
                                        jQuery('.cboxPhoto').attr('style','width:55%; height:auto; margin:100px');
                                        jQuery('.cboxPhoto').css({'float': 'right'});
@@ -1657,8 +1670,8 @@ function windowResize() {
   visWidth = $(window).width();
   visHeight = $(window).height();
   if (visMode == "person") {
-    visWidth += 540;
-	visHeight -= 500;
+    visWidth -= 540;
+	  //visHeight -= 500;
     $("#network").css('float', 'right');
   }
   $("#network").css('width', visWidth + 'px');
