@@ -740,6 +740,7 @@ function restart() {
         //                    function() {
         usePerson = d.id;
         changeVisMode("person");
+        $("html, body").animate({ scrollTop: 0 }, "slow");
         //                  }
         //               );
       });
@@ -761,7 +762,7 @@ function restart() {
       if (fileNames.indexOf(useId+'.png') == -1) {
         return "menu/whistler.png";
       } else {
-        return "/image/round/" + useId+'.png';
+        return "/images/round/" + useId+'.png';
       }
     })
     .attr("x", function(d) { return  (returnNodeSize(d)*-1); })
@@ -841,6 +842,8 @@ function restart() {
     if (visMode == "person") {
       nodes[usePersonIndex].x = visWidth/2;
       nodes[usePersonIndex].y = visHeight/2;
+      vis.selectAll("#node_" + usePerson.split("/")[usePerson.split("/").length-1].replace(cssSafe,''))
+        .attr("transform", function(d) { return "translate(" + visWidth/2 + "," + visHeight/2 + ")";});
       nodes[usePersonIndex].fixed = true;
       showPopup(nodes[usePersonIndex]);
 	    $("#title").hide();
@@ -1002,7 +1005,7 @@ function showPopup(d,cords) {
     if (headshotFileNames.indexOf(useId+'.png') == -1) {
       var useImage = 'menu/no_headshot.png';
     } else {
-      var useImage = '/image/headshot/' + useId+'.png'
+      var useImage = '/images/headshot/' + useId+'.png'
     }
 
     var abstract = "";
@@ -1011,6 +1014,28 @@ function showPopup(d,cords) {
     var deathPlace = "";
     var deathDate = "";
     var occupation = "";
+    var headshotLarge = "";
+    var headshotIcon = "";
+    var headshotBanner = "";
+    var artwork1Large = "";
+    var artwork1Title = "";
+    var artwork1Date = "";
+    var artwork1Desc = "";
+
+    var artwork2Large = "";
+    var artwork2Title = "";
+    var artwork2Date = "";
+    var artwork2Desc = "";
+
+    var artwork3Large = "";
+    var artwork3Title = "";
+    var artwork3Date = "";
+    var artwork3Desc = "";
+
+    var artwork4Large = "";
+    var artwork4Title = "";
+    var artwork4Date = "";
+    var artwork4Desc = "";
 
     if (descObject.hasOwnProperty(usePerson)) {
       if (descObject[usePerson]['http://dbpedia.org/ontology/abstract']) {
@@ -1030,13 +1055,74 @@ function showPopup(d,cords) {
       }
       if (descObject[usePerson]['http://dbpedia.org/ontology/occupation']) {
         occupation = descObject[usePerson]['http://dbpedia.org/ontology/occupation'][0].value;
+        occupation = occupation.replace(new RegExp(', ', 'g'), '<br/>');
+      }
+      if (descObject[usePerson]['http://lv.artic.edu/ns#image']) {
+        headshotLarge = descObject[usePerson]['http://lv.artic.edu/ns#image'][0].value;
+      }
+      if (descObject[usePerson]['http://lv.artic.edu/ns#imageIcon']) {
+        headshotIcon = descObject[usePerson]['http://lv.artic.edu/ns#imageIcon'][0].value;
+      }
+      if (descObject[usePerson]['http://lv.artic.edu/ns#imageBanner']) {
+        headshotBanner = descObject[usePerson]['http://lv.artic.edu/ns#imageBanner'][0].value;
+      }
+      if (descObject[usePerson]['http://lv.artic.edu/ns#artwork1']) {
+        artwork1Large = descObject[usePerson]['http://lv.artic.edu/ns#artwork1'][0].value;
+      }
+      if (descObject[usePerson]['http://lv.artic.edu/ns#artwork1Title']) {
+        artwork1Title = descObject[usePerson]['http://lv.artic.edu/ns#artwork1Title'][0].value;
+      }
+      if (descObject[usePerson]['http://lv.artic.edu/ns#artwork1Date']) {
+        artwork1Date = descObject[usePerson]['http://lv.artic.edu/ns#artwork1Date'][0].value;
+      }
+      if (descObject[usePerson]['http://lv.artic.edu/ns#artwork1Desc']) {
+        artwork1Desc = descObject[usePerson]['http://lv.artic.edu/ns#artwork1Desc'][0].value;
+      }
+
+      if (descObject[usePerson]['http://lv.artic.edu/ns#artwork2']) {
+        artwork2Large = descObject[usePerson]['http://lv.artic.edu/ns#artwork2'][0].value;
+      }
+      if (descObject[usePerson]['http://lv.artic.edu/ns#artwork2Title']) {
+        artwork2Title = descObject[usePerson]['http://lv.artic.edu/ns#artwork2Title'][0].value;
+      }
+      if (descObject[usePerson]['http://lv.artic.edu/ns#artwork2Date']) {
+        artwork2Date = descObject[usePerson]['http://lv.artic.edu/ns#artwork2Date'][0].value;
+      }
+      if (descObject[usePerson]['http://lv.artic.edu/ns#artwork2Desc']) {
+        artwork2Desc = descObject[usePerson]['http://lv.artic.edu/ns#artwork2Desc'][0].value;
+      }
+
+      if (descObject[usePerson]['http://lv.artic.edu/ns#artwork3']) {
+        artwork3Large = descObject[usePerson]['http://lv.artic.edu/ns#artwork3'][0].value;
+      }
+      if (descObject[usePerson]['http://lv.artic.edu/ns#artwork3Title']) {
+        artwork3Title = descObject[usePerson]['http://lv.artic.edu/ns#artwork3Title'][0].value;
+      }
+      if (descObject[usePerson]['http://lv.artic.edu/ns#artwork3Date']) {
+        artwork3Date = descObject[usePerson]['http://lv.artic.edu/ns#artwork3Date'][0].value;
+      }
+      if (descObject[usePerson]['http://lv.artic.edu/ns#artwork3Desc']) {
+        artwork3Desc = descObject[usePerson]['http://lv.artic.edu/ns#artwork3Desc'][0].value;
+      }
+
+      if (descObject[usePerson]['http://lv.artic.edu/ns#artwork4']) {
+        artwork4Large = descObject[usePerson]['http://lv.artic.edu/ns#artwork4'][0].value;
+      }
+      if (descObject[usePerson]['http://lv.artic.edu/ns#artwork4Title']) {
+        artwork4Title = descObject[usePerson]['http://lv.artic.edu/ns#artwork4Title'][0].value;
+      }
+      if (descObject[usePerson]['http://lv.artic.edu/ns#artwork4Date']) {
+        artwork4Date = descObject[usePerson]['http://lv.artic.edu/ns#artwork4Date'][0].value;
+      }
+      if (descObject[usePerson]['http://lv.artic.edu/ns#artwork4Desc']) {
+        artwork4Desc = descObject[usePerson]['http://lv.artic.edu/ns#artwork4Desc'][0].value;
       }
     }
 
     jQuery('#popUp')
       .append(
         $("<a>")
-          .attr("href", useImage)
+          .attr("href", headshotLarge)
           .attr("class", "cboxElement")
           .attr("title", "<h2>" + nodes[usePersonIndex].label + "</h2><h3>" + birthDate + "–" + deathDate + "</h3><p>" + abstract + "</p>")
           .append(
@@ -1044,7 +1130,7 @@ function showPopup(d,cords) {
               .attr("class","popup-headshot-cont")
               .append(
                 $("<img>")
-                  .attr("src", useImage)
+                  .attr("src", headshotBanner)
                   .attr("class","popup-headshot")
               )
           )
@@ -1110,26 +1196,163 @@ function showPopup(d,cords) {
           .attr("class", "clear")
       );
 
+    popupWorks = $("<div>")
+      .attr("class", "popup-artworks")
+
+    popupWorks.append(
+      $("<div>")
+        .attr("class", "popup-row")
+        .append(
+          $("<img>")
+            .attr("width", "20px")
+            .attr("height", "4px")
+            .attr("src", "menu/dash.png")
+        )
+        .append($("<br/>"))
+        .append($("<p>").html("WORKS"))
+    );
+
     // Works
-    jQuery('#popUp')
-      .append(
-        $("<div>")
-          .attr("class", "popup-works")
+    if (artwork1Large) {
+      popupWorks.append(
+        $("<a>")
+          .attr("href", artwork1Large)
+          .attr("class", "cboxElement")
+          .attr("title", "<h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork1Title + "</h3><p>" + artwork1Date + "</p><p>" + artwork1Desc + "</p>" )
           .append(
-            $("<img>")
-              .attr("width", "20px")
-              .attr("height", "4px")
-              .attr("src", "menu/dash.png")
+            $("<span>")
+              .attr("class", "popup-row")
+              .append(
+                $("<img>")
+                  .attr("width", "180px")
+                  .attr("class", "popup-artwork")
+                  .attr("src", artwork1Large)
+              )
+              .append(
+                $("<span>")
+                  .attr("class", "popup-artwork-desc")
+                  .append(
+                    $("<span>")
+                      .attr("class", "popup-title")
+                      .html(artwork1Title)
+                  )
+                  .append(
+                    $("<span>")
+                      .attr("class", "popup-date")
+                      .html(artwork1Date)
+                  )
+              )
           )
-          .append($("<br/>"))
-          .append($("<p>").html("WORKS"))
       );
+    }
+
+    if (artwork2Large) {
+      popupWorks.append(
+        $("<a>")
+          .attr("href", artwork2Large)
+          .attr("class", "cboxElement")
+          .attr("title", "<h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork2Title + "</h3><p>" + artwork2Date + "</p><p>" + artwork2Desc + "</p>" )
+          .append(
+            $("<span>")
+              .attr("class", "popup-row")
+              .append(
+                $("<img>")
+                  .attr("width", "180px")
+                  .attr("class", "popup-artwork")
+                  .attr("src", artwork2Large)
+              )
+              .append(
+                $("<span>")
+                  .attr("class", "popup-artwork-desc")
+                  .append(
+                    $("<span>")
+                      .attr("class", "popup-title")
+                      .html(artwork2Title)
+                  )
+                  .append(
+                    $("<span>")
+                      .attr("class", "popup-date")
+                      .html(artwork2Date)
+                  )
+              )
+          )
+      );
+    }
+
+    if (artwork3Large) {
+      popupWorks.append(
+        $("<a>")
+          .attr("href", artwork3Large)
+          .attr("class", "cboxElement")
+          .attr("title", "<h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork3Title + "</h3><p>" + artwork3Date + "</p><p>" + artwork3Desc + "</p>" )
+          .append(
+            $("<span>")
+              .attr("class", "popup-row")
+              .append(
+                $("<img>")
+                  .attr("width", "180px")
+                  .attr("class", "popup-artwork")
+                  .attr("src", artwork3Large)
+              )
+              .append(
+                $("<span>")
+                  .attr("class", "popup-artwork-desc")
+                  .append(
+                    $("<span>")
+                      .attr("class", "popup-title")
+                      .html(artwork3Title)
+                  )
+                  .append(
+                    $("<span>")
+                      .attr("class", "popup-date")
+                      .html(artwork3Date)
+                  )
+              )
+          )
+      );
+    }
+
+    if (artwork4Large) {
+      popupWorks.append(
+        $("<a>")
+          .attr("href", artwork4Large)
+          .attr("class", "cboxElement")
+          .attr("title", "<h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork4Title + "</h3><p>" + artwork4Date + "</p><p>" + artwork4Desc + "</p>" )
+          .append(
+            $("<span>")
+              .attr("class", "popup-row")
+              .append(
+                $("<img>")
+                  .attr("width", "180px")
+                  .attr("class", "popup-artwork")
+                  .attr("src", artwork4Large)
+              )
+              .append(
+                $("<span>")
+                  .attr("class", "popup-artwork-desc")
+                  .append(
+                    $("<span>")
+                      .attr("class", "popup-title")
+                      .html(artwork4Title)
+                  )
+                  .append(
+                    $("<span>")
+                      .attr("class", "popup-date")
+                      .html(artwork4Date)
+                  )
+              )
+          )
+      );
+    }
+
+    jQuery('#popUp')
+      .append(popupWorks);
 
     jQuery("#popUp")
       .css("left", "0px")
       .css("top", "0px");
 
-    jQuery('.cboxElement').colorbox({transition:"fade", width:"75%", height:"75%", scrolling:false,
+    jQuery('.cboxElement').colorbox({transition:"fade", width:"100%", height:"100%",
                                      onComplete:function () {
                                        jQuery('.cboxPhoto').attr('style','width:55%; height:auto; margin:100px');
                                        jQuery('.cboxPhoto').css({'float': 'right'});
@@ -1341,7 +1564,7 @@ function buildDynamicList() {
                 {
 
                   if (fileNames.indexOf(id_img+'.png') != -1) {
-                    return "/image/round/" + id_img+'.png';
+                    return "/images/round/" + id_img+'.png';
                   } else {
                     return "";
                   }
