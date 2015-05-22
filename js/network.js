@@ -88,15 +88,13 @@ jQuery(document).ready(function($) {
   jQuery("#filter_mentors").click(function() {showRelations("mentors"); });
   jQuery("#filter_employers").click(function() {showRelations("employers"); });
 
-  //$("#network").fadeOut();
-
   var history = History.getState();
   if (history.hash.search(/\?person=/) > -1) {
     visMode = "person";
   }
   windowResize();
 
-  //showSpinner("Loading<br>Triples");
+  showSpinner("");
 
   initalizeNetwork();
 
@@ -237,7 +235,7 @@ function parseStateChangeVis() {
     changeVisMode(mode);
 
   } else {
-    //showSpinner("Rendering<br>Network");
+    showSpinner("");
     filter();
   }
 }
@@ -640,7 +638,11 @@ function filter(clear) {
 
   //are we wiping the nodes out or just adding?
   if (clear) {
-    //$("#network").css("visibility","hidden");
+    $("#network").css("visibility","hidden");
+	$("#title").css("visibility","hidden");
+	$("#about").css("visibility","hidden");
+	$("#logo").css("visibility","hidden");
+	$("#zoomWidget").css("visibility","hidden");
     vis.selectAll("g.node").remove();
     vis.selectAll("line.link").remove();
 
@@ -895,6 +897,8 @@ function restart() {
 
   force.start();
   force.on("tick", function(e) {
+	if (e.alpha <= .02) {
+        hideSpinner();
     // Collision detection stolen from: http://vallandingham.me/building_a_bubble_cloud.html
     dampenedAlpha = e.alpha * .5;
     jitter = 0.3;
@@ -910,6 +914,15 @@ function restart() {
       .attr("y1", function(d) { return d.source.y; })
       .attr("x2", function(d) { return d.target.x; })
       .attr("y2", function(d) { return d.target.y; });
+	  
+	 if ($("#network").css("visibility") != "visible") {
+          $("#network").css("visibility","visible");
+		  $("#title").css("visibility","visible");
+		  $("#about").css("visibility","visible");
+		  $("#logo").css("visibility","visible");
+          $("#zoomWidget").css("visibility","visible");
+        }
+	}
   });
 }
 
