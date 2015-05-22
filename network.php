@@ -110,7 +110,6 @@ if ($handle = opendir('images/headshot/')) {
 	<img src="menu/preloader.gif">
     <span>LOADING</span>
 </div>
-<div id="video"></div>
 
 </body>
 </html>

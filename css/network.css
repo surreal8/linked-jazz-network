@@ -85,10 +85,11 @@ body{
 	font-family: caslon, serif;
 }
 
-#divider {
+.divider {
 	color: #E9967A;
 	text-align:left;
 	line-height:.5em;
+  font-size: 16px;
 }
 
 #begin{
@@ -268,7 +269,7 @@ circle {
 	stroke-width: 1.5;
 }
 
-#backgroundCircle_Theodore_Casimir_Roussel, #backgroundCircle_James_McNeill_Whistler {
+.backgroundCircleHighlight {
 	stroke-width: 5;
 }
 
@@ -276,9 +277,9 @@ circle {
 	opacity: 0;
 }
 
-#imageCircle_Theodore_Casimir_Roussel.imageCircle, #imageCircle_James_McNeill_Whistler.imageCircle {
+.imageCircleHighlight {
 	opacity: 1;
-} 
+}
 
 text {
 	font-size: 7.5px;

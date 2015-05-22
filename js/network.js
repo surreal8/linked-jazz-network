@@ -60,7 +60,7 @@ var fill = d3.scale.category10();
 var lineColor = d3.scale.category20c();
 
 var whistlerPersonIndex = 0;    //the index pos of the James_McNeill_whistler in the nodes array, so we dont have to loop through the whole thing everytime
-var roussellPersonIndex = 0;    //the index pos of the James_McNeill_whistler in the nodes array, so we dont have to loop through the whole thing everytime
+var roussellPersonIndex = 0;    //the index pos of the Theodore_Casimir_Roussell in the nodes array, so we dont have to loop through the whole thing everytime
 
 
 jQuery(document).ready(function($) {
@@ -843,6 +843,16 @@ function restart() {
         .attr("class", "circleTextRectHighlight");
       vis.selectAll("#circleTextRect_Theodore_Casimir_Roussel")
         .attr("class", "circleTextRectHighlight");
+
+      vis.selectAll("#imageCircle_James_McNeill_Whistler")
+        .attr("class", "imageCircleHighlight");
+      vis.selectAll("#imageCircle_Theodore_Casimir_Roussel")
+        .attr("class", "imageCircleHighlight");
+
+      vis.selectAll("#backgroundCircle_James_McNeill_Whistler")
+        .attr("class", "backgroundCircleHighlight");
+      vis.selectAll("#backgroundCircle_Theodore_Casimir_Roussel")
+        .attr("class", "backgroundCircleHighlight");
     }
     else {
       if (nodes[aNode].id == usePerson) {
@@ -858,6 +868,10 @@ function restart() {
 	      d3.selectAll("#network rect").style("fill", "white");
         vis.selectAll("#circleTextRect_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))
           .attr("class", "circleTextRectHighlight");
+        vis.selectAll("#imageCircle_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))
+          .attr("class", "imageCircleHighlight");
+        vis.selectAll("#backgroundCircle_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))
+          .attr("class", "backgroundCircleHighlight");
       }
     }
   }
@@ -969,9 +983,13 @@ function collide(jitter) {
 }
 
 function returnNodeSize(d) {
-  if (d.label == "James McNeill Whistler" || d.label == "Theodore Casimir Roussel") {
+  if (usePerson && d.id == usePerson) {
     return 15;
-  } else {
+  }
+  else if (!usePerson && (d.label == "James McNeill Whistler" || d.label == "Theodore Casimir Roussel")) {
+    return 15;
+  }
+  else {
     return 4;
   }
 }
@@ -1173,12 +1191,10 @@ function showPopup(d,cords) {
         $("<div>")
           .attr("class", "popup-metadata")
           .append(
-            $("<img>")
-              .attr("width", "20px")
-              .attr("height", "4px")
-              .attr("src", "menu/dash.png")
+            $('<div>')
+              .attr("class", "divider")
+              .text("—")
           )
-          .append($("<br/>"))
           .append($("<h4>").text("OCCUPATION"))
           .append($("<p>").html(occupation))
       );
@@ -1189,10 +1205,9 @@ function showPopup(d,cords) {
         $("<div>")
           .attr("class", "popup-description")
           .append(
-            $("<img>")
-              .attr("width", "20px")
-              .attr("height", "4px")
-              .attr("src", "menu/dash.png")
+            $('<div>')
+              .attr("class", "divider")
+              .text("—")
           )
           .append($("<p>").html(abstract))
       );
@@ -1210,10 +1225,9 @@ function showPopup(d,cords) {
       $("<div>")
         .attr("class", "popup-row")
         .append(
-          $("<img>")
-            .attr("width", "20px")
-            .attr("height", "4px")
-            .attr("src", "menu/dash.png")
+          $('<div>')
+            .attr("class", "divider")
+            .text("—")
         )
         .append($("<h4>").html("WORKS"))
     );
