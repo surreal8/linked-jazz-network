@@ -41,16 +41,14 @@ body{
 
 #welcome {
   width: 25%;
-  height: 840px;
+  height: 1000px;
   background-color: #ffffff;
   z-index: 50;
-  top: -1050px;
-  position: relative;
+  top: 120px;
+  left: 37%;
+  position: absolute;
   margin: 0 auto;
-  background: -webkit-linear-gradient(#ffffff 45%, #eeeeee 55%); /* For Safari 5.1 to 6.0 */
-  background: -o-linear-gradient(#ffffff 45%, #eeeeee 55%); /* For Opera 11.1 to 12.0 */
-  background: -moz-linear-gradient(#ffffff 45%, #eeeeee 55%); /* For Firefox 3.6 to 15 */
-  background: linear-gradient(#ffffff 45%, #eeeeee 55%); /* Standard syntax (must be last) */
+  padding: 0px;
 }
 
 #landingimages .landingimages{
@@ -66,23 +64,38 @@ body{
 
 #titlewelcome {
   text-align: center;
-  top: 48px;
+  top: 0px;
   position: relative;
   font-size: 32px;
   letter-spacing: 22px;
   line-height: 1.8em;
   color: #000000;
   font-family: akkuratmono, sans-serif;
+  padding: 60px 40px;
 }
 
 #titledesc {
-	top: 350px;
-  	position: absolute;
-  	padding: 50px;
+	top: 0px;
+  	position: relative;
+  	padding: 50px 50px 10px 50px;
   	text-align: left;
   	font-size: 16px;
 	line-height: 2em;
 	font-family: caslon, serif;
+	color: #000000;
+	font-weight:bold;
+	background: -webkit-linear-gradient(#eeeeee 1%, #ffffff 8%); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(#eeeeee 1%, #ffffff 8%); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(#eeeeee 1%, #ffffff 8%); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(#eeeeee 1%, #ffffff 8%); /* Standard syntax (must be last) */
+}
+
+p.credits {
+	font-family: akkuratreg, sans-serif;
+	font-size: 12px;
+	color: #CCC;
+	font-weight:normal;
+	letter-spacing: 1px;
 }
 
 #divider {
@@ -93,22 +106,20 @@ body{
 
 #begin{
   position: relative;
-  bottom: -50%;
-  width: 75px;
-  margin: 0 auto;
+  width: 100px;
+  margin: 45px auto;
   text-align: center;
   color: #ffffff;
   display: block;
-  background-color: #E9967A;;
-  border-radius: 6px;
+  background-color: #E9967A;
+  border-radius: 13px;
   padding: 15px 30px;
-  font-size: 15px;
-  letter-spacing: 2px;
+  font-size: 14px;
+  letter-spacing: 6px;
   font-family: akkuratreg, sans-serif;
 }
 
-#begin a, a:visited {
-	color: #ffffff;
+a.begin, a:visited.begin, a:hover.begin {
 	text-decoration: none;
 }
 
@@ -547,8 +558,8 @@ text.circleText {
 
 #spinner img{
 	opacity:0.5;
-	height:129px;
-	width:132px;
+	height:70px;
+	width:70px;
 	
 }
 
