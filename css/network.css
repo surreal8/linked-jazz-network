@@ -40,12 +40,11 @@ body{
 }
 
 #welcome {
-  width: 25%;
-  height: 1000px;
+  width: 28.1vw;
   background-color: #ffffff;
   z-index: 50;
-  top: 120px;
-  left: 37%;
+  top: 3vw;
+  left: 36vw;
   position: absolute;
   margin: 0 auto;
   padding: 0px;
@@ -58,28 +57,30 @@ body{
 #landingimages .landinglogo{
   position: absolute;
   z-index: 50;
-  top: 30px;
-  left: 30px;	
+  top: 1.56vw;
+  left: 1.56vw;
+  width: 5.2vw;
+  height: 5.2vw;
 }
 
 #titlewelcome {
   text-align: center;
   top: 0px;
   position: relative;
-  font-size: 32px;
-  letter-spacing: 22px;
+  font-size: 1.66vw;
+  letter-spacing: 0.685em; /* 1.15vw; */
   line-height: 1.8em;
   color: #000000;
   font-family: akkuratmono, sans-serif;
-  padding: 60px 40px;
+  padding: 2.5vw 2.06vw;
 }
 
 #titledesc {
 	top: 0px;
   	position: relative;
-  	padding: 50px 50px 10px 50px;
+  	padding: 2.6vw 2.6vw 0.52vw 2.6vw;
   	text-align: left;
-  	font-size: 16px;
+  	font-size: 0.835vw;
 	line-height: 2em;
 	font-family: caslon, serif;
 	color: #000000;
@@ -92,31 +93,32 @@ body{
 
 p.credits {
 	font-family: akkuratreg, sans-serif;
-	font-size: 12px;
+	font-size: 0.625vw;
 	color: #CCC;
 	font-weight:normal;
-	letter-spacing: 1px;
+	letter-spacing: 0.083em;
+  line-height: 2em;
 }
 
 .divider {
 	color: #E9967A;
 	text-align:left;
 	line-height:.5em;
-  font-size: 16px;
+  font-size: 0.835vw;
 }
 
 #begin{
   position: relative;
-  width: 100px;
-  margin: 45px auto;
+  width: 5.2vw;
+  margin: 2.35vw auto;
   text-align: center;
   color: #ffffff;
   display: block;
   background-color: #E9967A;
-  border-radius: 13px;
-  padding: 15px 30px;
-  font-size: 14px;
-  letter-spacing: 6px;
+  border-radius: 0.7vw;
+  padding: 0.78vw 1.56vw;
+  font-size: 0.74vw;
+  letter-spacing: 0.43em;
   font-family: akkuratreg, sans-serif;
 }
 
