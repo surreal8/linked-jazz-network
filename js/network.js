@@ -713,6 +713,7 @@ function filter(clear) {
 
     if (visMode == "person" && workingNodes[aNode].id == usePerson) {
       usePersonIndex = aNode;
+
     }
     if (workingNodes[aNode].id == 'http://data.artic.edu/whistler/person/James_McNeill_Whistler') {
       whistlerPersonIndex = aNode;
@@ -834,6 +835,7 @@ function restart() {
     .attr("width", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width; })
     .attr("height", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height; });
 */
+
   for (aNode in nodes) {
     nodes[aNode].width = $("#" + "node_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))[0].	getBBox().width;
     nodes[aNode].height = $("#" + "node_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height;
@@ -847,11 +849,14 @@ function restart() {
         nodes[aNode].y = visHeight/2;
         nodes[aNode].fixed = true;
       }
+
       if (nodes[aNode].id == 'http://data.artic.edu/whistler/person/Theodore_Casimir_Roussel') {
         nodes[aNode].x = visWidth/2 - 100;
         nodes[aNode].y = visHeight/2;
         nodes[aNode].fixed = true;
       }
+
+      // Highlight Whistler and Roussell
       vis.selectAll("#circleTextRect_James_McNeill_Whistler")
         .attr("class", "circleTextRectHighlight");
       vis.selectAll("#circleTextRect_Theodore_Casimir_Roussel")
@@ -869,43 +874,30 @@ function restart() {
     }
     else {
       if (nodes[aNode].id == usePerson) {
-        nodes[aNode].x = visWidth/2 + 540;
+        nodes[aNode].x = visWidth/2 + 270;
         nodes[aNode].y = visHeight/2;
-        nodes[aNode].fixed = true;
+
         showPopup(nodes[aNode]);
+        
 	      $("#title").hide();
 	      $("#about").hide();
 	      d3.selectAll("#filter_family, #filter_friends, #filter_colleagues, #filter_mentors, #filter_employers").style("visibility", "visible");
 	      d3.selectAll("#network rect").style("fill", "white");
+
+        // Highlight selected person
         vis.selectAll("#circleTextRect_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))
           .attr("class", "circleTextRectHighlight");
         vis.selectAll("#imageCircle_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))
           .attr("class", "imageCircleHighlight");
         vis.selectAll("#backgroundCircle_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))
           .attr("class", "backgroundCircleHighlight");
-        vis.selectAll("#node_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))
-          .attr("transform", function(d) { return "translate(" + nodes[aNode].x + "," + nodes[aNode].y + ")";});
       }
     }
   }
 
-  //controls the movement of the nodes
-  force.on("start", function() {
-    if (visMode == "person") {
-      nodes[usePersonIndex].x = visWidth/2 + 540;
-      nodes[usePersonIndex].y = visHeight/2;
-      vis.selectAll("#node_" + usePerson.split("/")[usePerson.split("/").length-1].replace(cssSafe,''))
-        .attr("transform", function(d) { return "translate(" + nodes[usePersonIndex].x + "," + nodes[usePersonIndex].y + ")";});
-      nodes[usePersonIndex].fixed = true;
-      showPopup(nodes[usePersonIndex]);
-	    $("#title").hide();
-	    $("#about").hide();
-	    d3.selectAll("#filter_family, #filter_friends, #filter_colleagues, #filter_mentors, #filter_employers").style("visibility", "visible");
-	    d3.selectAll("#network rect").style("fill", "white");
-    }
-  });
-
   force.start();
+
+  //controls the movement of the nodes
   force.on("tick", function(e){ 
 	if ((usePerson && nodes[usePersonIndex].connections < 15 && e.alpha <= 1) || e.alpha <= .02) {
         hideSpinner();
@@ -915,9 +907,10 @@ function restart() {
     ratio = 2.77; // xy ratio
 
     vis.selectAll("g.node")
-      .each(gravity(dampenedAlpha))
-      	.each(collide(jitter))
-          .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
+      .each(stickyPeople())
+        .each(gravity(dampenedAlpha))
+          .each(collide(jitter))
+            .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
 
     vis.selectAll("line.link")
       .attr("x1", function(d) { return d.source.x;})
@@ -935,6 +928,27 @@ function restart() {
    }
 	}
   });
+}
+
+function stickyPeople() {
+  return function(d) {
+    if (visMode == "person") {
+      if (d.id == usePerson) {
+        d.x = visWidth/2;
+        d.y = visHeight/2;
+      }
+    }
+    else {
+      if (d.id == 'http://data.artic.edu/whistler/person/James_McNeill_Whistler') {
+        d.x = visWidth/2 + 100;
+        d.y = visHeight/2;
+      }
+      if (d.id == 'http://data.artic.edu/whistler/person/Theodore_Casimir_Roussel') {
+        d.x = visWidth/2 - 100;
+        d.y = visHeight/2;
+      }
+    }
+  };
 }
 
 function gravity(alpha) {
@@ -983,7 +997,6 @@ function collide(jitter) {
           moveY = y * distance;
           if (moveX == 0) { moveX = 1; }
           if (moveY == 0) { moveY = 1; }
-
           if ((visMode != 'person' && (d.id == 'http://data.artic.edu/whistler/person/James_McNeill_Whistler' || d.id == 'http://data.artic.edu/whistler/person/Theodore_Casimir_Roussel'))
              || (visMode == 'person' && (d.id == usePerson))) {
             d2.x += moveX * 2;
@@ -1436,7 +1449,15 @@ function changeVisMode(changeTo) {
   rendering = true;
 
   if (changeTo == "person") {
-    History.pushState({state:idLookup[usePerson]}, "Person Mode", "?person=" + idLookup[usePerson]);
+    var name = "";
+
+    if (nameObject.hasOwnProperty(usePerson)) {
+      if (nameObject[usePerson]['http://xmlns.com/foaf/0.1/name']) {
+        name = nameObject[usePerson]['http://xmlns.com/foaf/0.1/name'][0].value;
+      }
+    }
+
+    History.pushState({state:idLookup[usePerson]}, "Linked Visions: " + name, "?person=" + idLookup[usePerson]);
   } else {
     History.pushState({state:changeTo}, changeTo +" Mode", "?mode=" + changeTo);
   }
