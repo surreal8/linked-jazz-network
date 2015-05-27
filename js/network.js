@@ -1418,7 +1418,14 @@ function showPopup(d,cords) {
                                      onComplete:function () {
                                        jQuery('.cboxPhoto').attr('style','width:55%; height:auto; margin:100px');
                                        jQuery('.cboxPhoto').css({'float': 'right'});
-                                     }});
+                                     },
+                                     onLoad:function() {
+                                       $('html, body').css('overflow', 'hidden'); // page scrollbars off
+                                     },
+                                     onClosed:function() {
+                                       $('html, body').css('overflow', ''); // page scrollbars on
+                                     }
+                                    });
 
 
     jQuery("#popUp").fadeIn(200);
