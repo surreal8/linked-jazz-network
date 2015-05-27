@@ -97,12 +97,12 @@ if ($handle = opendir('images/headshot/')) {
     <div id="popUp">
     </div>
 	
-	<div id="filter_all">All</div>     
-	<div id="filter_family">Family</div>     
-	<div id="filter_friends">Friends</div>     
-	<div id="filter_colleagues">Colleagues</div>     
-	<div id="filter_mentors">Mentors and Followers</div>     
-	<div id="filter_employers">Employers and Employees</div>     
+	<div class="filter-button active" id="filter_all">All</div>     
+	<div class="filter-button" id="filter_family">Family</div>     
+	<div class="filter-button" id="filter_friends">Friends</div>     
+	<div class="filter-button" id="filter_colleagues">Colleagues</div>     
+	<div class="filter-button" id="filter_mentors">Mentors & Followers</div>     
+	<div class="filter-button" id="filter_employers">Employers & Employees</div>     
 </div>
 
 

@@ -194,71 +194,47 @@ svg {
 }
 
 #network #filter_all {
-	cursor: pointer;
-	position: absolute;
-	right: 720px;
-	height: 50px;
-	top: 10px;
-	opacity: .15;
-	visibility:hidden;
+	right:1140px;
 }
 
 #filter_family {
-	cursor: pointer; 
-	position:absolute; 
-	right:635px; 
-	height:50px; 
-	top:10px;
-	opacity: .15;
-	visibility:hidden;
+	right:995px; 
 }
 
 #filter_friends {
-	cursor: pointer; 
-	position:absolute; 
-	right:545px; 
-	height:50px; 
-	top:10px;
-	opacity: .15;
-	visibility:hidden;
+	right:835px; 
 }
 
 #filter_colleagues {
-	cursor: pointer; 
-	position:absolute; 
-	right:425px; 
-	height:50px; 
-	top:10px;
-	opacity: .15;
-	visibility:hidden;
+	right:640px; 
 }
 
 #filter_mentors {
-	cursor: pointer; 
-	position:absolute; 
-	right:225px; 
-	height:50px; 
-	top:10px;
-	opacity: .15;
-	visibility:hidden;
+	right:345px; 
 }
 
 #filter_employers {
+	right:30px; 
+}
+
+.filter-button {
 	cursor: pointer; 
 	position:absolute; 
-	right:10px; 
-	height:50px; 
-	top:10px;
-	opacity: .15;
+	top:20px;
 	visibility:hidden;
+  padding: 15px 30px;
+  border: black solid 1px;
+  border-radius: 30px;
+	font-family: akkuratreg, sans-serif;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
 }
 
-#filter_all:hover, #filter_family:hover, #filter_friends:hover, #filter_colleagues:hover, #filter_mentors:hover, #filter_employers:hover {
-	opacity: 1;
-}
-
-#filter_all:active, #filter_family:active, #filter_friends:active, #filter_colleagues:active, #filter_mentors:active, #filter_employers:active {
-	opacity: 1;
+.filter-button.active{
+  background-color: #E9967A;
+  border-color: #E9967A;
+  color: #fff;
 }
 
 line.link {
