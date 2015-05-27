@@ -1205,7 +1205,8 @@ function showPopup(d,cords) {
                 $("<img>")
                   .attr("src", headshotBanner)
                   .attr("class","popup-headshot")
-                  .attr("alt", "<h2>" + nodes[usePersonIndex].label + "</h2><h4>" + birthDate + "–" + deathDate + "</h4><p>" + abstract + "</p>")
+                  .attr("alt", nodes[usePersonIndex].label)
+                  .attr("copy", "<div class=\"divider\">—</div><h2>" + nodes[usePersonIndex].label + "</h2><h4>" + birthDate + "–" + deathDate + "</h4><p>" + abstract + "</p>")
               )
               .append(
                 $("<img>")
@@ -1298,7 +1299,8 @@ function showPopup(d,cords) {
                 $("<img>")
                   .attr("class", "popup-artwork")
                   .attr("src", artwork1Large)
-                  .attr("alt", "<h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork1Title + "</h3><p>" + artwork1Date + "</p><p>" + artwork1Desc + "</p>" )
+                  .attr("alt", nodes[usePersonIndex].label)
+                  .attr("copy", "<div class=\"divider\">—</div><h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork1Title + "</h3><h4>" + artwork1Date + "</h4><p>" + artwork1Desc + "</p>" )
               )
               .append(
                 $("<span>")
@@ -1330,7 +1332,8 @@ function showPopup(d,cords) {
                 $("<img>")
                   .attr("class", "popup-artwork")
                   .attr("src", artwork2Large)
-                  .attr("alt", "<h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork2Title + "</h3><h4>" + artwork2Date + "</h4><p>" + artwork2Desc + "</p>" )
+                  .attr("alt", nodes[usePersonIndex].label)
+                  .attr("copy", "<div class=\"divider\">—</div><h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork2Title + "</h3><h4>" + artwork2Date + "</h4><p>" + artwork2Desc + "</p>" )
               )
               .append(
                 $("<span>")
@@ -1362,7 +1365,8 @@ function showPopup(d,cords) {
                 $("<img>")
                   .attr("class", "popup-artwork")
                   .attr("src", artwork3Large)
-                  .attr("alt", "<h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork3Title + "</h3><p>" + artwork3Date + "</p><p>" + artwork3Desc + "</p>" )
+                  .attr("alt", nodes[usePersonIndex].label)
+                  .attr("copy", "<div class=\"divider\">—</div><h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork3Title + "</h3><h4>" + artwork3Date + "</h4><p>" + artwork3Desc + "</p>" )
               )
               .append(
                 $("<span>")
@@ -1394,7 +1398,8 @@ function showPopup(d,cords) {
                 $("<img>")
                   .attr("class", "popup-artwork")
                   .attr("src", artwork4Large)
-                  .attr("alt", "<h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork4Title + "</h3><p>" + artwork4Date + "</p><p>" + artwork4Desc + "</p>" )
+                  .attr("alt", nodes[usePersonIndex].label)
+                  .attr("copy", "<div class=\"divider\">—</div><h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork4Title + "</h3><h4>" + artwork4Date + "</h4><p>" + artwork4Desc + "</p>" )
               )
               .append(
                 $("<span>")
@@ -1421,11 +1426,17 @@ function showPopup(d,cords) {
       .css("left", "0px")
       .css("top", "0px");
 
-    jQuery('.cboxElement').colorbox({transition:"fade", width:"100%", height:"100%",
-                                     title: function(){ return jQuery(this).find('img').attr('alt');},
+    jQuery('.cboxElement').colorbox({transition:"fade", width:"100%", height:"100%", opacity: 0.92,
+                                     title: function(){ return jQuery(this).find('img').attr('copy');},
                                      onComplete:function () {
-                                       jQuery('.cboxPhoto').attr('style','width:55%; height:auto; margin:100px');
+                                       jQuery('.cboxPhoto').attr('style','width:55%; height:auto; margin:35px 180px');
                                        jQuery('.cboxPhoto').css({'float': 'right'});
+                                       jQuery('#cboxContent').prepend(
+                                         $("<img>")
+                                           .attr("src", "menu/logo-white.png")
+                                           .attr("id","cboxLogo")
+                                           .attr("alt", "Art Institute of Chicago")
+                                       );
                                      },
                                      onLoad:function() {
                                        $('html, body').css('overflow', 'hidden'); // page scrollbars off
@@ -1434,7 +1445,6 @@ function showPopup(d,cords) {
                                        $('html, body').css('overflow', ''); // page scrollbars on
                                      }
                                     });
-
 
     jQuery("#popUp").fadeIn(200);
 
