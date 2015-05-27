@@ -645,19 +645,18 @@ function filter(clear) {
 
   //are we wiping the nodes out or just adding?
   if (clear) {
-    $("#network svg").css("visibility","hidden");
+	  $("#network svg").css("visibility","hidden");
 	  $("#title").css("visibility","hidden");
 	  $("#about").css("visibility","hidden");
 	  $("#logo").css("visibility","hidden");
 	  $("#zoomWidget").css("visibility","hidden");
-    vis.selectAll("g.node").remove();
-    vis.selectAll("line.link").remove();
+      vis.selectAll("g.node").remove();
+      vis.selectAll("line.link").remove();
 
-    nodes = [];
-    links = [];
-    force.nodes([]);
-    force.links([]);
-    //restart();
+      nodes = [];
+      links = [];
+      force.nodes([]);
+      force.links([]);
   }
 
   var workingNodes = [];
@@ -713,7 +712,6 @@ function filter(clear) {
 
     if (visMode == "person" && workingNodes[aNode].id == usePerson) {
       usePersonIndex = aNode;
-
     }
     if (workingNodes[aNode].id == 'http://data.artic.edu/whistler/person/James_McNeill_Whistler') {
       whistlerPersonIndex = aNode;
@@ -728,12 +726,11 @@ function filter(clear) {
   links = force.links();
 
   for (aNode in workingNodes) {
-    nodes.push(workingNodes[aNode]);
+	  nodes.push(workingNodes[aNode]);
   }
   for (aLink in workingLinks) {
     links.push(workingLinks[aLink]);
   }
-
   restart();
 }
 
@@ -747,11 +744,6 @@ function restart() {
     .data(links)
     .enter().insert("line", "circle.node")
     .attr("class", function(d) {return "link " + d.customClass});
-  //.attr("marker-end", function(d) { return  (visMode == "person"||visMode == "dynamic") ? "url(#FOAFknows)" : "none"; })
-  /*.attr("x1", function(d) { return d.source.x; })
-    .attr("y1", function(d) { return d.source.y; })
-    .attr("x2", function(d) { return d.target.x; })
-    .attr("y2", function(d) { return d.target.y; });*/
 
   var node = vis.selectAll("g.node")
       .data(nodes);
@@ -814,7 +806,7 @@ function restart() {
     .attr("y", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
     .attr("width", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width; })
     .attr("height", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height; });
-/*
+
   nodeEnter.append("svg:rect")
     .attr("id", function(d) {  return "labelRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
 	.attr("rx", 6)
@@ -834,7 +826,7 @@ function restart() {
     .attr("y", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
     .attr("width", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width; })
     .attr("height", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height; });
-*/
+
 
   for (aNode in nodes) {
     nodes[aNode].width = $("#" + "node_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))[0].	getBBox().width;
@@ -908,32 +900,32 @@ function restart() {
   force.on("tick", function(e){ 
 	if ((usePerson && nodes[usePersonIndex].connections < 15 && e.alpha <= 1) || e.alpha <= .02) {
         hideSpinner();
-    // Collision detection stolen from: http://vallandingham.me/building_a_bubble_cloud.html
-    dampenedAlpha = e.alpha * .5;
-    jitter = 0.3;
-    ratio = 2.77; // xy ratio
+    	// Collision detection stolen from: http://vallandingham.me/building_a_bubble_cloud.html
+    	dampenedAlpha = e.alpha * .5;
+    	jitter = 0.3;
+    	ratio = 2.77; // xy ratio
 
-    vis.selectAll("g.node")
-      .each(stickyPeople())
-        .each(gravity(dampenedAlpha))
-          .each(collide(jitter))
-            .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
+		vis.selectAll("g.node")
+		  .each(stickyPeople())
+			.each(gravity(dampenedAlpha))
+			  .each(collide(jitter))
+				.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
 
-    vis.selectAll("line.link")
-      .attr("x1", function(d) { return d.source.x;})
-      .attr("y1", function(d) { return d.source.y; })
-      .attr("x2", function(d) { return d.target.x; })
-      .attr("y2", function(d) { return d.target.y; });
+		vis.selectAll("line.link")
+		  .attr("x1", function(d) { return d.source.x;})
+		  .attr("y1", function(d) { return d.source.y; })
+		  .attr("x2", function(d) { return d.target.x; })
+		  .attr("y2", function(d) { return d.target.y; });
 	  
-	 if ($("#network svg").css("visibility") != "visible") {
-     $("#network").css("visibility","visible");
-     $("#network svg").css("visibility","visible");
-		 $("#title").css("visibility","visible");
-		 $("#about").css("visibility","visible");
-		 $("#logo").css("visibility","visible");
-     $("#zoomWidget").css("visibility","visible");
-   }
-	}
+	  if ($("#network svg").css("visibility") != "visible") {
+		  $("#network").css("visibility","visible");
+		  $("#network svg").css("visibility","visible");
+		  $("#title").css("visibility","visible");
+		  $("#about").css("visibility","visible");
+		  $("#logo").css("visibility","visible");
+	      $("#zoomWidget").css("visibility","visible");
+		}
+	 }
   });
 }
 
@@ -1572,112 +1564,6 @@ function showRelations(rel) {
   }
 }
 
-//build the intial list used for dynamic mode
-function buildDynamicList() {
-
-  var listNodes = baseNodes;
-  listNodes.sort(function(a,b) {
-    var nameA = a.labelLast.toLowerCase(), nameB = b.labelLast.toLowerCase()
-    if (nameA < nameB) //sort string ascending
-      return -1
-    if (nameA > nameB)
-      return 1
-    return 0 //default return value (no sorting)
-  });
-
-  var domFragment = $("<div>");
-
-  for (x in listNodes) {
-    var id_css = listNodes[x].id.split("/")[listNodes[x].id.split("/").length-1].replace(cssSafe,'');
-    var id_img = $.trim(decodeURI(listNodes[x].id).split("\/")[decodeURI(listNodes[x].id).split("\/").length-1]);
-
-    var descText = '';
-    // if (descObject.hasOwnProperty(listNodes[x].id)) {
-    //  var desc = descObject[listNodes[x].id]['http://www.w3.org/2000/01/rdf-schema#comment'][0].value;
-    //  var r = /\\u([\d\w]{4})/gi;
-    //  desc = desc.replace(r, function (match, grp) {
-    //    return String.fromCharCode(parseInt(grp, 16)); } );
-    //  desc = unescape(desc);
-    //  descText = decodeURIComponent(desc);
-    //  descText = descText.replace(/&ndash;/gi,'-');
-    //  descText = descText.replace(/&amp;/gi,'&');
-    // }
-
-    if (descObject[listNodes[x].id]) {
-      if (descObject[listNodes[x].id]['http://dbpedia.org/ontology/abstract']) {
-        var desc = descObject[listNodes[x].id]['http://dbpedia.org/ontology/abstract'][0].value;
-        var r = /\\u([\d\w]{4})/gi;
-        desc = desc.replace(r, function (match, grp) {
-          return String.fromCharCode(parseInt(grp, 16)); } );
-        desc = unescape(desc);
-        descText = decodeURIComponent(desc);
-        descText = descText.replace(/&ndash;/gi,'-');
-        descText = descText.replace(/&amp;/gi,'&');
-
-        var link = listNodes[x].id.replace('dbpedia','wikipedia').replace('resource','wiki');
-
-        descText = descText.substring(0,250) + '...' + '<br>' + '<a class="popup-link" target="_blank" href="' + link + '">From Wikipedia</a><br><br>';
-      } else {
-        descText = "";
-      }
-    }
-
-    domFragment.append
-    (
-      $("<div>")
-        .attr("id","dynamic_" + id_css)
-        .addClass("dynamicListItem")
-        .data("label",listNodes[x].labelLast)
-        .data("id",listNodes[x].id)
-        .click(function() { if (dynamicPeople.indexOf($(this).data("id")) == -1) {usePerson = $(this).data("id"); dynamicPeople.push(usePerson); filter();}})
-        .append
-      (
-        $("<img>")
-          .attr("src",function()
-                {
-
-                  if (fileNames.indexOf(id_img+'.png') != -1) {
-                    return "/images/round/" + id_img+'.png';
-                  } else {
-                    return "";
-                  }
-                })
-          .css("visibility",function()
-               {
-                 if (fileNames.indexOf(id_img+'.png') != -1) {
-                   return "visible"
-                 } else {
-                   return "hidden"
-                 }
-               })
-      )
-        .append
-      (
-        $("<div>")
-          .text(listNodes[x].labelLast)
-          .attr("title", descText)
-
-      )
-    )
-  }
-
-  window.orginalDynamicListFragment = domFragment;
-}
-
-function dynamicFilterList() {
-
-  var searchTerm = $("#dynamicSearchInput").val().toLowerCase();
-
-  $(".dynamicListItem").each(function() {
-
-    if ($(this).data("label").toLowerCase().indexOf(searchTerm) == -1) {
-      $(this).css("display","none");
-    } else {
-      $(this).css("display","block");
-    }
-  });
-}
-
 //zoom/pan function called by mouse event
 function redraw(useScale) {
   //store the last event data
@@ -1695,11 +1581,8 @@ function redraw(useScale) {
     d3.selectAll(".labelRect").transition(800).style("opacity",1).attr("visibility","visible");
   }
 
-
   //transform the vis
-  vis.attr("transform",
-           "translate(" + trans + ")"
-           + " scale(" + scale + ")");
+  vis.attr("transform","translate(" + trans + ")" + " scale(" + scale + ")");
   y = 1/trans[1] + scale*.6;
   d3.selectAll(".circleText").attr("transform",
                                    "translate(" + 1/trans[0] + " " + y + ")"
