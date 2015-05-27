@@ -1195,6 +1195,11 @@ function showPopup(d,cords) {
                   .attr("class","popup-headshot")
                   .attr("alt", "<h2>" + nodes[usePersonIndex].label + "</h2><h4>" + birthDate + "–" + deathDate + "</h4><p>" + abstract + "</p>")
               )
+              .append(
+                $("<img>")
+                  .attr("src", "menu/plus.jpg")
+                  .attr("class","popup-headshot-plus")
+              )
           )
       );
 

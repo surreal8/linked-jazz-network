@@ -360,6 +360,17 @@ text.circleText {
   height: 300px;
 }
 
+.popup-headshot-cont:hover .popup-headshot-plus {
+  display: block;
+}
+
+.popup-headshot-plus {
+  margin-left: -69%;
+  margin-top: -95%;
+  opacity: 0.8;
+  display: none;
+}
+
 .popup-headshot {
   width: 100%;
 }
