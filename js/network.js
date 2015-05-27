@@ -181,35 +181,33 @@ jQuery(document).ready(function($) {
   jQuery("#zoomWidget").mouseenter(function() {console.log('whhyyy'); zoomWidgetObjDoZoom = true; });
 
   zoomWidgetObj = new Dragdealer('zoomWidget',
-                                 {
-                                   horizontal: false,
-                                   vertical: true,
-                                   y: 0.255555555,
-                                   animationCallback: function(x, y)
-                                   {
-                                     //if the value is the same as the intial value exit, to prevent a zoom even being called onload
-                                     if (y==0.255555555) {return false;}
-                                     //prevent too muuch zooooom
-                                     if (y<0.05) {return false;}
-
-
-                                     //are we  zooming based on a call from interaction with the slider, or is this callback being triggerd by the mouse event updating the slider position.
-                                     if (zoomWidgetObjDoZoom == true) {
-
-                                       y =y *4;
-
-                                       //this is how it works now until i figure out how to handle this better.
-                                       //translate to the middle of the vis and apply the zoom level
-                                       vis.attr("transform", "translate(" + [(visWidth/2)-(visWidth*y/2),(visHeight/2)-(visHeight*y/2)] + ")"  + " scale(" + y+ ")");
-                                       //store the new data into the zoom object so it is ready for mouse events
-                                       zoom.translate([(visWidth/2)-(visWidth*y/2),(visHeight/2)-(visHeight*y/2)]).scale(y);
-                                     }
-
-
-
-                                   }
-                                 });
-
+                  {
+                   horizontal: false,
+                   vertical: true,
+                   y: 0.255555555,
+                   animationCallback: function(x, y) {
+					   console.log('y', y);
+                       //if the value is the same as the intial value exit, to prevent a zoom even being called onload
+                       if (y==0.255555555) {
+						   return false;
+						   }
+                       //prevent too muuch zooooom
+                       if (y<0.15) {
+						   return false;
+						   }
+					   //are we  zooming based on a call from interaction with the slider, or is this callback being triggerd by the mouse event updating the slider position.
+					   if (zoomWidgetObjDoZoom == true) {
+						   y = y * 4;
+						   //this is how it works now until i figure out how to handle this better.
+                           //translate to the middle of the vis and apply the zoom level
+                           vis.attr("transform", "translate(" + [(visWidth/2)-(visWidth*y/2),(visHeight/2)-(visHeight*y/2)] + ")"  + " scale(" + y + ")");
+                           //store the new data into the zoom object so it is ready for mouse events
+                           zoom.translate([(visWidth/2)-(visWidth*y/2),(visHeight/2)-(visHeight*y/2)]).scale(y);
+						   zoom.event(vis);
+                           }
+					}
+                                 
+				});
 });
 
 function parseStateChangeVis() {
@@ -271,7 +269,7 @@ function initalizeNetwork() {
 	  zoom = d3.behavior.zoom()
       .translate([0,0])
       .scale(0.99)
-      .scaleExtent([1,3])	//how far it can zoom out and in
+      .scaleExtent([0,6])	//how far it can zoom out and in
       .on("zoom", redraw);
 	  
 	  vis = d3.select("#network").append("svg:svg")
@@ -287,6 +285,14 @@ function initalizeNetwork() {
 	  .attr("cx", "0")
 	  .attr("cy", "0")
 	  .attr("r", "15");
+	  
+	  vis.append('defs')
+	  .append('clipPath')
+	  .attr("id", "smallClip")
+	  .append('circle')
+	  .attr("cx", "0")
+	  .attr("cy", "0")
+	  .attr("r", "4");
 	  
 	  vis.append('svg:rect')
     //.attr('width', $("#network").width() + 1000)
@@ -785,7 +791,7 @@ function restart() {
   nodeEnter.append("svg:image")
     .attr("id", function(d) {  return "imageCircle_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
     .attr("class","imageCircle")
-	  .attr("clip-path","url(#myClip)")
+	.attr("clip-path","url(#myClip)")
     .attr("xlink:href", function(d) {
       var useId = $.trim(decodeURI(d.id).split("\/")[decodeURI(d.id).split("\/").length-1]);
       if (fileNames.indexOf(useId+'.png') == -1) {
@@ -1608,19 +1614,30 @@ function showRelations(rel) {
 
 //zoom/pan function called by mouse event
 function redraw(useScale) {
+  console.log('redraw!');
   //store the last event data
   trans = d3.event.translate;
   scale = d3.event.scale;
+  
+  
+  console.log('trans', trans);
+  console.log('scale', scale);
 
   if (scale > 2) {
-    //console.log(trans);
-    //console.log(scale);
     d3.selectAll(".backgroundCircle").style("fill", "#ffffff");
-    d3.selectAll(".imageCircle").transition(800).style("opacity",1).attr("visibility","visible");
+    d3.selectAll(".imageCircle").transition(800).style("opacity",1).attr("visibility","visible").attr("clip-path","url(#smallClip)");
   }
   if (scale > 3) {
     d3.selectAll(".labelText").transition(800).style("opacity",1).attr("visibility","visible");
     d3.selectAll(".labelRect").transition(800).style("opacity",1).attr("visibility","visible");
+  }
+  if (scale < 2) {
+    d3.selectAll(".backgroundCircle").style("fill", "#E9967A");
+    d3.selectAll(".imageCircle").transition(500).style("opacity",0).attr("visibility","hidden");
+  }
+  if (scale < 3) {
+    d3.selectAll(".labelText").transition(500).style("opacity",0).attr("visibility","hidden");
+    d3.selectAll(".labelRect").transition(500).style("opacity",0).attr("visibility","hidden");
   }
 
   //transform the vis
@@ -1638,11 +1655,43 @@ function redraw(useScale) {
   d3.selectAll(".labelRect").attr("transform",
                                   "translate(" + 1/trans[0] + " " + y + ")"
                                   + " scale(" + 1/scale + ")");
+	
+  d3.selectAll(".circleTextRectHighlight").attr("transform",
+                                  "translate(" + 1/trans[0] + " " + y + ")"
+                                  + " scale(" + 1/scale + ")");		
+								  
+  d3.selectAll(".backgroundCircleHighlight").attr("transform",
+                                  "translate(" + 1/trans[0] + " " + y + ")"
+                                  + " scale(" + 1/scale + ")");	
+  d3.selectAll(".imageCircleHighlight").attr("transform",
+                                  "translate(" + 1/trans[0] + " " + y + ")"
+                                  + " scale(" + 1/scale + ")");				  
+											  
+								  
 
   //we need to update the zoom slider, set the boolean to false so the slider change does not trigger a zoom change in the vis (from the slider callback function)
-  zoomWidgetObjDoZoom = false;
-  zoomWidgetObj.setValue(0,(scale/4));
+  //zoomWidgetObjDoZoom = false;
+  //zoomWidgetObj.setValue(0,(scale/4));
 }
+
+/*
+nodeEnter.append("svg:image")
+    .attr("id", function(d) {  return "imageCircle_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
+    .attr("class","imageCircle")
+	.attr("clip-path","url(#myClip)")
+    .attr("xlink:href", function(d) {
+      var useId = $.trim(decodeURI(d.id).split("\/")[decodeURI(d.id).split("\/").length-1]);
+      if (fileNames.indexOf(useId+'.png') == -1) {
+        return "menu/no_image.png";
+      } else {
+        return "images/headshotIcon/" + useId+'.png';
+      }
+    })
+    .attr("x", function(d) { return  (returnNodeSize(d)*-1); })
+    .attr("y", function(d) { return  (returnNodeSize(d)*-1); })
+    .attr("width", function(d) { return  (returnNodeSize(d)*2); })
+    .attr("height", function(d) { return  (returnNodeSize(d)*2); });
+	*/
 
 function showSpinner(text) {
   if (visMode == "person") {
