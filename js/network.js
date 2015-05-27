@@ -897,6 +897,13 @@ function restart() {
 
   force.start();
 
+  force.on("start", function(e){ 
+    if (visMode == "person") {
+      windowResize();
+      showPopup(nodes[usePersonIndex]);
+    }
+  });
+
   //controls the movement of the nodes
   force.on("tick", function(e){ 
 	if ((usePerson && nodes[usePersonIndex].connections < 15 && e.alpha <= 1) || e.alpha <= .02) {
