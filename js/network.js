@@ -1284,7 +1284,6 @@ function showPopup(d,cords) {
               .attr("class", "popup-row")
               .append(
                 $("<img>")
-                  .attr("width", "180px")
                   .attr("class", "popup-artwork")
                   .attr("src", artwork1Large)
                   .attr("alt", "<h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork1Title + "</h3><p>" + artwork1Date + "</p><p>" + artwork1Desc + "</p>" )
@@ -1317,7 +1316,6 @@ function showPopup(d,cords) {
               .attr("class", "popup-row")
               .append(
                 $("<img>")
-                  .attr("width", "180px")
                   .attr("class", "popup-artwork")
                   .attr("src", artwork2Large)
                   .attr("alt", "<h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork2Title + "</h3><h4>" + artwork2Date + "</h4><p>" + artwork2Desc + "</p>" )
@@ -1350,7 +1348,6 @@ function showPopup(d,cords) {
               .attr("class", "popup-row")
               .append(
                 $("<img>")
-                  .attr("width", "180px")
                   .attr("class", "popup-artwork")
                   .attr("src", artwork3Large)
                   .attr("alt", "<h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork3Title + "</h3><p>" + artwork3Date + "</p><p>" + artwork3Desc + "</p>" )
@@ -1383,7 +1380,6 @@ function showPopup(d,cords) {
               .attr("class", "popup-row")
               .append(
                 $("<img>")
-                  .attr("width", "180px")
                   .attr("class", "popup-artwork")
                   .attr("src", artwork4Large)
                   .attr("alt", "<h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork4Title + "</h3><p>" + artwork4Date + "</p><p>" + artwork4Desc + "</p>" )
