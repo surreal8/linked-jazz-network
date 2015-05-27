@@ -334,6 +334,14 @@ text.circleText {
   height: 100%;
 }
 
+#popUp::-webkit-scrollbar {
+  width: 3px;
+}
+
+#popUp::-webkit-scrollbar-thumb {
+  background: #000;
+}
+
 #popUp h2 {
   margin: 60px 0px 10px 20px;
   font-family: akkuratreg, sans-serif;
