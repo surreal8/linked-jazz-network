@@ -99,6 +99,7 @@ jQuery(document).ready(function($) {
 	$("#about").css("visibility","hidden");
 	$("#logo").css("visibility","hidden");
 	$("#zoomWidget").css("visibility","hidden");
+  $(".filter-button").css("visibility","hidden");
 
   showSpinner("");
 
@@ -651,6 +652,7 @@ function filter(clear) {
 	  $("#about").css("visibility","hidden");
 	  $("#logo").css("visibility","hidden");
 	  $("#zoomWidget").css("visibility","hidden");
+    $(".filter-button").css("visibility","hidden");
     vis.selectAll("g.node").remove();
     vis.selectAll("line.link").remove();
 
@@ -882,8 +884,6 @@ function restart() {
         
 	      $("#title").hide();
 	      $("#about").hide();
-	      d3.selectAll("#filter_all, #filter_family, #filter_friends, #filter_colleagues, #filter_mentors, #filter_employers").style("visibility", "visible");
-	      d3.selectAll("#network rect").style("fill", "white");
 
         // Highlight selected person
         vis.selectAll("#circleTextRect_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))
@@ -933,6 +933,9 @@ function restart() {
 		  $("#about").css("visibility","visible");
 		  $("#logo").css("visibility","visible");
 	    $("#zoomWidget").css("visibility","visible");
+      if (visMode == 'person') {
+        $(".filter-button").css("visibility","visible");
+      }
 		}
 	 }
   });
