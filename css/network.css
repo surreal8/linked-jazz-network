@@ -178,6 +178,17 @@ svg {
     background: linear-gradient(#eeeeee 0%, #ffffff 3%); /* Standard syntax (must be last) */
 }
 
+#network.with-popup svg {
+  background: none;
+}
+
+#network.with-popup {
+  background: -webkit-linear-gradient(left, #eeeeee 0%, #ffffff 3%); /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient(right, #eeeeee 0%, #ffffff 3%); /* For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient(right, #eeeeee 0%, #ffffff 3%); /* For Firefox 3.6 to 15 */
+  background: linear-gradient(to right, #eeeeee 0%, #ffffff 3%); /* Standard syntax (must be last) */
+}
+
 #network{
 	background-color:#fff;
 	-webkit-touch-callout: none;
@@ -316,10 +327,11 @@ text.circleText {
 	display:none;
 	position:absolute;
 	color:#000;
-	overflow:visible;
+	overflow-y:scroll;
 	font-size: 20px;
-    font-family: Verdana, Geneva, sans-serif;
+  font-family: Verdana, Geneva, sans-serif;
 	z-index: 50;
+  height: 100%;
 }
 
 #popUp h2 {
@@ -419,8 +431,9 @@ text.circleText {
 
 .popup-artwork {
   float: left;
-  margin-right: 60px;
+  margin-right: 20px;
   margin-top: 30px;
+  width: 30%;
 }
 
 .popup-artwork-desc {

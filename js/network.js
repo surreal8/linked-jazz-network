@@ -275,10 +275,10 @@ function initalizeNetwork() {
 	  
 	  vis = d3.select("#network").append("svg:svg")
       .attr("width", visWidth - 10)
-      .attr("height", visHeight - 10)
+      .attr("height", visHeight - 130)
       .append('svg:g')
       .call(zoom);//.call(d3.behavior.zoom().scaleExtent([0.25, 6]).on("zoom", redraw)) //.call(d3.behavior.zoom().on("zoom", redraw))
-	  
+
 	  vis.append('defs')
 	  .append('clipPath')
 	  .attr("id", "myClip")
@@ -293,6 +293,7 @@ function initalizeNetwork() {
       .attr('width', visWidth)
       .attr('height', visHeight)
       .attr('id', 'zoomCanvas')
+      .attr('fill-opacity', '0')
 	  .on("mousedown", function() {
  	  //the grabbing css rules do not work with web-kit, so specifiy the cursor hand and use the css for firefox.
 	  	d3.select("#zoomCanvas").style("cursor",  "url(menu/closedhand.png)");
@@ -650,13 +651,21 @@ function filter(clear) {
 	  $("#about").css("visibility","hidden");
 	  $("#logo").css("visibility","hidden");
 	  $("#zoomWidget").css("visibility","hidden");
-      vis.selectAll("g.node").remove();
-      vis.selectAll("line.link").remove();
+    vis.selectAll("g.node").remove();
+    vis.selectAll("line.link").remove();
 
-      nodes = [];
-      links = [];
-      force.nodes([]);
-      force.links([]);
+    
+    if (visMode == "person") {
+      $("#network").attr("class", "with-popup");
+    }
+    else {
+      $("#network").attr("class", "");
+    }
+
+    nodes = [];
+    links = [];
+    force.nodes([]);
+    force.links([]);
   }
 
   var workingNodes = [];
@@ -923,7 +932,7 @@ function restart() {
 		  $("#title").css("visibility","visible");
 		  $("#about").css("visibility","visible");
 		  $("#logo").css("visibility","visible");
-	      $("#zoomWidget").css("visibility","visible");
+	    $("#zoomWidget").css("visibility","visible");
 		}
 	 }
   });
