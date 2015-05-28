@@ -1222,8 +1222,8 @@ function showPopup(d,cords) {
           .attr("href", "network.php")
           .append(
             $("<div>")
-              .attr("class", "popup-back")
-              .text("BACK")
+              .attr("class", "popup-home")
+              .text("HOME")
           )
       );
 
