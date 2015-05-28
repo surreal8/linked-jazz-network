@@ -791,7 +791,7 @@ function restart() {
   nodeEnter.append("svg:image")
     .attr("id", function(d) {  return "imageCircle_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
     .attr("class","imageCircle")
-	.attr("clip-path","url(#myClip)")
+	  .attr("clip-path","url(#myClip)")
     .attr("xlink:href", function(d) {
       var useId = $.trim(decodeURI(d.id).split("\/")[decodeURI(d.id).split("\/").length-1]);
       if (fileNames.indexOf(useId+'.png') == -1) {
@@ -1080,13 +1080,6 @@ function showPopup(d,cords) {
 
     // Headshot
     var useId = $.trim(decodeURI(d.id).split("\/")[decodeURI(d.id).split("\/").length-1]);
-
-    if (headshotFileNames.indexOf(useId+'.png') == -1) {
-      var bannerImage = 'menu/headshottryagain1_icon.png';
-	  var largeImage = 'menu/headshottryagain1.png';
-    } else {
-      var useImage = '/images/headshot/' + useId+'.png'
-    }
 
     var abstract = "";
     var birthPlace = "";
@@ -1432,11 +1425,10 @@ function showPopup(d,cords) {
       .css("left", "0px")
       .css("top", "0px");
 
-    jQuery('.cboxElement').colorbox({transition:"fade", width:"100%", height:"100%", opacity: 0.92,
+    jQuery('.cboxElement').colorbox({transition:"fade", width:"100%", height:"100%", opacity: 0.92, scalePhotos: true,
                                      title: function(){ return jQuery(this).find('img').attr('copy');},
                                      onComplete:function () {
-                                       jQuery('.cboxPhoto').attr('style','width:55%; height:auto; margin:35px 180px');
-                                       jQuery('.cboxPhoto').css({'float': 'right'});
+                                       jQuery('.cboxPhoto').attr('style','max-width:55%; max-height: 92%; height: 92%; margin-top:35px; margin-left: 35%; margin-right: 180px; float: none;');
                                        jQuery('#cboxContent').prepend(
                                          $("<img>")
                                            .attr("src", "menu/logo-white.png")
