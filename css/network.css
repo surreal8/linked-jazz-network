@@ -248,6 +248,12 @@ svg {
   color: #fff;
 }
 
+.filter-button.disabled {
+  border-color: #ccc;
+  color: #ccc;
+	cursor: default; 
+}
+
 line.link {
 	stroke: #cccccc;	
 	stroke-width: 0.3;

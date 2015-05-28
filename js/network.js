@@ -39,6 +39,7 @@ var connectionCounter = {};     //holds each id as a property name w/ the value 
 var connectionIndex = {};       //an object with properties as id names, with values an array of strings of ids that person has connections to.
 var largestConnection = 0;
 var relationIndex = {};         //an object with properties as relationship ids, with values an array of strings of ids that have that relation.
+var connectionRelationIndex = {};         //an object with properties as relationship ids, with values an array of strings of ids that have that relation.
 
 var simlarityIndex = {}         //properties are id names, with the value being an array of objects with other ids and their # of matching connections
 var largestSimilarity = 0;      //holds the max number of similar connections any two nodes share in the network
@@ -62,6 +63,11 @@ var lineColor = d3.scale.category20c();
 var whistlerPersonIndex = 0;    //the index pos of the James_McNeill_whistler in the nodes array, so we dont have to loop through the whole thing everytime
 var roussellPersonIndex = 0;    //the index pos of the Theodore_Casimir_Roussell in the nodes array, so we dont have to loop through the whole thing everytime
 
+var relFriends = [];
+var relFamily = [];
+var relColleagues = [];
+var relMentors = [];
+var relEmployers = [];
 
 jQuery(document).ready(function($) {
 
@@ -81,13 +87,8 @@ jQuery(document).ready(function($) {
   /* Binds */
   $(window).resize(function() { windowResize();});
 
-  jQuery("#filter_all").click(function() {hideRelations(); });
-  jQuery("#filter_family").click(function() {showRelations("family"); });
-  jQuery("#filter_friends").click(function() {showRelations("friends"); });
-  jQuery("#filter_colleagues").click(function() {showRelations("colleagues"); });
-  jQuery("#filter_mentors").click(function() {showRelations("mentors"); });
-  jQuery("#filter_employers").click(function() {showRelations("employers"); });
-
+  resetFilters();
+  
   var history = History.getState();
   if (history.hash.search(/\?person=/) > -1) {
     visMode = "person";
@@ -102,6 +103,17 @@ jQuery(document).ready(function($) {
   $(".filter-button").css("visibility","hidden");
 
   showSpinner("");
+
+  relFriends.push("http://data.artic.edu/whistler/predicate/is_friend_of");
+  relFamily.push("http://data.artic.edu/whistler/predicate/is_relative_of");
+  relFamily.push("http://data.artic.edu/whistler/predicate/is_spouse_of");
+  relColleagues.push("http://data.artic.edu/whistler/predicate/is_colleague_of");
+  relMentors.push("http://data.artic.edu/whistler/predicate/is_student_of");
+  relMentors.push("http://data.artic.edu/whistler/predicate/is_teacher_of");
+  relEmployers.push("http://data.artic.edu/whistler/predicate/is_master_of");
+  relEmployers.push("http://data.artic.edu/whistler/predicate/is_assistant_to");
+  relEmployers.push("http://data.artic.edu/whistler/predicate/is_artist_of");
+  relEmployers.push("http://data.artic.edu/whistler/predicate/is_model_for");
 
   initalizeNetwork();
 
@@ -645,6 +657,55 @@ function buildBase() {
     if (relationIndex[pred].indexOf(id2) == -1) {
       relationIndex[pred].push(id2);
     }
+
+    //add this relationship to the connectionRelationIndex object
+    //has propery yet?
+    if (!connectionRelationIndex.hasOwnProperty(id1)) {
+      connectionRelationIndex[id1] = [];
+    }
+    if (!connectionRelationIndex.hasOwnProperty(id2)) {
+      connectionRelationIndex[id2] = [];
+    }
+    if (!connectionRelationIndex[id1].hasOwnProperty(pred)) {
+      connectionRelationIndex[id1][pred] = [];
+    }
+    if (!connectionRelationIndex[id2].hasOwnProperty(pred)) {
+      connectionRelationIndex[id2][pred] = [];
+    }
+
+    //does it have this connectionRelationship already?
+    if (connectionRelationIndex[id1][pred].indexOf(id2) == -1) {
+      connectionRelationIndex[id1][pred].push(id2);
+    }
+    if (connectionRelationIndex[id2][pred].indexOf(id1) == -1) {
+      connectionRelationIndex[id2][pred].push(id1);
+    }
+  }
+}
+
+function resetFilters() {
+  jQuery(".filter-button").removeClass("disabled");
+
+  jQuery("#filter_all").click(function() {hideRelations(); });
+  jQuery("#filter_family").click(function() {showRelations("family"); });
+  jQuery("#filter_friends").click(function() {showRelations("friends"); });
+  jQuery("#filter_colleagues").click(function() {showRelations("colleagues"); });
+  jQuery("#filter_mentors").click(function() {showRelations("mentors"); });
+  jQuery("#filter_employers").click(function() {showRelations("employers"); });
+}
+
+function disableFilter(preds, rel) {
+  var show = false;
+  for (var key in preds) {
+    if (connectionRelationIndex.hasOwnProperty(usePerson) && connectionRelationIndex[usePerson].hasOwnProperty(preds[key])) {
+      if (connectionRelationIndex[usePerson][preds[key]].length > 0) {
+        show = true;
+      }
+    }
+  }
+  if (!show) {
+    jQuery("#filter_" + rel).addClass("disabled");
+    jQuery("#filter_" + rel).off("click");
   }
 }
 
@@ -665,6 +726,14 @@ function filter(clear) {
     
     if (visMode == "person") {
       $("#network").attr("class", "with-popup");
+
+      resetFilters();
+
+      disableFilter(relFriends, "friends");
+      disableFilter(relFamily, "family");
+      disableFilter(relColleagues, "colleagues");
+      disableFilter(relMentors, "mentors");
+      disableFilter(relEmployers, "employers");
     }
     else {
       $("#network").attr("class", "");
@@ -1550,30 +1619,21 @@ function showRelations(rel) {
 
   // Which predicates to show
   var relationsToShow = [];
+  fill = "#E9967A";
   if (rel == "friends") {
-    relationsToShow.push("http://data.artic.edu/whistler/predicate/is_friend_of");
-    fill = "#E9967A";
+    relationsToShow = relFriends;
   }
   else if (rel == "family") {
-    relationsToShow.push("http://data.artic.edu/whistler/predicate/is_relative_of");
-    relationsToShow.push("http://data.artic.edu/whistler/predicate/is_spouse_of");
-    fill = "#E9967A";
+    relationsToShow = relFamily;
   }
   else if (rel == "colleagues") {
-    relationsToShow.push("http://data.artic.edu/whistler/predicate/is_colleague_of");
-    fill = "#E9967A";
+    relationsToShow = relColleagues;
   }
   else if (rel == "mentors") {
-    relationsToShow.push("http://data.artic.edu/whistler/predicate/is_student_of");
-    relationsToShow.push("http://data.artic.edu/whistler/predicate/is_teacher_of");
-    fill = "#E9967A";
+    relationsToShow = relMentors;
   }
   else if (rel == "employers") {
-    relationsToShow.push("http://data.artic.edu/whistler/predicate/is_master_of");
-    relationsToShow.push("http://data.artic.edu/whistler/predicate/is_assistant_to");
-    relationsToShow.push("http://data.artic.edu/whistler/predicate/is_artist_of");
-    relationsToShow.push("http://data.artic.edu/whistler/predicate/is_model_for");
-    fill = "#E9967A";
+    relationsToShow = relEmployers;
   }
 
   var nodesShown = [];
@@ -1581,8 +1641,8 @@ function showRelations(rel) {
   // Show circles and names
   for (var r in relationsToShow) {
     var rx = relationsToShow[r];
-    for (var e in relationIndex[rx]) {
-      var id = relationIndex[rx][e].split("/")[relationIndex[rx][e].split("/").length-1].replace(cssSafe,'');
+    for (var e in connectionRelationIndex[usePerson][rx]) {
+      var id = connectionRelationIndex[usePerson][rx][e].split("/")[connectionRelationIndex[usePerson][rx][e].split("/").length-1].replace(cssSafe,'');
       d3.selectAll("#backgroundCircle_" + id).attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", fill).style("stroke", fill);
       d3.selectAll("#imageCircle_"+ id).attr("display","block").style("fill", fill).attr("stroke", fill);
       d3.selectAll("#circleText_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1);
@@ -1593,11 +1653,19 @@ function showRelations(rel) {
       nodesShown.push(id);
     }
   }
-
+  var id = usePerson.split("/")[usePerson.split("/").length-1].replace(cssSafe,'');
+  d3.selectAll("#backgroundCircle_" + id).attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", fill).style("stroke", fill);
+  d3.selectAll("#imageCircle_"+ id).attr("display","block").style("fill", fill).attr("stroke", fill);
+  d3.selectAll("#circleText_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1);
+  d3.selectAll("#circleTextRect_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", "white").attr("stroke", "black");
+  d3.selectAll("#labelText_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1);
+  d3.selectAll("#labelRect_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", "white").attr("stroke", "black");
+  d3.selectAll(".marker path").style("fill", fill);
+  nodesShown.push(id);
   // Now show all the lines between all the nodes that we've shown
   for (var n in nodesShown) {
     for (var m in nodesShown) {
-      if (nodesShown[n] != nodesShown[m]) {
+      if (nodesShown[n] != nodesShown[m] && (nodesShown[n] == id || nodesShown[m] == id)) {
         d3.selectAll(".link_" + nodesShown[n] + ".link_" + nodesShown[m]).attr("stroke-opacity",1).style("fill-opacity",1).style("stroke-width",2).style("fill", fill).style("stroke", fill);
       }
     }
