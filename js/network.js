@@ -1156,9 +1156,12 @@ function showPopup(d,cords) {
     var deathPlace = "";
     var deathDate = "";
     var occupation = "";
+    var activeStartDate = "";
+    var activeEndDate = "";
     var headshotLarge = "";
     var headshotIcon = "";
     var headshotBanner = "";
+    var headshotBannerButtonColor = "";
     var artwork1Large = "";
     var artwork1Title = "";
     var artwork1Date = "";
@@ -1199,6 +1202,12 @@ function showPopup(d,cords) {
         occupation = descObject[usePerson]['http://dbpedia.org/ontology/occupation'][0].value;
         occupation = occupation.replace(new RegExp(', ', 'g'), '<br/>');
       }
+      if (descObject[usePerson]['http://lv.artic.edu/ns#activeStartDate']) {
+        activeStartDate = descObject[usePerson]['http://lv.artic.edu/ns#activeStartDate'][0].value;
+      }
+      if (descObject[usePerson]['http://lv.artic.edu/ns#activeEndDate']) {
+        activeEndDate = descObject[usePerson]['http://lv.artic.edu/ns#activeEndDate'][0].value;
+      }
       if (descObject[usePerson]['http://lv.artic.edu/ns#image']) {
         headshotLarge = descObject[usePerson]['http://lv.artic.edu/ns#image'][0].value;
       }
@@ -1208,6 +1217,10 @@ function showPopup(d,cords) {
       if (descObject[usePerson]['http://lv.artic.edu/ns#imageBanner']) {
         headshotBanner = descObject[usePerson]['http://lv.artic.edu/ns#imageBanner'][0].value;
       }
+      if (descObject[usePerson]['http://lv.artic.edu/ns#imageBannerButtonColor']) {
+        headshotBannerButtonColor = descObject[usePerson]['http://lv.artic.edu/ns#imageBannerButtonColor'][0].value;
+      }
+
       if (descObject[usePerson]['http://lv.artic.edu/ns#artwork1']) {
         artwork1Large = descObject[usePerson]['http://lv.artic.edu/ns#artwork1'][0].value;
       }
@@ -1261,6 +1274,44 @@ function showPopup(d,cords) {
       }
     }
 
+
+    var dates = "";
+    if (birthPlace) {
+      dates += birthPlace;
+    }
+    if (birthDate) {
+      if (birthPlace) {
+        dates += ", ";
+      }
+      dates += birthDate;
+    }
+    if (birthDate && deathDate) {
+      dates += "–";
+    }
+    if (deathPlace) {
+      dates += deathPlace;
+    }
+    if (deathDate) {
+      if (deathPlace) {
+        dates += ", ";
+      }
+      dates += deathDate;
+    }
+
+    if (activeStartDate || activeEndDate) {
+        console.log(activeStartDate);
+      dates = "Active: ";
+      if (activeStartDate) {
+        dates += activeStartDate;
+      }
+      if (activeStartDate || activeEndDate) {
+        dates += "–";
+      }
+      if (activeEndDate) {
+        dates += activeEndDate;
+      }
+    }
+
     jQuery('#popUp')
       .append(
         $("<a>")
@@ -1273,8 +1324,9 @@ function showPopup(d,cords) {
                 $("<img>")
                   .attr("src", headshotBanner)
                   .attr("class","popup-headshot")
+                  .attr("id","popup-headshot")
                   .attr("alt", nodes[usePersonIndex].label)
-                  .attr("copy", "<div class=\"divider\">—</div><h2>" + nodes[usePersonIndex].label + "</h2><h4>" + birthDate + "–" + deathDate + "</h4><p>" + abstract + "</p>")
+                  .attr("copy", "<div class=\"divider\">—</div><h2>" + nodes[usePersonIndex].label + "</h2><h4>" +  dates + "</h4><p>" + abstract + "</p>")
               )
               .append(
                 $("<img>")
@@ -1296,6 +1348,11 @@ function showPopup(d,cords) {
           )
       );
 
+    if (headshotBannerButtonColor) {
+      $('.popup-home').css('color', headshotBannerButtonColor)
+      $('.popup-home').css('border-color', headshotBannerButtonColor)
+    }
+
     // Name and dates
     jQuery('#popUp')
       .append(
@@ -1304,7 +1361,7 @@ function showPopup(d,cords) {
       )
       .append(
         $("<h3>")
-          .text(birthPlace + ", " + birthDate + "–" + deathPlace +", " + deathDate)
+          .text(dates)
       );
 
     // Metadata
@@ -1340,155 +1397,157 @@ function showPopup(d,cords) {
           .attr("class", "clear")
       );
 
-    popupWorks = $("<div>")
-      .attr("class", "popup-artworks")
+    if (artwork1Large || artwork2Large || artwork3Large || artwork4Large) {
+      popupWorks = $("<div>")
+        .attr("class", "popup-artworks")
 
-    popupWorks.append(
-      $("<div>")
-        .attr("class", "popup-row")
-        .append(
-          $('<div>')
-            .attr("class", "divider")
-            .text("—")
-        )
-        .append($("<h4>").html("WORKS"))
-    );
-
-    // Works
-    if (artwork1Large) {
       popupWorks.append(
-        $("<a>")
-          .attr("href", artwork1Large)
-          .attr("class", "cboxElement")
+        $("<div>")
+          .attr("class", "popup-row")
           .append(
-            $("<span>")
-              .attr("class", "popup-row")
-              .append(
-                $("<img>")
-                  .attr("class", "popup-artwork")
-                  .attr("src", artwork1Large)
-                  .attr("alt", nodes[usePersonIndex].label)
-                  .attr("copy", "<div class=\"divider\">—</div><h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork1Title + "</h3><h4>" + artwork1Date + "</h4><p>" + artwork1Desc + "</p>" )
-              )
-              .append(
-                $("<span>")
-                  .attr("class", "popup-artwork-desc")
-                  .append(
-                    $("<span>")
-                      .attr("class", "popup-title")
-                      .html(artwork1Title)
-                  )
-                  .append(
-                    $("<span>")
-                      .attr("class", "popup-date")
-                      .html(artwork1Date)
-                  )
-              )
+            $('<div>')
+              .attr("class", "divider")
+              .text("—")
           )
+          .append($("<h4>").html("WORKS"))
       );
-    }
 
-    if (artwork2Large) {
-      popupWorks.append(
-        $("<a>")
-          .attr("href", artwork2Large)
-          .attr("class", "cboxElement")
-          .append(
-            $("<span>")
-              .attr("class", "popup-row")
-              .append(
-                $("<img>")
-                  .attr("class", "popup-artwork")
-                  .attr("src", artwork2Large)
-                  .attr("alt", nodes[usePersonIndex].label)
-                  .attr("copy", "<div class=\"divider\">—</div><h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork2Title + "</h3><h4>" + artwork2Date + "</h4><p>" + artwork2Desc + "</p>" )
-              )
-              .append(
-                $("<span>")
-                  .attr("class", "popup-artwork-desc")
-                  .append(
-                    $("<span>")
-                      .attr("class", "popup-title")
-                      .html(artwork2Title)
-                  )
-                  .append(
-                    $("<span>")
-                      .attr("class", "popup-date")
-                      .html(artwork2Date)
-                  )
-              )
-          )
-      );
-    }
+      // Works
+      if (artwork1Large) {
+        popupWorks.append(
+          $("<a>")
+            .attr("href", artwork1Large)
+            .attr("class", "cboxElement")
+            .append(
+              $("<span>")
+                .attr("class", "popup-row")
+                .append(
+                  $("<img>")
+                    .attr("class", "popup-artwork")
+                    .attr("src", artwork1Large)
+                    .attr("alt", nodes[usePersonIndex].label)
+                    .attr("copy", "<div class=\"divider\">—</div><h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork1Title + "</h3><h4>" + artwork1Date + "</h4><p>" + artwork1Desc + "</p>" )
+                )
+                .append(
+                  $("<span>")
+                    .attr("class", "popup-artwork-desc")
+                    .append(
+                      $("<span>")
+                        .attr("class", "popup-title")
+                        .html(artwork1Title)
+                    )
+                    .append(
+                      $("<span>")
+                        .attr("class", "popup-date")
+                        .html(artwork1Date)
+                    )
+                )
+            )
+        );
+      }
 
-    if (artwork3Large) {
-      popupWorks.append(
-        $("<a>")
-          .attr("href", artwork3Large)
-          .attr("class", "cboxElement")
-          .append(
-            $("<span>")
-              .attr("class", "popup-row")
-              .append(
-                $("<img>")
-                  .attr("class", "popup-artwork")
-                  .attr("src", artwork3Large)
-                  .attr("alt", nodes[usePersonIndex].label)
-                  .attr("copy", "<div class=\"divider\">—</div><h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork3Title + "</h3><h4>" + artwork3Date + "</h4><p>" + artwork3Desc + "</p>" )
-              )
-              .append(
-                $("<span>")
-                  .attr("class", "popup-artwork-desc")
-                  .append(
-                    $("<span>")
-                      .attr("class", "popup-title")
-                      .html(artwork3Title)
-                  )
-                  .append(
-                    $("<span>")
-                      .attr("class", "popup-date")
-                      .html(artwork3Date)
-                  )
-              )
-          )
-      );
-    }
+      if (artwork2Large) {
+        popupWorks.append(
+          $("<a>")
+            .attr("href", artwork2Large)
+            .attr("class", "cboxElement")
+            .append(
+              $("<span>")
+                .attr("class", "popup-row")
+                .append(
+                  $("<img>")
+                    .attr("class", "popup-artwork")
+                    .attr("src", artwork2Large)
+                    .attr("alt", nodes[usePersonIndex].label)
+                    .attr("copy", "<div class=\"divider\">—</div><h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork2Title + "</h3><h4>" + artwork2Date + "</h4><p>" + artwork2Desc + "</p>" )
+                )
+                .append(
+                  $("<span>")
+                    .attr("class", "popup-artwork-desc")
+                    .append(
+                      $("<span>")
+                        .attr("class", "popup-title")
+                        .html(artwork2Title)
+                    )
+                    .append(
+                      $("<span>")
+                        .attr("class", "popup-date")
+                        .html(artwork2Date)
+                    )
+                )
+            )
+        );
+      }
 
-    if (artwork4Large) {
-      popupWorks.append(
-        $("<a>")
-          .attr("href", artwork4Large)
-          .attr("class", "cboxElement")
-          .append(
-            $("<span>")
-              .attr("class", "popup-row")
-              .append(
-                $("<img>")
-                  .attr("class", "popup-artwork")
-                  .attr("src", artwork4Large)
-                  .attr("alt", nodes[usePersonIndex].label)
-                  .attr("copy", "<div class=\"divider\">—</div><h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork4Title + "</h3><h4>" + artwork4Date + "</h4><p>" + artwork4Desc + "</p>" )
-              )
-              .append(
-                $("<span>")
-                  .attr("class", "popup-artwork-desc")
-                  .append(
-                    $("<span>")
-                      .attr("class", "popup-title")
-                      .html(artwork4Title)
-                  )
-                  .append(
-                    $("<span>")
-                      .attr("class", "popup-date")
-                      .html(artwork4Date)
-                  )
-              )
-          )
-      );
-    }
+      if (artwork3Large) {
+        popupWorks.append(
+          $("<a>")
+            .attr("href", artwork3Large)
+            .attr("class", "cboxElement")
+            .append(
+              $("<span>")
+                .attr("class", "popup-row")
+                .append(
+                  $("<img>")
+                    .attr("class", "popup-artwork")
+                    .attr("src", artwork3Large)
+                    .attr("alt", nodes[usePersonIndex].label)
+                    .attr("copy", "<div class=\"divider\">—</div><h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork3Title + "</h3><h4>" + artwork3Date + "</h4><p>" + artwork3Desc + "</p>" )
+                )
+                .append(
+                  $("<span>")
+                    .attr("class", "popup-artwork-desc")
+                    .append(
+                      $("<span>")
+                        .attr("class", "popup-title")
+                        .html(artwork3Title)
+                    )
+                    .append(
+                      $("<span>")
+                        .attr("class", "popup-date")
+                        .html(artwork3Date)
+                    )
+                )
+            )
+        );
+      }
 
-    jQuery('#popUp')
-      .append(popupWorks);
+      if (artwork4Large) {
+        popupWorks.append(
+          $("<a>")
+            .attr("href", artwork4Large)
+            .attr("class", "cboxElement")
+            .append(
+              $("<span>")
+                .attr("class", "popup-row")
+                .append(
+                  $("<img>")
+                    .attr("class", "popup-artwork")
+                    .attr("src", artwork4Large)
+                    .attr("alt", nodes[usePersonIndex].label)
+                    .attr("copy", "<div class=\"divider\">—</div><h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork4Title + "</h3><h4>" + artwork4Date + "</h4><p>" + artwork4Desc + "</p>" )
+                )
+                .append(
+                  $("<span>")
+                    .attr("class", "popup-artwork-desc")
+                    .append(
+                      $("<span>")
+                        .attr("class", "popup-title")
+                        .html(artwork4Title)
+                    )
+                    .append(
+                      $("<span>")
+                        .attr("class", "popup-date")
+                        .html(artwork4Date)
+                    )
+                )
+            )
+        );
+      }
+
+      jQuery('#popUp')
+        .append(popupWorks);
+    }
 
     jQuery("#popUp")
       .css("left", "0px")
