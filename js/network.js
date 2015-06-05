@@ -61,7 +61,7 @@ var fill = d3.scale.category10();
 var lineColor = d3.scale.category20c();
 
 var whistlerPersonIndex = 0;    //the index pos of the James_McNeill_whistler in the nodes array, so we dont have to loop through the whole thing everytime
-var roussellPersonIndex = 0;    //the index pos of the Theodore_Casimir_Roussell in the nodes array, so we dont have to loop through the whole thing everytime
+var roussellPersonIndex = 0;    //the index pos of the Theodore_Roussell in the nodes array, so we dont have to loop through the whole thing everytime
 
 var relFriends = [];
 var relFamily = [];
@@ -802,7 +802,7 @@ function filter(clear) {
     if (workingNodes[aNode].id == 'http://data.artic.edu/whistler/person/James_McNeill_Whistler') {
       whistlerPersonIndex = aNode;
     }
-    if (workingNodes[aNode].id == 'http://data.artic.edu/whistler/person/Theodore_Casimir_Roussel') {
+    if (workingNodes[aNode].id == 'http://data.artic.edu/whistler/person/Theodore_Roussel') {
       roussellPersonIndex = aNode;
     }
   }
@@ -862,12 +862,12 @@ function restart() {
     .attr("class","imageCircle")
 	  .attr("clip-path","url(#myClip)")
     .attr("xlink:href", function(d) {
-      var useId = $.trim(decodeURI(d.id).split("\/")[decodeURI(d.id).split("\/").length-1]);
-      if (fileNames.indexOf(useId+'.png') == -1) {
-        return "menu/no_image.png";
-      } else {
-        return "images/headshotIcon/" + useId+'.png';
+      if (descObject.hasOwnProperty(d.id)) {
+        if (descObject[d.id]['http://lv.artic.edu/ns#imageIcon']) {
+          return descObject[d.id]['http://lv.artic.edu/ns#imageIcon'][0].value;
+        }
       }
+      return "menu/no_image.png";
     })
     .attr("x", function(d) { return  (returnNodeSize(d)*-1); })
     .attr("y", function(d) { return  (returnNodeSize(d)*-1); })
@@ -886,6 +886,9 @@ function restart() {
     .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
     .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8; })
     .text(function(d) { return d.label; });
+
+  nodeEnter.selectAll(".circleText")
+    .attr("textLength", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width * 1.1; });
 
   nodeEnter.selectAll(".circleTextRect")
     .attr("x", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().x; })
@@ -906,6 +909,9 @@ function restart() {
     .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+20; })
     .attr("visibility", "hidden")
     .text("ARTIST");
+
+    nodeEnter.selectAll(".labelText")
+    .attr("textLength", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width * 1.1; });
 
   nodeEnter.selectAll(".labelRect")
     .attr("x", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().x; })
@@ -928,7 +934,7 @@ function restart() {
         nodes[aNode].fixed = true;
       }
 
-      if (nodes[aNode].id == 'http://data.artic.edu/whistler/person/Theodore_Casimir_Roussel') {
+      if (nodes[aNode].id == 'http://data.artic.edu/whistler/person/Theodore_Roussel') {
         nodes[aNode].x = visWidth/2 - 100;
         nodes[aNode].y = visHeight/2;
         nodes[aNode].fixed = true;
@@ -937,17 +943,17 @@ function restart() {
       // Highlight Whistler and Roussell
       vis.selectAll("#circleTextRect_James_McNeill_Whistler")
         .attr("class", "circleTextRectHighlight");
-      vis.selectAll("#circleTextRect_Theodore_Casimir_Roussel")
+      vis.selectAll("#circleTextRect_Theodore_Roussel")
         .attr("class", "circleTextRectHighlight");
 
       vis.selectAll("#imageCircle_James_McNeill_Whistler")
         .attr("class", "imageCircleHighlight");
-      vis.selectAll("#imageCircle_Theodore_Casimir_Roussel")
+      vis.selectAll("#imageCircle_Theodore_Roussel")
         .attr("class", "imageCircleHighlight");
 
       vis.selectAll("#backgroundCircle_James_McNeill_Whistler")
         .attr("class", "backgroundCircleHighlight");
-      vis.selectAll("#backgroundCircle_Theodore_Casimir_Roussel")
+      vis.selectAll("#backgroundCircle_Theodore_Roussel")
         .attr("class", "backgroundCircleHighlight");
     }
     else {
@@ -1029,7 +1035,7 @@ function stickyPeople() {
         d.x = visWidth/2 + 100;
         d.y = visHeight/2;
       }
-      if (d.id == 'http://data.artic.edu/whistler/person/Theodore_Casimir_Roussel') {
+      if (d.id == 'http://data.artic.edu/whistler/person/Theodore_Roussel') {
         d.x = visWidth/2 - 100;
         d.y = visHeight/2;
       }
@@ -1083,12 +1089,12 @@ function collide(jitter) {
           moveY = y * distance;
           if (moveX == 0) { moveX = 1; }
           if (moveY == 0) { moveY = 1; }
-          if ((visMode != 'person' && (d.id == 'http://data.artic.edu/whistler/person/James_McNeill_Whistler' || d.id == 'http://data.artic.edu/whistler/person/Theodore_Casimir_Roussel'))
+          if ((visMode != 'person' && (d.id == 'http://data.artic.edu/whistler/person/James_McNeill_Whistler' || d.id == 'http://data.artic.edu/whistler/person/Theodore_Roussel'))
              || (visMode == 'person' && (d.id == usePerson))) {
             d2.x += moveX * 2;
             d2.y += moveY * 2;
           }
-          else if ((visMode != 'person' && (d2.id == 'http://data.artic.edu/whistler/person/James_McNeill_Whistler' || d2.id == 'http://data.artic.edu/whistler/person/Theodore_Casimir_Roussel'))
+          else if ((visMode != 'person' && (d2.id == 'http://data.artic.edu/whistler/person/James_McNeill_Whistler' || d2.id == 'http://data.artic.edu/whistler/person/Theodore_Roussel'))
              || (visMode == 'person' && (d2.id == usePerson))) {
             d.x -= moveX * 2;
             d.y -= moveY * 2;
@@ -1109,7 +1115,7 @@ function returnNodeSize(d) {
   if (usePerson && d.id == usePerson) {
     return 15;
   }
-  else if (!usePerson && (d.label == "James McNeill Whistler" || d.label == "Theodore Casimir Roussel")) {
+  else if (!usePerson && (d.label == "James McNeill Whistler" || d.label == "Theodore Roussel")) {
     return 15;
   }
   else {
@@ -1119,7 +1125,7 @@ function returnNodeSize(d) {
 
 //replacing returnNodeSize for testing 2.10.ts
 function returnTextLoc(d) {
-  if (d.label == "James McNeill Whistler" || d.label == "Theodore Casimir Roussel") {
+  if (d.label == "James McNeill Whistler" || d.label == "Theodore Roussel") {
     return 20;
   } else {
     return 15;

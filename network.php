@@ -1,32 +1,3 @@
-<?php
-/*
-  This is a simple php snipt it scrape the image directory for images that are available and their metadata (youtube videos)
-  TODO: Script to put all images into a css style sheet as base64 data
-*/
-if ($handle = opendir('images/headshotIcon/')) {
-	$jsFileNames='';
-	$jsMetaNames='';
-  while (false !== ($entry = readdir($handle))) {
-    if ($entry != "." && $entry != "..") {
-			if (strpos($entry,'.png')!==false){
-				$jsFileNames .= '"' . addslashes($entry) . '",';
-			}
-			if (strpos($entry,'.meta')!==false){
-				$jsMetaNames .= "'" . $entry . "',";
-			}
-    }
-  }
-
-  //these get put out to the html render as JS vars.
-	$jsFileNames = substr($jsFileNames,0,strlen($jsFileNames)-1);
-	$jsFileNames = "var fileNames = [" . $jsFileNames . "];";
-	$jsMetaNames = substr($jsMetaNames,0,strlen($jsMetaNames)-1);
-	$jsMetaNames = "var metaNames = [" . $jsMetaNames . "];";
-	
-  closedir($handle);
-}
-?>
-
 <!DOCTYPE HTML>
 <html>
 <head>
