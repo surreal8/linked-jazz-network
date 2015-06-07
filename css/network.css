@@ -200,7 +200,6 @@ svg {
 }
 
 #network rect {
-	fill: none;
 	cursor: url(menu/openhand.png);
 }
 
