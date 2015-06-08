@@ -13,8 +13,6 @@
 <script src="js/vex.min.js"></script> 
 <script src="js/network.js"></script> 
 
-<script type="text/javascript"><?=$jsFileNames?><?=$jsMetaNames?></script>
-
 <link rel="stylesheet" href="css/network.css">
 <link rel="stylesheet" href="css/vex.css">
 <link rel="stylesheet" href="css/vex-theme-os.css">
