@@ -207,16 +207,76 @@ jQuery(document).ready(function($) {
                        if (y<0.05) {
 						   return false;
 						   }
-					   //are we  zooming based on a call from interaction with the slider, or is this callback being triggerd by the mouse event updating the slider position.
-					   if (zoomWidgetObjDoZoom == true) {
+
+               // Keep some elements the same size regardless of zoom level
 						   y = y * 4;
+               d3.selectAll(".circleText").attr("transform","scale(" + 1/y + ")");
+               d3.selectAll(".circleTextRect").attr("transform","scale(" + 1/y + ")");
+               d3.selectAll(".labelText").attr("transform","scale(" + 1/y + ")");
+               d3.selectAll(".labelRect").attr("transform","scale(" + 1/y + ")");
+               d3.selectAll(".circleTextRectHighlight").attr("transform","scale(" + 1/y + ")");		
+               //d3.selectAll(".backgroundCircleHighlight").attr("transform","scale(" + 1/y + ")");	
+               //d3.selectAll(".imageCircleHighlight").attr("transform","scale(" + 1/y + ")");	 
+
+               // Implement various zoom levels
+               if (y >= 2 && y < 3) {
+                 d3.selectAll(".backgroundCircle").attr("r", "15");
+                 d3.selectAll(".backgroundCircle").style("fill", "#ffffff");
+	               if ($(".imageCircle").css("visibility") != "visible") {
+                   d3.selectAll(".imageCircle").transition(800).style("opacity",1).attr("visibility","visible");
+                 }
+                 d3.selectAll(".imageCircle")
+                   .attr("clip-path","url(#smallClip)")
+                   .attr("width", 15*2)
+                   .attr("height", 15*2)
+                   .attr("x", 15*-1)
+                   .attr("y", 15*-1)
+	                 .attr("clip-path","url(#myClip)");
+                 d3.selectAll(".labelText").transition(500).style("opacity",0).attr("visibility","hidden");
+                 d3.selectAll(".labelRect").transition(500).style("opacity",0).attr("visibility","hidden");
+               }
+               if (y > 3) {
+	               if ($(".labelText").css("visibility") != "visible") {
+                   d3.selectAll(".labelText").transition(800).style("opacity",1).attr("visibility","visible");
+                   d3.selectAll(".labelRect").transition(800).style("opacity",1).attr("visibility","visible");
+                 }
+               }
+
+               // Default view
+               if (y < 2) {
+                 d3.selectAll(".backgroundCircle").attr("r", function(d) { return  returnNodeSize(d); });
+                 d3.selectAll(".backgroundCircle").style("fill", "#E9967A");
+                 d3.selectAll(".imageCircle").transition(500).style("opacity",0).attr("visibility","hidden")
+                   .attr("width", function(d) { return  (returnNodeSize(d)*2); })
+                   .attr("height", function(d) { return  (returnNodeSize(d)*2); })
+                   .attr("x", function(d) { return  (returnNodeSize(d)*-1); })
+                   .attr("y", function(d) { return  (returnNodeSize(d)*-1); })
+	                 .attr("clip-path","url(#smallClip)");
+                 d3.selectAll(".circleText")
+                   .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8; })
+                 d3.selectAll(".labelText").attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)*1.8+20; })
+               }
+               else {
+                 d3.selectAll(".circleText")
+                   .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)*(y-1); })
+                 d3.selectAll(".labelText").attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)*(y-1)+20; })
+               }
+               d3.selectAll(".circleTextRect")
+                 .attr("y", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
+               d3.selectAll(".circleTextRectHighlight")
+                 .attr("y", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
+               d3.selectAll(".labelRect")
+                 .attr("y", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
+
+                     //are we  zooming based on a call from interaction with the slider, or is this callback being triggerd by the mouse event updating the slider position.
+					   if (zoomWidgetObjDoZoom == true) {
 						   //this is how it works now until i figure out how to handle this better.
                            //translate to the middle of the vis and apply the zoom level
                            vis.attr("transform", "translate(" + [(visWidth/2)-(visWidth*y/2),(visHeight/2)-(visHeight*y/2)] + ")"  + " scale(" + y + ")");
                            //store the new data into the zoom object so it is ready for mouse events
                            zoom.translate([(visWidth/2)-(visWidth*y/2),(visHeight/2)-(visHeight*y/2)]).scale(y);
 						   //zoom.event(vis);
-                           }
+             }
 					}
                                  
 				});
@@ -939,13 +999,13 @@ function restart() {
       if (nodes[aNode].id == 'http://data.artic.edu/whistler/person/James_McNeill_Whistler') {
         nodes[aNode].x = visWidth/2 + 100;
         nodes[aNode].y = visHeight/2;
-        nodes[aNode].fixed = true;
+        //nodes[aNode].fixed = true;
       }
 
       if (nodes[aNode].id == 'http://data.artic.edu/whistler/person/Theodore_Roussel') {
         nodes[aNode].x = visWidth/2 - 100;
         nodes[aNode].y = visHeight/2;
-        nodes[aNode].fixed = true;
+        //nodes[aNode].fixed = true;
       }
 
       // Highlight Whistler and Roussell
@@ -1756,6 +1816,7 @@ function redraw(useScale) {
   console.log('trans', trans);
   console.log('scale', scale);
 
+  /*
   if (scale > 2) {
     d3.selectAll(".backgroundCircle").style("fill", "#ffffff");
     d3.selectAll(".imageCircle").transition(800).style("opacity",1).attr("visibility","visible").attr("clip-path","url(#smallClip)");
@@ -1772,7 +1833,8 @@ function redraw(useScale) {
     d3.selectAll(".labelText").transition(500).style("opacity",0).attr("visibility","hidden");
     d3.selectAll(".labelRect").transition(500).style("opacity",0).attr("visibility","hidden");
   }
-
+  */
+  
   //transform the vis
   vis.attr("transform","translate(" + trans + ")" + " scale(" + scale + ")");
   /*y = 1/trans[1] + scale*.6;
