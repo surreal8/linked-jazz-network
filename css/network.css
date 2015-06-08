@@ -135,7 +135,7 @@ h1 {
 	text-align: center;
 	top: 20px;
 	position: relative;
-	font-size: 25px;
+	font-size: 27px;
 	letter-spacing: 15px;
 	line-height: 1.5em;
 	color: #000000;
@@ -148,7 +148,7 @@ h1 {
 
 #about{
   position: absolute;
-  top: 20px;
+  top: 32px;
   right: 20px;
   color: #000000;
   display: block;
@@ -549,7 +549,7 @@ text.circleText {
 
  #logo{
 	 position:absolute; 
-	 top:30px;
+	 top:34px;
 	 left:30px;
 	 width:48px;
 	 height:auto;
