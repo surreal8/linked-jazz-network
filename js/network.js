@@ -1332,7 +1332,7 @@ function showPopup(d,cords) {
                   .attr("class","popup-headshot")
                   .attr("id","popup-headshot")
                   .attr("alt", nodes[usePersonIndex].label)
-                  .attr("copy", "<div class=\"divider\">—</div><h2>" + nodes[usePersonIndex].label + "</h2><h4>" +  dates + "</h4><p>" + abstract + "</p>")
+                  .attr("copy", "<div class=\"divider\"><img src=\"menu/dash.png\"/></div><h2>" + nodes[usePersonIndex].label + "</h2><h4>" +  dates + "</h4><p>" + abstract + "</p>")
               )
               .append(
                 $("<img>")
@@ -1378,7 +1378,7 @@ function showPopup(d,cords) {
           .append(
             $('<div>')
               .attr("class", "divider")
-              .text("—")
+              .html("<img src=\"menu/dash.png\"/>")
           )
           .append($("<h4>").text("OCCUPATION"))
           .append($("<p>").html(occupation))
@@ -1392,7 +1392,7 @@ function showPopup(d,cords) {
           .append(
             $('<div>')
               .attr("class", "divider")
-              .text("—")
+              .html("<img src=\"menu/dash.png\"/>")
           )
           .append($("<p>").html(abstract))
       );
@@ -1413,7 +1413,7 @@ function showPopup(d,cords) {
           .append(
             $('<div>')
               .attr("class", "divider")
-              .text("—")
+              .html("<img src=\"menu/dash.png\"/>")
           )
           .append($("<h4>").html("WORKS"))
       );
@@ -1432,7 +1432,7 @@ function showPopup(d,cords) {
                     .attr("class", "popup-artwork")
                     .attr("src", artwork1Large)
                     .attr("alt", nodes[usePersonIndex].label)
-                    .attr("copy", "<div class=\"divider\">—</div><h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork1Title + "</h3><h4>" + artwork1Date + "</h4><p>" + artwork1Desc + "</p>" )
+                    .attr("copy", "<div class=\"divider\"><img src=\"menu/dash.png\"/></div><h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork1Title + "</h3><h4>" + artwork1Date + "</h4><p>" + artwork1Desc + "</p>" )
                 )
                 .append(
                   $("<span>")
@@ -1465,7 +1465,7 @@ function showPopup(d,cords) {
                     .attr("class", "popup-artwork")
                     .attr("src", artwork2Large)
                     .attr("alt", nodes[usePersonIndex].label)
-                    .attr("copy", "<div class=\"divider\">—</div><h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork2Title + "</h3><h4>" + artwork2Date + "</h4><p>" + artwork2Desc + "</p>" )
+                    .attr("copy", "<div class=\"divider\"><img src=\"menu/dash.png\"/></div><h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork2Title + "</h3><h4>" + artwork2Date + "</h4><p>" + artwork2Desc + "</p>" )
                 )
                 .append(
                   $("<span>")
@@ -1498,7 +1498,7 @@ function showPopup(d,cords) {
                     .attr("class", "popup-artwork")
                     .attr("src", artwork3Large)
                     .attr("alt", nodes[usePersonIndex].label)
-                    .attr("copy", "<div class=\"divider\">—</div><h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork3Title + "</h3><h4>" + artwork3Date + "</h4><p>" + artwork3Desc + "</p>" )
+                    .attr("copy", "<div class=\"divider\"><img src=\"menu/dash.png\"/></div><h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork3Title + "</h3><h4>" + artwork3Date + "</h4><p>" + artwork3Desc + "</p>" )
                 )
                 .append(
                   $("<span>")
@@ -1531,7 +1531,7 @@ function showPopup(d,cords) {
                     .attr("class", "popup-artwork")
                     .attr("src", artwork4Large)
                     .attr("alt", nodes[usePersonIndex].label)
-                    .attr("copy", "<div class=\"divider\">—</div><h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork4Title + "</h3><h4>" + artwork4Date + "</h4><p>" + artwork4Desc + "</p>" )
+                    .attr("copy", "<div class=\"divider\"><img src=\"menu/dash.png\"/></div><h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork4Title + "</h3><h4>" + artwork4Date + "</h4><p>" + artwork4Desc + "</p>" )
                 )
                 .append(
                   $("<span>")
