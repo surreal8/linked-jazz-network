@@ -149,7 +149,7 @@ h1 {
 #about{
   position: absolute;
   top: 32px;
-  right: 20px;
+  right: 30px;
   color: #000000;
   display: block;
   background-color: #ffffff;
@@ -453,6 +453,7 @@ text.circleText {
 .popup-artwork-desc {
   float: left;
   margin-top: 60px;
+  width: 340px;
 }
 
 .popup-title {
