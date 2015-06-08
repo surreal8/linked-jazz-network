@@ -908,7 +908,15 @@ function restart() {
     .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
     .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+20; })
     .attr("visibility", "hidden")
-    .text("ARTIST");
+    .text(function(d) {
+      var occupation = "ARTIST";
+      if (descObject.hasOwnProperty(d.id)) {
+        if (descObject[d.id]['http://dbpedia.org/ontology/occupation']) {
+          occupation = descObject[d.id]['http://dbpedia.org/ontology/occupation'][0].value;
+        }
+      }
+      return occupation;
+    });
 
     nodeEnter.selectAll(".labelText")
     .attr("textLength", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width * 1.1; });
