@@ -204,7 +204,7 @@ jQuery(document).ready(function($) {
 						   return false;
 						   }
                        //prevent too muuch zooooom
-                       if (y<0.15) {
+                       if (y<0.05) {
 						   return false;
 						   }
 					   //are we  zooming based on a call from interaction with the slider, or is this callback being triggerd by the mouse event updating the slider position.
@@ -215,7 +215,7 @@ jQuery(document).ready(function($) {
                            vis.attr("transform", "translate(" + [(visWidth/2)-(visWidth*y/2),(visHeight/2)-(visHeight*y/2)] + ")"  + " scale(" + y + ")");
                            //store the new data into the zoom object so it is ready for mouse events
                            zoom.translate([(visWidth/2)-(visWidth*y/2),(visHeight/2)-(visHeight*y/2)]).scale(y);
-						   zoom.event(vis);
+						   //zoom.event(vis);
                            }
 					}
                                  
@@ -281,34 +281,18 @@ function initalizeNetwork() {
 	  zoom = d3.behavior.zoom()
       .translate([0,0])
       .scale(0.99)
-      .scaleExtent([0,6])	//how far it can zoom out and in
+      .scaleExtent([0.25,6])	//how far it can zoom out and in
       .on("zoom", redraw);
 	  
 	  vis = d3.select("#network").append("svg:svg")
-      .attr("width", visWidth - 10)
-      .attr("height", visHeight - 130)
+	  .attr("width", visWidth - 10)
+	  .attr("height", visHeight - 130)
       .append('svg:g')
-      .call(zoom);//.call(d3.behavior.zoom().scaleExtent([0.25, 6]).on("zoom", redraw)) //.call(d3.behavior.zoom().on("zoom", redraw))
+      .call(zoom)//.call(d3.behavior.zoom().scaleExtent([0.25, 6]).on("zoom", redraw)) //.call(d3.behavior.zoom().on("zoom", redraw))
+	  .append('svg:g');
 
-	  vis.append('defs')
-	  .append('clipPath')
-	  .attr("id", "myClip")
-	  .append('circle')
-	  .attr("cx", "0")
-	  .attr("cy", "0")
-	  .attr("r", "15");
-	  
-	  vis.append('defs')
-	  .append('clipPath')
-	  .attr("id", "smallClip")
-	  .append('circle')
-	  .attr("cx", "0")
-	  .attr("cy", "0")
-	  .attr("r", "4");
 	  
 	  vis.append('svg:rect')
-    //.attr('width', $("#network").width() + 1000)
-    //.attr('height', $("#network").height() + 1000)
       .attr('width', visWidth)
       .attr('height', visHeight)
       .attr('id', 'zoomCanvas')
@@ -825,6 +809,22 @@ function restart() {
   if (visMode == "person" && nodes[usePersonIndex].connections > 15) {
     showSpinner("");
   }
+  
+  vis.append('defs')
+	  .append('clipPath')
+	  .attr("id", "myClip")
+	  .append('circle')
+	  .attr("cx", "0")
+	  .attr("cy", "0")
+	  .attr("r", "15");
+	  
+	  vis.append('defs')
+	  .append('clipPath')
+	  .attr("id", "smallClip")
+	  .append('circle')
+	  .attr("cx", "0")
+	  .attr("cy", "0")
+	  .attr("r", "4");
 
   vis.selectAll("line.link")
     .data(links)
@@ -1767,7 +1767,7 @@ function redraw(useScale) {
 
   //transform the vis
   vis.attr("transform","translate(" + trans + ")" + " scale(" + scale + ")");
-  y = 1/trans[1] + scale*.6;
+  /*y = 1/trans[1] + scale*.6;
   d3.selectAll(".circleText").attr("transform",
                                    "translate(" + 1/trans[0] + " " + y + ")"
                                    + " scale(" + 1/scale + ")");
@@ -1790,13 +1790,13 @@ function redraw(useScale) {
                                   + " scale(" + 1/scale + ")");	
   d3.selectAll(".imageCircleHighlight").attr("transform",
                                   "translate(" + 1/trans[0] + " " + y + ")"
-                                  + " scale(" + 1/scale + ")");				  
+                                  + " scale(" + 1/scale + ")");		*/		  
 											  
 								  
 
   //we need to update the zoom slider, set the boolean to false so the slider change does not trigger a zoom change in the vis (from the slider callback function)
-  //zoomWidgetObjDoZoom = false;
-  //zoomWidgetObj.setValue(0,(scale/4));
+  zoomWidgetObjDoZoom = false;
+  zoomWidgetObj.setValue(0,(scale/4));
 }
 
 /*
