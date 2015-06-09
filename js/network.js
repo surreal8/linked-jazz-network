@@ -1639,16 +1639,38 @@ function showPopup(d,cords) {
       .css("left", "0px")
       .css("top", "0px");
 
-    jQuery('.cboxElement').colorbox({transition:"fade", width:"100%", height:"100%", opacity: 0.92, scalePhotos: true, returnFocus: false,
+    jQuery('.cboxElement').colorbox({transition:"fade", width:"100%", height:"100%", opacity: 0.92, scalePhotos: true, returnFocus: false, scrolling: false,
                                      title: function(){ return jQuery(this).find('img').attr('copy');},
                                      onComplete:function () {
-                                       jQuery('.cboxPhoto').attr('style','max-width:55%; max-height: 92%; height: 92%; margin-top:35px; margin-left: 35%; margin-right: 180px; float: none;');
+                                       jQuery('.cboxPhoto').attr('style','width: auto; height: 100%; margin-top:35px; margin-left: 35%; margin-right: 180px; float: none;');
                                        jQuery('#cboxContent').prepend(
                                          $("<img>")
                                            .attr("src", "menu/logo-white.png")
                                            .attr("id","cboxLogo")
                                            .attr("alt", "Art Institute of Chicago")
                                        );
+                                       var maxWidth = $('#cboxLoadedContent').width() * .55; // Max width for the image
+                                       var maxHeight = $('#cboxLoadedContent').height() * .92;    // Max height for the image
+                                       var ratio = 0;  // Used for aspect ratio
+                                       var width = $('.cboxPhoto').width();    // Current image width
+                                       var height = $('.cboxPhoto').height();  // Current image height
+
+                                       // Check if the current width is larger than the max
+                                       if(width > maxWidth){
+                                         ratio = maxWidth / width;   // get ratio for scaling image
+                                         $('.cboxPhoto').css("width", maxWidth); // Set new width
+                                         $('.cboxPhoto').css("height", height * ratio);  // Scale height based on ratio
+                                         height = height * ratio;    // Reset height to match scaled image
+                                         width = width * ratio;    // Reset width to match scaled image
+                                       }
+
+                                       // Check if current height is larger than max
+                                       if(height > maxHeight){
+                                         ratio = maxHeight / height; // get ratio for scaling image
+                                         $('.cboxPhoto').css("height", maxHeight);   // Set new height
+                                         $('.cboxPhoto').css("width", width * ratio);    // Scale width based on ratio
+                                         width = width * ratio;    // Reset width to match scaled image
+                                       }
                                      },
                                      onLoad:function() {
                                        $('html, body').css('overflow', 'hidden'); // page scrollbars off
