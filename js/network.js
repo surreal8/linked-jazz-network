@@ -96,10 +96,10 @@ jQuery(document).ready(function($) {
   windowResize();
 
   $("#network").css("visibility","hidden");
-	$("#title").css("visibility","hidden");
-	$("#about").css("visibility","hidden");
-	$("#logo").css("visibility","hidden");
-	$("#zoomWidget").css("visibility","hidden");
+	$("#title").css("display","none");
+	$("#about").css("display","none");
+	$("#logo").css("display","none");
+	$("#zoomWidget").css("display","none");
   $(".filter-button").css("visibility","hidden");
 
   showSpinner("");
@@ -739,10 +739,10 @@ function filter(clear) {
   //are we wiping the nodes out or just adding?
   if (clear) {
 	  $("#network svg").css("visibility","hidden");
-	  $("#title").css("visibility","hidden");
-	  $("#about").css("visibility","hidden");
-	  $("#logo").css("visibility","hidden");
-	  $("#zoomWidget").css("visibility","hidden");
+	  $("#title").css("display","none");
+	  $("#about").css("display","none");
+	  $("#logo").css("display","none");
+	  $("#zoomWidget").css("display","none");
     $(".filter-button").css("visibility","hidden");
     vis.selectAll("g.node").remove();
     vis.selectAll("line.link").remove();
@@ -1055,13 +1055,14 @@ function restart() {
 		  .attr("x2", function(d) { return d.target.x; })
 		  .attr("y2", function(d) { return d.target.y; });
 	  
+	  
 	  if ($("#network svg").css("visibility") != "visible") {
 		  $("#network").css("visibility","visible");
 		  $("#network svg").css("visibility","visible");
-		  $("#title").css("visibility","visible");
-		  $("#about").css("visibility","visible");
-		  $("#logo").css("visibility","visible");
-	    $("#zoomWidget").css("visibility","visible");
+		  $("#title").fadeIn(3000);
+		  $("#about").fadeIn(3000);
+		  $("#logo").fadeIn(3000);
+	    $("#zoomWidget").fadeIn(3000).css("visibility","visible");
       if (visMode == 'person') {
         $(".filter-button").css("visibility","visible");
       }
