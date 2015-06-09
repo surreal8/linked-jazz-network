@@ -160,10 +160,7 @@ jQuery(document).ready(function($) {
       .append(
         jQuery("<div>")
           .addClass("handle")
-          .append(
-            jQuery("<div>")
-              .text("-")
-          )
+          
       )
       .append(
         jQuery("<div>")
@@ -196,20 +193,18 @@ jQuery(document).ready(function($) {
                   {
                    horizontal: false,
                    vertical: true,
-                   y: 0.255555555,
+                   y: 0.8,
                    animationCallback: function(x, y) {
 					   console.log('y', y);
                        //if the value is the same as the intial value exit, to prevent a zoom even being called onload
-                       if (y==0.255555555) {
+                       if (y==0.8) {
 						   return false;
 						   }
-                       //prevent too muuch zooooom
-                       if (y<0.05) {
-						   return false;
-						   }
-
                // Keep some elements the same size regardless of zoom level
-						   y = y * 4;
+						//subtracting from 1 to flip axis
+                        y = 1 - y;
+                        y = (y * 2) + .4;
+						
                d3.selectAll(".circleText").attr("transform","scale(" + 1/y + ")");
                d3.selectAll(".circleTextRect").attr("transform","scale(" + 1/y + ")");
                d3.selectAll(".labelText").attr("transform","scale(" + 1/y + ")");
@@ -275,7 +270,7 @@ jQuery(document).ready(function($) {
                            vis.attr("transform", "translate(" + [(visWidth/2)-(visWidth*y/2),(visHeight/2)-(visHeight*y/2)] + ")"  + " scale(" + y + ")");
                            //store the new data into the zoom object so it is ready for mouse events
                            zoom.translate([(visWidth/2)-(visWidth*y/2),(visHeight/2)-(visHeight*y/2)]).scale(y);
-						   //zoom.event(vis);
+						  
              }
 					}
                                  
@@ -341,7 +336,7 @@ function initalizeNetwork() {
 	  zoom = d3.behavior.zoom()
       .translate([0,0])
       .scale(0.99)
-      .scaleExtent([0.25,6])	//how far it can zoom out and in
+      .scaleExtent([0.4,2.4])	//how far it can zoom out and in
       .on("zoom", redraw);
 	  
 	  vis = d3.select("#network").append("svg:svg")
@@ -1866,7 +1861,8 @@ function redraw(useScale) {
 
   //we need to update the zoom slider, set the boolean to false so the slider change does not trigger a zoom change in the vis (from the slider callback function)
   zoomWidgetObjDoZoom = false;
-  zoomWidgetObj.setValue(0,(scale/4));
+  //subtracting from 1 to flip axis
+  zoomWidgetObj.setValue(0,1-(scale-.4)/2);
 }
 
 /*
