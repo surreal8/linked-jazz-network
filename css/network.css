@@ -297,6 +297,10 @@ text {
 	color: #000000;
 }
 
+text.labelText {
+	font-size: 4.5px;
+}
+
 rect.circleTextRect {
 	stroke: black;
 	stroke-width: 10;
