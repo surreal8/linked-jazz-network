@@ -1059,12 +1059,14 @@ function restart() {
 	  if ($("#network svg").css("visibility") != "visible") {
 		  $("#network").css("visibility","visible");
 		  $("#network svg").css("visibility","visible");
-		  $("#title").fadeIn(3000);
-		  $("#about").fadeIn(3000);
-		  $("#logo").fadeIn(3000);
 	    $("#zoomWidget").fadeIn(3000).css("visibility","visible");
       if (visMode == 'person') {
         $(".filter-button").css("visibility","visible");
+      }
+      else {
+		    $("#title").fadeIn(3000);
+		    $("#about").fadeIn(3000);
+		    $("#logo").fadeIn(3000);
       }
 		}
 	 }
