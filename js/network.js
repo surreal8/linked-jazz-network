@@ -1939,7 +1939,6 @@ function hideSpinner() {
 }
 
 function windowResize() {
-
   visWidth = $(window).width();
   visHeight = $(window).height();
   if (visMode == "person") {
@@ -1949,4 +1948,7 @@ function windowResize() {
   }
   $("#network").css('width', visWidth + 'px');
   $("#network").css('height',visHeight + 'px');
+  d3.select("#network svg")
+	  .attr("width", visWidth - 10)
+	  .attr("height", visHeight - 130);
 }
