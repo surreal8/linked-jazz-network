@@ -22,7 +22,28 @@
 <body>
 <a href="/"><img src="menu/logo.png" id="logo"></a>
 <div id="title">WHISTLER AND ROUSSEL <br /> <span class="subtitle">LINKED VISIONS</span></div>
-<a href="#" id="about">ABOUT</a>
+<a href="about.html" id="about">ABOUT</a>
+
+<script>
+jQuery('#about').colorbox({transition:"fade", width:"100%", height:"100%", opacity: 0.92, scalePhotos: true, returnFocus: false,
+                                     /*title: 'About',
+                                     onComplete:function () {
+                                       jQuery('.cboxPhoto').attr('style','max-width:55%; max-height: 92%; height: 92%; margin-top:35px; margin-left: 35%; margin-right: 180px; float: none;');
+                                       jQuery('#cboxContent').prepend(
+                                         $("<img>")
+                                           .attr("src", "menu/logo-white.png")
+                                           .attr("id","cboxLogo")
+                                           .attr("alt", "Art Institute of Chicago")
+                                       );
+                                     },
+                                     onLoad:function() {
+                                       $('html, body').css('overflow', 'hidden'); // page scrollbars off
+                                     },
+                                     onClosed:function() {
+                                       $('html, body').css('overflow', ''); // page scrollbars on
+                                     }*/
+                                    });
+</script>
 
 <div id="network">
     <div id="popUp">

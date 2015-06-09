@@ -548,6 +548,14 @@ text.circleText {
   margin: 0 0 28px;
 }
 
+#colorbox p.about {
+  font-family: akkuratreg, sans-serif;
+  font-size: 14px;
+  line-height: 34px;
+  margin: 28px;
+  color: #ffffff;
+}
+
  #logo{
 	 position:absolute; 
 	 top:34px;
@@ -628,13 +636,13 @@ text.circleText {
 
 #zoomWidget{
 	position:absolute;
-	height:145px;
+	height:100px;
 	width:44px;
 	right:10px;
 	top:525px;
 	visibility:visible;
-	background-color: #ffffff;
-	/*border-color: #cccccc;
+	/*background-color: #ffffff;
+	border-color: #cccccc;
 	border-width: 2px;
 	border-style: solid;*/
 	border-radius: 24px;
@@ -655,13 +663,13 @@ text.circleText {
 
 #woomWidgetZoomOut{
 	position:relative;
-	top: -72px;	
+	top: 66px;	
 	left: 4px;
 }
 
 #woomWidgetZoomIn{
 	position:relative;
-	top: 147px;
+	top: -36px;
 	left: 4px;
 	
 }
