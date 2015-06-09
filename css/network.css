@@ -354,6 +354,7 @@ text.circleText {
   text-transform: uppercase;
   font-size: 36px;
   letter-spacing: 15px;
+  font-weight: normal;
 }
 
 #popUp h3 {
