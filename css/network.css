@@ -403,7 +403,7 @@ text.circleText {
 
 .popup-metadata {
   margin: 50px 20px 0 20px;
-  width: 30%;
+  width: 35%;
   float: left;
 }
 
@@ -417,7 +417,7 @@ text.circleText {
 .popup-description {
   margin: 50px 0 0 0;
   font-family: serif;
-  width: 60%;
+  width: 55%;
   float: left;
 }
 
@@ -447,13 +447,13 @@ text.circleText {
   float: left;
   margin-right: 20px;
   margin-top: 30px;
-  width: 30%;
+  width: 35%;
 }
 
 .popup-artwork-desc {
   float: left;
   margin-top: 60px;
-  width: 340px;
+  width: 310px;
 }
 
 .popup-title {
