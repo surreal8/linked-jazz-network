@@ -205,6 +205,23 @@ jQuery(document).ready(function($) {
                         y = 1 - y;
                         y = (y * 2) + .4;
 						
+					  if (y > 1) {
+						 d3.selectAll(".backgroundCircle").style("fill", "#ffffff").attr("r", function(d) { return  returnNodeSize(d); });
+						 d3.selectAll(".imageCircle").transition(800).style("opacity",1).attr("visibility","visible").attr("clip-path","url(#smallClip)").attr("width", function(d) { return  (returnNodeSize(d)*2); }).attr("height", function(d) { return  (returnNodeSize(d)*2); });
+					  }
+					  if (y > 2) {
+						d3.selectAll(".labelText").transition(800).style("opacity",1).attr("visibility","visible");
+						d3.selectAll(".labelRect").transition(800).style("opacity",1).attr("visibility","visible");
+					  }
+					  if (y < 1) {
+						d3.selectAll(".backgroundCircle").style("fill", "#E9967A").attr("transform", " scale(" + y * 3.5+ ")");
+						d3.selectAll(".imageCircle").transition(500).style("opacity",0).attr("visibility","hidden").attr("transform", " scale(" + y * 3.5+ ")");
+					  }
+					  if (y < 2) {
+						d3.selectAll(".labelText").transition(500).style("opacity",0).attr("visibility","hidden");
+						d3.selectAll(".labelRect").transition(500).style("opacity",0).attr("visibility","hidden");
+					  }
+/*						
                d3.selectAll(".circleText").attr("transform","scale(" + 1/y + ")");
                d3.selectAll(".circleTextRect").attr("transform","scale(" + 1/y + ")");
                d3.selectAll(".labelText").attr("transform","scale(" + 1/y + ")");
@@ -262,7 +279,7 @@ jQuery(document).ready(function($) {
                  .attr("y", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
                d3.selectAll(".labelRect")
                  .attr("y", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
-
+*/
                      //are we  zooming based on a call from interaction with the slider, or is this callback being triggerd by the mouse event updating the slider position.
 					   if (zoomWidgetObjDoZoom == true) {
 						   //this is how it works now until i figure out how to handle this better.
@@ -1811,24 +1828,23 @@ function redraw(useScale) {
   console.log('trans', trans);
   console.log('scale', scale);
 
-  /*
-  if (scale > 2) {
-    d3.selectAll(".backgroundCircle").style("fill", "#ffffff");
-    d3.selectAll(".imageCircle").transition(800).style("opacity",1).attr("visibility","visible").attr("clip-path","url(#smallClip)");
+  if (scale > 1) {
+    d3.selectAll(".backgroundCircle").style("fill", "#ffffff").attr("r", function(d) { return  returnNodeSize(d); });
+    d3.selectAll(".imageCircle").transition(800).style("opacity",1).attr("visibility","visible").attr("clip-path","url(#smallClip)").attr("width", function(d) { return  (returnNodeSize(d)*2); })
+    .attr("height", function(d) { return  (returnNodeSize(d)*2); });
   }
-  if (scale > 3) {
+  if (scale > 2) {
     d3.selectAll(".labelText").transition(800).style("opacity",1).attr("visibility","visible");
     d3.selectAll(".labelRect").transition(800).style("opacity",1).attr("visibility","visible");
   }
-  if (scale < 2) {
-    d3.selectAll(".backgroundCircle").style("fill", "#E9967A");
-    d3.selectAll(".imageCircle").transition(500).style("opacity",0).attr("visibility","hidden");
+  if (scale < 1) {
+    d3.selectAll(".backgroundCircle").style("fill", "#E9967A").attr("transform", " scale(" + scale * 3.5+ ")");
+    d3.selectAll(".imageCircle").transition(500).style("opacity",0).attr("visibility","hidden").attr("transform", " scale(" + scale * 3.5+ ")");
   }
-  if (scale < 3) {
+  if (scale < 2) {
     d3.selectAll(".labelText").transition(500).style("opacity",0).attr("visibility","hidden");
     d3.selectAll(".labelRect").transition(500).style("opacity",0).attr("visibility","hidden");
   }
-  */
   
   //transform the vis
   vis.attr("transform","translate(" + trans + ")" + " scale(" + scale + ")");
