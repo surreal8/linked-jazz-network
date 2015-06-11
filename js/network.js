@@ -1602,6 +1602,15 @@ function showPopup(d,cords) {
         );
       }
 
+      popupWorks.append(
+        $("<div>")
+          .attr("class", "popup-row")
+          .append(
+            $('<p>')
+              .html("&nbsp;")
+          )
+      );
+
       jQuery('#popUp')
         .append(popupWorks);
     }
