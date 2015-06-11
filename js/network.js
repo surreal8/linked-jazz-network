@@ -1342,7 +1342,7 @@ function showPopup(d,cords) {
       }
       dates += birthDate;
     }
-    if (birthDate && deathDate) {
+    if ((birthDate || birthPlace) && (deathDate || deathPlace)) {
       dates += "–";
     }
     if (deathPlace) {
