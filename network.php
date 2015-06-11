@@ -12,6 +12,7 @@
 <script src="js/d3.v3.5.5.js"></script> 
 <script src="js/vex.min.js"></script> 
 <script src="js/network.js"></script> 
+<script src="js/jquery.idle-timer.js"></script> 
 
 <link rel="stylesheet" href="css/network.css">
 <link rel="stylesheet" href="css/vex.css">
@@ -62,6 +63,23 @@ jQuery('#about').colorbox({transition:"fade", width:"100%", height:"100%", opaci
 	<img src="menu/preloader.gif">
     <span>LOADING</span>
 </div>
+<script>
+//add timer for interactive
+(function($){
+	//3 minutes
+	var timeout = 60000;
+	
+	$(document).bind("idle.idleTimer", function(){
+		window.location.href = 'index.html';
+	});
+	
+	$(document).bind("active.idleTimer", function(){
+		//reset timer? listen for idleness?
+	});
+	
+	$.idleTimer(timeout);
 
+})(jQuery);
+</script>
 </body>
 </html>
