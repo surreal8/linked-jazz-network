@@ -1739,6 +1739,7 @@ function showPopup(d,cords) {
                                          ratio = maxWidth / width;   // get ratio for scaling image
                                          $('.cboxPhoto').css("width", maxWidth); // Set new width
                                          $('.cboxPhoto').css("height", height * ratio);  // Scale height based on ratio
+                                         $('.cboxPhoto').css("margin-top", (height - (height * ratio) - 70)/2 + 35);  // Scale height based on ratio
                                          height = height * ratio;    // Reset height to match scaled image
                                          width = width * ratio;    // Reset width to match scaled image
                                        }
