@@ -69,6 +69,7 @@ var relColleagues = [];
 var relMentors = [];
 var relEmployers = [];
 var nodeClickFunction = function(d) {
+  if (d3.event.defaultPrevented) return;
   force.stop();
   //$("#network").fadeOut('fast',
   //                    function() {
