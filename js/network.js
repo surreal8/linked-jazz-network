@@ -1378,17 +1378,21 @@ function showPopup(d,cords) {
             $("<div>")
               .attr("class","popup-headshot-cont")
               .append(
-                $("<img>")
-                  .attr("src", headshotBanner)
-                  .attr("class","popup-headshot")
-                  .attr("id","popup-headshot")
-                  .attr("alt", nodes[usePersonIndex].label)
-                  .attr("copy", "<div class=\"divider\"><img src=\"menu/dash.png\"/></div><h2>" + nodes[usePersonIndex].label + "</h2><h4>" +  dates + "</h4><p>" + abstract + "</p>")
-              )
-              .append(
-                $("<img>")
-                  .attr("src", "menu/plus.jpg")
-                  .attr("class","popup-headshot-plus")
+                $("<div>")
+                  .attr("class","popup-headshot-cont-wrapper")
+                  .append(
+                    $("<img>")
+                      .attr("src", headshotBanner)
+                      .attr("class","popup-headshot")
+                      .attr("id","popup-headshot")
+                      .attr("alt", nodes[usePersonIndex].label)
+                      .attr("copy", "<div class=\"divider\"><img src=\"menu/dash.png\"/></div><h2>" + nodes[usePersonIndex].label + "</h2><h4>" +  dates + "</h4><p>" + abstract + "</p>")
+                  )
+                  .append(
+                    $("<img>")
+                      .attr("src", "menu/plus.jpg")
+                      .attr("class","popup-headshot-plus")
+                  )
               )
           )
       );
@@ -1876,7 +1880,10 @@ function windowResize() {
   visWidth = $(window).width();
   visHeight = $(window).height();
   if (visMode == "person") {
-    visWidth -= 540;
+    visWidth -= $('#popUp').width();
+    if (visWidth < 614) {
+      visWidth = 614;
+    }
 	  //visHeight -= 500;
     $("#network").css('float', 'right');
   }

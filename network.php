@@ -50,12 +50,14 @@ jQuery('#about').colorbox({transition:"fade", width:"100%", height:"100%", opaci
     <div id="popUp">
     </div>
 	
-	<div class="filter-button active" id="filter_all">All</div>     
-	<div class="filter-button" id="filter_family">Family</div>     
-	<div class="filter-button" id="filter_friends">Friends</div>     
-	<div class="filter-button" id="filter_colleagues">Colleagues</div>     
-	<div class="filter-button" id="filter_mentors">Mentors & Followers</div>     
-	<div class="filter-button" id="filter_employers">Employers & Employees</div>     
+  <div class="filters">
+    <div class="filter-button active" id="filter_all">All</div>     
+	  <div class="filter-button" id="filter_family">Family</div>     
+	  <div class="filter-button" id="filter_friends">Friends</div>     
+	  <div class="filter-button" id="filter_colleagues">Colleagues</div>     
+	  <div class="filter-button" id="filter_mentors">Mentors & Followers</div>
+	  <div class="filter-button" id="filter_employers">Artists & Models</div>     
+  </div>
 </div>
 
 
@@ -65,7 +67,8 @@ jQuery('#about').colorbox({transition:"fade", width:"100%", height:"100%", opaci
 </div>
 <script>
 //add timer for interactive
-(function($){
+/*
+   (function($){
 	//3 minutes
 	var timeout = 60000;
 	
@@ -80,6 +83,7 @@ jQuery('#about').colorbox({transition:"fade", width:"100%", height:"100%", opaci
 	$.idleTimer(timeout);
 
 })(jQuery);
+*/
 </script>
 </body>
 </html>

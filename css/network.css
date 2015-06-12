@@ -28,12 +28,15 @@ body{
 	padding: 0;
 	background-color:#fff;
 	font-family: Arial, Helvetica, sans-serif;
+  min-width: 1024px;
+  width: auto;
 }
 
 #landing {
   background-color: #000000;
   margin: 0 auto;
   text-align: center;
+  min-width: initial;
 }
 
 #landingimages {
@@ -204,34 +207,12 @@ svg {
 	cursor: url(menu/openhand.png);
 }
 
-#network #filter_all {
-	right:1140px;
+.filters {
+  float: right;
+  margin-left: 20px;
 }
-
-#filter_family {
-	right:995px; 
-}
-
-#filter_friends {
-	right:835px; 
-}
-
-#filter_colleagues {
-	right:640px; 
-}
-
-#filter_mentors {
-	right:345px; 
-}
-
-#filter_employers {
-	right:30px; 
-}
-
 .filter-button {
 	cursor: pointer; 
-	position:absolute; 
-	top:20px;
 	visibility:hidden;
   padding: 15px 30px;
   border: black solid 1px;
@@ -240,6 +221,9 @@ svg {
   font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 3px;
+  margin-top: 20px;
+  margin-right: 20px;
+  float: left;
 }
 
 .filter-button.active{
@@ -332,7 +316,9 @@ text.circleText {
 #popUp{
 	background-color:#fff;
 	height:auto;
-	width:540px;
+	max-width:540px;
+	min-width:410px;
+  width: 40%;
 	min-height:100%;
 	display:none;
 	position:absolute;
@@ -385,25 +371,33 @@ text.circleText {
   display: block;
 }
 
-.popup-headshot-cont {
+.popup-headshot-cont-wrapper {
   overflow:hidden;
   width: 100%;
-  height: 300px;
+  max-height: 300px;
+  position: relative;
 }
 
 .popup-headshot-cont:hover .popup-headshot-plus {
-  display: block;
+    display: block;
+    overflow: hidden;
 }
 
 .popup-headshot-plus {
-  margin-left: -69%;
-  margin-top: -95%;
+  left: 50%;
+  top: 60%;
   opacity: 0.8;
   display: none;
+  position: absolute;
+  -webkit-transform: translateY(-50%) translateX(-50%);
+  -o-transform: translateY(-50%) translateX(-50%);
+  -moz-transform: translateY(-50%) translateX(-50%);
+  transform: translateY(-50%) translateX(-50%);
 }
 
 .popup-headshot {
-  width: 100%;
+    width: 100%;
+    display: block;
 }
 
 .popup-metadata {
