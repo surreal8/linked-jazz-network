@@ -444,15 +444,39 @@ text.circleText {
 
 .popup-artwork {
   float: left;
-  margin-right: 20px;
-  margin-top: 30px;
-  width: 35%;
+  width: 100%;
 }
 
 .popup-artwork-desc {
+  padding-top: 60px;
+  width: 100%;
+}
+
+
+.popup-artwork-cont-wrapper {
+  overflow:hidden;
+  width: 35%;
+  position: relative;
+  margin-right: 30px;
+  margin-top: 30px;
   float: left;
-  margin-top: 60px;
-  width: 310px;
+}
+
+.popup-artwork-cont:hover .popup-artwork-plus {
+    display: block;
+    overflow: hidden;
+}
+
+.popup-artwork-plus {
+  left: 50%;
+  top: 60%;
+  opacity: 0.8;
+  display: none;
+  position: absolute;
+  -webkit-transform: translateY(-50%) translateX(-50%);
+  -o-transform: translateY(-50%) translateX(-50%);
+  -moz-transform: translateY(-50%) translateX(-50%);
+  transform: translateY(-50%) translateX(-50%);
 }
 
 .popup-title {

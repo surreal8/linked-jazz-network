@@ -1483,32 +1483,45 @@ function showPopup(d,cords) {
       // Works
       if (artwork1Large) {
         popupWorks.append(
-          $("<a>")
-            .attr("href", artwork1Large)
-            .attr("class", "cboxElement")
+          $("<span>")
+            .attr("class", "popup-row")
+            .append(
+              $("<div>")
+                .attr("class","popup-artwork-cont")
+                .append(
+                  $("<div>")
+                    .attr("class","popup-artwork-cont-wrapper")
+                    .append(
+                      $("<a>")
+                        .attr("href", artwork1Large)
+                        .attr("class", "cboxElement")
+                        .append(
+                          $("<img>")
+                            .attr("class", "popup-artwork")
+                            .attr("src", artwork1Large)
+                            .attr("alt", nodes[usePersonIndex].label)
+                            .attr("copy", "<div class=\"divider\"><img src=\"menu/dash.png\"/></div><h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork1Title + "</h3><h4>" + artwork1Date + "</h4><p>" + artwork1Desc + "</p>" )
+                        )
+                        .append(
+                          $("<img>")
+                            .attr("src", "menu/plus.jpg")
+                            .attr("class","popup-artwork-plus")
+                        )
+                    )
+                )
+            )
             .append(
               $("<span>")
-                .attr("class", "popup-row")
+                .attr("class", "popup-artwork-desc")
                 .append(
-                  $("<img>")
-                    .attr("class", "popup-artwork")
-                    .attr("src", artwork1Large)
-                    .attr("alt", nodes[usePersonIndex].label)
-                    .attr("copy", "<div class=\"divider\"><img src=\"menu/dash.png\"/></div><h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork1Title + "</h3><h4>" + artwork1Date + "</h4><p>" + artwork1Desc + "</p>" )
+                  $("<span>")
+                    .attr("class", "popup-title")
+                    .html(artwork1Title)
                 )
                 .append(
                   $("<span>")
-                    .attr("class", "popup-artwork-desc")
-                    .append(
-                      $("<span>")
-                        .attr("class", "popup-title")
-                        .html(artwork1Title)
-                    )
-                    .append(
-                      $("<span>")
-                        .attr("class", "popup-date")
-                        .html(artwork1Date)
-                    )
+                    .attr("class", "popup-date")
+                    .html(artwork1Date)
                 )
             )
         );
@@ -1516,32 +1529,45 @@ function showPopup(d,cords) {
 
       if (artwork2Large) {
         popupWorks.append(
-          $("<a>")
-            .attr("href", artwork2Large)
-            .attr("class", "cboxElement")
+          $("<span>")
+            .attr("class", "popup-row")
+            .append(
+              $("<div>")
+                .attr("class","popup-artwork-cont")
+                .append(
+                  $("<div>")
+                    .attr("class","popup-artwork-cont-wrapper")
+                    .append(
+                      $("<a>")
+                        .attr("href", artwork2Large)
+                        .attr("class", "cboxElement")
+                        .append(
+                          $("<img>")
+                            .attr("class", "popup-artwork")
+                            .attr("src", artwork2Large)
+                            .attr("alt", nodes[usePersonIndex].label)
+                            .attr("copy", "<div class=\"divider\"><img src=\"menu/dash.png\"/></div><h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork2Title + "</h3><h4>" + artwork2Date + "</h4><p>" + artwork2Desc + "</p>" )
+                        )
+                        .append(
+                          $("<img>")
+                            .attr("src", "menu/plus.jpg")
+                            .attr("class","popup-artwork-plus")
+                        )
+                    )
+                )
+            )
             .append(
               $("<span>")
-                .attr("class", "popup-row")
+                .attr("class", "popup-artwork-desc")
                 .append(
-                  $("<img>")
-                    .attr("class", "popup-artwork")
-                    .attr("src", artwork2Large)
-                    .attr("alt", nodes[usePersonIndex].label)
-                    .attr("copy", "<div class=\"divider\"><img src=\"menu/dash.png\"/></div><h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork2Title + "</h3><h4>" + artwork2Date + "</h4><p>" + artwork2Desc + "</p>" )
+                  $("<span>")
+                    .attr("class", "popup-title")
+                    .html(artwork2Title)
                 )
                 .append(
                   $("<span>")
-                    .attr("class", "popup-artwork-desc")
-                    .append(
-                      $("<span>")
-                        .attr("class", "popup-title")
-                        .html(artwork2Title)
-                    )
-                    .append(
-                      $("<span>")
-                        .attr("class", "popup-date")
-                        .html(artwork2Date)
-                    )
+                    .attr("class", "popup-date")
+                    .html(artwork2Date)
                 )
             )
         );
@@ -1549,32 +1575,45 @@ function showPopup(d,cords) {
 
       if (artwork3Large) {
         popupWorks.append(
-          $("<a>")
-            .attr("href", artwork3Large)
-            .attr("class", "cboxElement")
+          $("<span>")
+            .attr("class", "popup-row")
+            .append(
+              $("<div>")
+                .attr("class","popup-artwork-cont")
+                .append(
+                  $("<div>")
+                    .attr("class","popup-artwork-cont-wrapper")
+                    .append(
+                      $("<a>")
+                        .attr("href", artwork3Large)
+                        .attr("class", "cboxElement")
+                        .append(
+                          $("<img>")
+                            .attr("class", "popup-artwork")
+                            .attr("src", artwork3Large)
+                            .attr("alt", nodes[usePersonIndex].label)
+                            .attr("copy", "<div class=\"divider\"><img src=\"menu/dash.png\"/></div><h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork3Title + "</h3><h4>" + artwork3Date + "</h4><p>" + artwork3Desc + "</p>" )
+                        )
+                        .append(
+                          $("<img>")
+                            .attr("src", "menu/plus.jpg")
+                            .attr("class","popup-artwork-plus")
+                        )
+                    )
+                )
+            )
             .append(
               $("<span>")
-                .attr("class", "popup-row")
+                .attr("class", "popup-artwork-desc")
                 .append(
-                  $("<img>")
-                    .attr("class", "popup-artwork")
-                    .attr("src", artwork3Large)
-                    .attr("alt", nodes[usePersonIndex].label)
-                    .attr("copy", "<div class=\"divider\"><img src=\"menu/dash.png\"/></div><h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork3Title + "</h3><h4>" + artwork3Date + "</h4><p>" + artwork3Desc + "</p>" )
+                  $("<span>")
+                    .attr("class", "popup-title")
+                    .html(artwork3Title)
                 )
                 .append(
                   $("<span>")
-                    .attr("class", "popup-artwork-desc")
-                    .append(
-                      $("<span>")
-                        .attr("class", "popup-title")
-                        .html(artwork3Title)
-                    )
-                    .append(
-                      $("<span>")
-                        .attr("class", "popup-date")
-                        .html(artwork3Date)
-                    )
+                    .attr("class", "popup-date")
+                    .html(artwork3Date)
                 )
             )
         );
@@ -1582,32 +1621,45 @@ function showPopup(d,cords) {
 
       if (artwork4Large) {
         popupWorks.append(
-          $("<a>")
-            .attr("href", artwork4Large)
-            .attr("class", "cboxElement")
+          $("<span>")
+            .attr("class", "popup-row")
+            .append(
+              $("<div>")
+                .attr("class","popup-artwork-cont")
+                .append(
+                  $("<div>")
+                    .attr("class","popup-artwork-cont-wrapper")
+                    .append(
+                      $("<a>")
+                        .attr("href", artwork4Large)
+                        .attr("class", "cboxElement")
+                        .append(
+                          $("<img>")
+                            .attr("class", "popup-artwork")
+                            .attr("src", artwork4Large)
+                            .attr("alt", nodes[usePersonIndex].label)
+                            .attr("copy", "<div class=\"divider\"><img src=\"menu/dash.png\"/></div><h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork4Title + "</h3><h4>" + artwork4Date + "</h4><p>" + artwork4Desc + "</p>" )
+                        )
+                        .append(
+                          $("<img>")
+                            .attr("src", "menu/plus.jpg")
+                            .attr("class","popup-artwork-plus")
+                        )
+                    )
+                )
+            )
             .append(
               $("<span>")
-                .attr("class", "popup-row")
+                .attr("class", "popup-artwork-desc")
                 .append(
-                  $("<img>")
-                    .attr("class", "popup-artwork")
-                    .attr("src", artwork4Large)
-                    .attr("alt", nodes[usePersonIndex].label)
-                    .attr("copy", "<div class=\"divider\"><img src=\"menu/dash.png\"/></div><h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork4Title + "</h3><h4>" + artwork4Date + "</h4><p>" + artwork4Desc + "</p>" )
+                  $("<span>")
+                    .attr("class", "popup-title")
+                    .html(artwork4Title)
                 )
                 .append(
                   $("<span>")
-                    .attr("class", "popup-artwork-desc")
-                    .append(
-                      $("<span>")
-                        .attr("class", "popup-title")
-                        .html(artwork4Title)
-                    )
-                    .append(
-                      $("<span>")
-                        .attr("class", "popup-date")
-                        .html(artwork4Date)
-                    )
+                    .attr("class", "popup-date")
+                    .html(artwork4Date)
                 )
             )
         );
