@@ -26,7 +26,7 @@
         .cboxIframe{background:#000;}
         #cboxError{padding:50px; border:1px solid #ccc;}
         #cboxLoadedContent{}
-        #cboxTitle{position:relative; top:-75%; left:120px; color:#ccc; width:25%}
+        #cboxTitle{position:relative; top:-75%; left:120px; color:#ccc; width:20%}
         #cboxCurrent{position:absolute; top:-20px; right:0px; color:#ccc;}
         #cboxLoadingGraphic{background:url(../menu/preloader.gif) no-repeat center center;}
 
