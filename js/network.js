@@ -716,6 +716,10 @@ function resetFilters() {
   jQuery("#filter_colleagues").click(function() {showRelations("colleagues"); });
   jQuery("#filter_mentors").click(function() {showRelations("mentors"); });
   jQuery("#filter_employers").click(function() {showRelations("employers"); });
+
+  jQuery(".filter-button").removeClass("active");
+  jQuery("#filter_all").addClass("active");
+
 }
 
 function disableFilter(preds, rel) {
