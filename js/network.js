@@ -68,6 +68,16 @@ var relFamily = [];
 var relColleagues = [];
 var relMentors = [];
 var relEmployers = [];
+var nodeClickFunction = function(d) {
+  force.stop();
+  //$("#network").fadeOut('fast',
+  //                    function() {
+  usePerson = d.id;
+  changeVisMode("person");
+  $("html, body").animate({ scrollTop: 0 }, "slow");
+  //                  }
+  //               );
+};
 
 jQuery(document).ready(function($) {
 
@@ -762,6 +772,8 @@ function filter(clear) {
       disableFilter(relColleagues, "colleagues");
       disableFilter(relMentors, "mentors");
       disableFilter(relEmployers, "employers");
+
+      d3.selectAll(".node").on("click", nodeClickFunction);
     }
     else {
       $("#network").attr("class", "");
@@ -881,16 +893,7 @@ function restart() {
   var nodeEnter = node.enter().append("svg:g")
       .attr("class", "node")
       .attr("id", function(d) {  return "node_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
-      .on("click",function(d) {
-        force.stop();
-        //$("#network").fadeOut('fast',
-        //                    function() {
-        usePerson = d.id;
-        changeVisMode("person");
-        $("html, body").animate({ scrollTop: 0 }, "slow");
-        //                  }
-        //               );
-      });
+      .on("click",nodeClickFunction);
 
   if (networkNodeDrag) {
     nodeEnter.call(force.drag);
@@ -1751,13 +1754,16 @@ function hideRelations() {
   d3.selectAll(".labelText").attr("fill-opacity",1).attr("stroke-opacity",1);
   d3.selectAll(".labelRect").attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", "white").attr("stroke", black);
   d3.selectAll(".link").attr("stroke-opacity",1).style("fill-opacity",1).style("stroke-width",0.3).style("fill", grey).style("stroke", grey);
+
   jQuery(".filter-button").removeClass("active");
   jQuery("#filter_all").addClass("active");
+  d3.selectAll(".node").on("click", nodeClickFunction);
 }
 
 function showRelations(rel) {
   jQuery(".filter-button").removeClass("active");
   jQuery("#filter_" + rel).addClass("active");
+  d3.selectAll(".node").on("click", nodeClickFunction);
 
   // First we grey out everything
   var fill = "black";
@@ -1823,6 +1829,15 @@ function showRelations(rel) {
       if (nodesShown[n] != nodesShown[m] && (nodesShown[n] == id || nodesShown[m] == id)) {
         d3.selectAll(".link_" + nodesShown[n] + ".link_" + nodesShown[m]).attr("stroke-opacity",1).style("fill-opacity",1).style("stroke-width",2).style("fill", fill).style("stroke", fill);
       }
+    }
+  }
+
+  // Remove click events from disabled nodes
+  for (var n in nodes) {
+    var id = nodes[n].id.split("/")[nodes[n].id.split("/").length-1].replace(cssSafe,'');
+
+    if (jQuery.inArray(id, nodesShown) == -1) {
+      d3.selectAll("#node_" + id).on("click", null);
     }
   }
 }
