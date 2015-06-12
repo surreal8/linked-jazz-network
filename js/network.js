@@ -1742,18 +1742,18 @@ function hideRelations() {
   var black = "black";
   var salmon = "#E9967A";
   var grey = "#cccccc";
-  d3.selectAll(".marker").attr("stroke-opacity",1).attr("fill-opacity",1)
-  d3.selectAll(".marker path").style("fill", black);
-  d3.selectAll(".backgroundCircle").attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", salmon).style("stroke", salmon);
-  d3.selectAll(".backgroundCircleHighlight").attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", salmon).style("stroke", salmon);
-  d3.selectAll(".imageCircle").attr("display","block");
-  d3.selectAll(".imageCircleHighlight").attr("display","block");
-  d3.selectAll(".circleText").attr("fill-opacity",1).attr("stroke-opacity",1);
-  d3.selectAll(".circleTextRect").attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", "white").attr("stroke", black);
-  d3.selectAll(".circleTextRectHighlight").attr("fill-opacity",1).attr("stroke-opacity",1);
-  d3.selectAll(".labelText").attr("fill-opacity",1).attr("stroke-opacity",1);
-  d3.selectAll(".labelRect").attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", "white").attr("stroke", black);
-  d3.selectAll(".link").attr("stroke-opacity",1).style("fill-opacity",1).style("stroke-width",0.3).style("fill", grey).style("stroke", grey);
+  d3.selectAll(".marker").transition().attr("stroke-opacity",1).attr("fill-opacity",1)
+  d3.selectAll(".marker path").transition().style("fill", black);
+  d3.selectAll(".backgroundCircle").transition().attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", salmon).style("stroke", salmon);
+  d3.selectAll(".backgroundCircleHighlight").transition().attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", salmon).style("stroke", salmon);
+  d3.selectAll(".imageCircle").transition().attr("display","block");
+  d3.selectAll(".imageCircleHighlight").transition().attr("display","block");
+  d3.selectAll(".circleText").transition().attr("fill-opacity",1).attr("stroke-opacity",1);
+  d3.selectAll(".circleTextRect").transition().attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", "white").attr("stroke", black);
+  d3.selectAll(".circleTextRectHighlight").transition().attr("fill-opacity",1).attr("stroke-opacity",1);
+  d3.selectAll(".labelText").transition().attr("fill-opacity",1).attr("stroke-opacity",1);
+  d3.selectAll(".labelRect").transition().attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", "white").attr("stroke", black);
+  d3.selectAll(".link").transition().attr("stroke-opacity",1).style("fill-opacity",1).style("stroke-width",0.3).style("fill", grey).style("stroke", grey);
 
   jQuery(".filter-button").removeClass("active");
   jQuery("#filter_all").addClass("active");
@@ -1767,16 +1767,16 @@ function showRelations(rel) {
 
   // First we grey out everything
   var fill = "black";
-  d3.selectAll(".backgroundCircle").attr("fill-opacity",0.03).attr("stroke-opacity",0.03).style("fill", fill).style("stroke", fill);
-  d3.selectAll(".backgroundCircleHighlight").attr("fill-opacity",0.1).attr("stroke-opacity",0.1);
-  d3.selectAll(".circleText").attr("fill-opacity",0.03).attr("stroke-opacity",0.03);
-  d3.selectAll(".circleTextRect").attr("fill-opacity",0.03).attr("stroke-opacity",0.03).style("fill", fill).attr("stroke", fill);
-  d3.selectAll(".circleTextRectHighlight").attr("fill-opacity",0.1).attr("stroke-opacity",0.1);
-  d3.selectAll(".labelText").attr("fill-opacity",0.03).attr("stroke-opacity",0.03);
-  d3.selectAll(".labelRect").attr("fill-opacity",0.03).attr("stroke-opacity",0.03).style("fill", fill).attr("stroke", fill);
-  d3.selectAll(".imageCircle").attr("display","none");
-  d3.selectAll(".imageCircleHighlight").attr("display","none");
-  d3.selectAll(".link").attr("stroke-opacity",0.03).attr("fill-opacity",0.03).style("fill", fill).style("stroke", fill);
+  d3.selectAll(".backgroundCircle").transition().attr("fill-opacity",0.03).attr("stroke-opacity",0.03).style("fill", fill).style("stroke", fill);
+  d3.selectAll(".backgroundCircleHighlight").transition().attr("fill-opacity",0.1).attr("stroke-opacity",0.1);
+  d3.selectAll(".circleText").transition().attr("fill-opacity",0.03).attr("stroke-opacity",0.03);
+  d3.selectAll(".circleTextRect").transition().attr("fill-opacity",0.03).attr("stroke-opacity",0.03).style("fill", fill).attr("stroke", fill);
+  d3.selectAll(".circleTextRectHighlight").transition().attr("fill-opacity",0.1).attr("stroke-opacity",0.1);
+  d3.selectAll(".labelText").transition().attr("fill-opacity",0.03).attr("stroke-opacity",0.03);
+  d3.selectAll(".labelRect").transition().attr("fill-opacity",0.03).attr("stroke-opacity",0.03).style("fill", fill).attr("stroke", fill);
+  d3.selectAll(".imageCircle").transition().attr("display","none");
+  d3.selectAll(".imageCircleHighlight").transition().attr("display","none");
+  d3.selectAll(".link").transition().attr("stroke-opacity",0.03).attr("fill-opacity",0.03).style("fill", fill).style("stroke", fill);
 
   // Which predicates to show
   var relationsToShow = [];
@@ -1804,30 +1804,30 @@ function showRelations(rel) {
     var rx = relationsToShow[r];
     for (var e in connectionRelationIndex[usePerson][rx]) {
       var id = connectionRelationIndex[usePerson][rx][e].split("/")[connectionRelationIndex[usePerson][rx][e].split("/").length-1].replace(cssSafe,'');
-      d3.selectAll("#backgroundCircle_" + id).attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", fill).style("stroke", fill);
-      d3.selectAll("#imageCircle_"+ id).attr("display","block").style("fill", fill).attr("stroke", fill);
-      d3.selectAll("#circleText_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1);
-      d3.selectAll("#circleTextRect_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", "white").attr("stroke", "black");
-      d3.selectAll("#labelText_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1);
-      d3.selectAll("#labelRect_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", "white").attr("stroke", "black");
-      d3.selectAll(".marker path").style("fill", fill);
+      d3.selectAll("#backgroundCircle_" + id).transition().attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", fill).style("stroke", fill);
+      d3.selectAll("#imageCircle_"+ id).transition().attr("display","block").style("fill", fill).attr("stroke", fill);
+      d3.selectAll("#circleText_"+ id).transition().attr("fill-opacity",1).attr("stroke-opacity",1);
+      d3.selectAll("#circleTextRect_"+ id).transition().attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", "white").attr("stroke", "black");
+      d3.selectAll("#labelText_"+ id).transition().attr("fill-opacity",1).attr("stroke-opacity",1);
+      d3.selectAll("#labelRect_"+ id).transition().attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", "white").attr("stroke", "black");
+      d3.selectAll(".marker path").transition().style("fill", fill);
       nodesShown.push(id);
     }
   }
   var id = usePerson.split("/")[usePerson.split("/").length-1].replace(cssSafe,'');
-  d3.selectAll("#backgroundCircle_" + id).attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", fill).style("stroke", fill);
-  d3.selectAll("#imageCircle_"+ id).attr("display","block").style("fill", fill).attr("stroke", fill);
-  d3.selectAll("#circleText_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1);
-  d3.selectAll("#circleTextRect_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", "white").attr("stroke", "black");
-  d3.selectAll("#labelText_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1);
-  d3.selectAll("#labelRect_"+ id).attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", "white").attr("stroke", "black");
-  d3.selectAll(".marker path").style("fill", fill);
+  d3.selectAll("#backgroundCircle_" + id).transition().attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", fill).style("stroke", fill);
+  d3.selectAll("#imageCircle_"+ id).transition().attr("display","block").style("fill", fill).attr("stroke", fill);
+  d3.selectAll("#circleText_"+ id).transition().attr("fill-opacity",1).attr("stroke-opacity",1);
+  d3.selectAll("#circleTextRect_"+ id).transition().attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", "white").attr("stroke", "black");
+  d3.selectAll("#labelText_"+ id).transition().attr("fill-opacity",1).attr("stroke-opacity",1);
+  d3.selectAll("#labelRect_"+ id).transition().attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", "white").attr("stroke", "black");
+  d3.selectAll(".marker path").transition().style("fill", fill);
   nodesShown.push(id);
   // Now show all the lines between all the nodes that we've shown
   for (var n in nodesShown) {
     for (var m in nodesShown) {
       if (nodesShown[n] != nodesShown[m] && (nodesShown[n] == id || nodesShown[m] == id)) {
-        d3.selectAll(".link_" + nodesShown[n] + ".link_" + nodesShown[m]).attr("stroke-opacity",1).style("fill-opacity",1).style("stroke-width",2).style("fill", fill).style("stroke", fill);
+        d3.selectAll(".link_" + nodesShown[n] + ".link_" + nodesShown[m]).transition().attr("stroke-opacity",1).style("fill-opacity",1).style("stroke-width",2).style("fill", fill).style("stroke", fill);
       }
     }
   }
