@@ -43,4 +43,4 @@
         #cboxNext:hover{background-position:bottom right;}
         #cboxClose{position:absolute; top:35px; right:35px; display:block; background:url(../menu/close.png); width:48px; height:48px; text-indent:-9999px;}
         #cboxClose:hover{background-position:bottom center;}
-        #cboxLogo{position:absolute; top:35px; left:35px; display:block;width:48px; height:48px;}
+        #cboxLogo{position:absolute; top:35px; left:35px; display:block;width:60px; height:60px;}
