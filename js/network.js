@@ -1229,21 +1229,25 @@ function showPopup(d,cords) {
     var artwork1Large = "";
     var artwork1Title = "";
     var artwork1Date = "";
+    var artwork1Artist = "";
     var artwork1Desc = "";
 
     var artwork2Large = "";
     var artwork2Title = "";
     var artwork2Date = "";
+    var artwork2Artist = "";
     var artwork2Desc = "";
 
     var artwork3Large = "";
     var artwork3Title = "";
     var artwork3Date = "";
+    var artwork3Artist = "";
     var artwork3Desc = "";
 
     var artwork4Large = "";
     var artwork4Title = "";
     var artwork4Date = "";
+    var artwork4Artist = "";
     var artwork4Desc = "";
 
     if (descObject.hasOwnProperty(usePerson)) {
@@ -1294,6 +1298,9 @@ function showPopup(d,cords) {
       if (descObject[usePerson]['http://lv.artic.edu/ns#artwork1Date']) {
         artwork1Date = descObject[usePerson]['http://lv.artic.edu/ns#artwork1Date'][0].value;
       }
+      if (descObject[usePerson]['http://lv.artic.edu/ns#artwork1Artist']) {
+        artwork1Artist = descObject[usePerson]['http://lv.artic.edu/ns#artwork1Artist'][0].value;
+      }
       if (descObject[usePerson]['http://lv.artic.edu/ns#artwork1Desc']) {
         artwork1Desc = descObject[usePerson]['http://lv.artic.edu/ns#artwork1Desc'][0].value;
       }
@@ -1306,6 +1313,9 @@ function showPopup(d,cords) {
       }
       if (descObject[usePerson]['http://lv.artic.edu/ns#artwork2Date']) {
         artwork2Date = descObject[usePerson]['http://lv.artic.edu/ns#artwork2Date'][0].value;
+      }
+      if (descObject[usePerson]['http://lv.artic.edu/ns#artwork2Artist']) {
+        artwork2Artist = descObject[usePerson]['http://lv.artic.edu/ns#artwork2Artist'][0].value;
       }
       if (descObject[usePerson]['http://lv.artic.edu/ns#artwork2Desc']) {
         artwork2Desc = descObject[usePerson]['http://lv.artic.edu/ns#artwork2Desc'][0].value;
@@ -1320,6 +1330,9 @@ function showPopup(d,cords) {
       if (descObject[usePerson]['http://lv.artic.edu/ns#artwork3Date']) {
         artwork3Date = descObject[usePerson]['http://lv.artic.edu/ns#artwork3Date'][0].value;
       }
+      if (descObject[usePerson]['http://lv.artic.edu/ns#artwork3Artist']) {
+        artwork3Artist = descObject[usePerson]['http://lv.artic.edu/ns#artwork3Artist'][0].value;
+      }
       if (descObject[usePerson]['http://lv.artic.edu/ns#artwork3Desc']) {
         artwork3Desc = descObject[usePerson]['http://lv.artic.edu/ns#artwork3Desc'][0].value;
       }
@@ -1332,6 +1345,9 @@ function showPopup(d,cords) {
       }
       if (descObject[usePerson]['http://lv.artic.edu/ns#artwork4Date']) {
         artwork4Date = descObject[usePerson]['http://lv.artic.edu/ns#artwork4Date'][0].value;
+      }
+      if (descObject[usePerson]['http://lv.artic.edu/ns#artwork4Artist']) {
+        artwork4Artist = descObject[usePerson]['http://lv.artic.edu/ns#artwork4Artist'][0].value;
       }
       if (descObject[usePerson]['http://lv.artic.edu/ns#artwork4Desc']) {
         artwork4Desc = descObject[usePerson]['http://lv.artic.edu/ns#artwork4Desc'][0].value;
@@ -1500,7 +1516,7 @@ function showPopup(d,cords) {
                             .attr("class", "popup-artwork")
                             .attr("src", artwork1Large)
                             .attr("alt", nodes[usePersonIndex].label)
-                            .attr("copy", "<div class=\"divider\"><img src=\"menu/dash.png\"/></div><h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork1Title + "</h3><h4>" + artwork1Date + "</h4><p>" + artwork1Desc + "</p>" )
+                            .attr("copy", "<div class=\"divider\"><img src=\"menu/dash.png\"/></div><h2>" + nodes[usePersonIndex].label + "</h2><h4>" + artwork1Artist + "</h4><h3>" + artwork1Title + "</h3><h4>" + artwork1Date + "</h4><p>" + artwork1Desc + "</p>" )
                         )
                         .append(
                           $("<img>")
@@ -1513,6 +1529,11 @@ function showPopup(d,cords) {
             .append(
               $("<span>")
                 .attr("class", "popup-artwork-desc")
+                .append(
+                  $("<span>")
+                    .attr("class", "popup-artist")
+                    .html(artwork1Artist)
+                )
                 .append(
                   $("<span>")
                     .attr("class", "popup-title")
@@ -1546,7 +1567,7 @@ function showPopup(d,cords) {
                             .attr("class", "popup-artwork")
                             .attr("src", artwork2Large)
                             .attr("alt", nodes[usePersonIndex].label)
-                            .attr("copy", "<div class=\"divider\"><img src=\"menu/dash.png\"/></div><h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork2Title + "</h3><h4>" + artwork2Date + "</h4><p>" + artwork2Desc + "</p>" )
+                            .attr("copy", "<div class=\"divider\"><img src=\"menu/dash.png\"/></div><h2>" + nodes[usePersonIndex].label + "</h2><h4>" + artwork2Artist + "</h4><h3>" + artwork2Title + "</h3><h4>" + artwork2Date + "</h4><p>" + artwork2Desc + "</p>" )
                         )
                         .append(
                           $("<img>")
@@ -1559,6 +1580,11 @@ function showPopup(d,cords) {
             .append(
               $("<span>")
                 .attr("class", "popup-artwork-desc")
+                .append(
+                  $("<span>")
+                    .attr("class", "popup-artist")
+                    .html(artwork2Artist)
+                )
                 .append(
                   $("<span>")
                     .attr("class", "popup-title")
@@ -1592,7 +1618,7 @@ function showPopup(d,cords) {
                             .attr("class", "popup-artwork")
                             .attr("src", artwork3Large)
                             .attr("alt", nodes[usePersonIndex].label)
-                            .attr("copy", "<div class=\"divider\"><img src=\"menu/dash.png\"/></div><h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork3Title + "</h3><h4>" + artwork3Date + "</h4><p>" + artwork3Desc + "</p>" )
+                            .attr("copy", "<div class=\"divider\"><img src=\"menu/dash.png\"/></div><h2>" + nodes[usePersonIndex].label + "</h2><h4>" + artwork3Artist + "</h4><h3>" + artwork3Title + "</h3><h4>" + artwork3Date + "</h4><p>" + artwork3Desc + "</p>" )
                         )
                         .append(
                           $("<img>")
@@ -1605,6 +1631,11 @@ function showPopup(d,cords) {
             .append(
               $("<span>")
                 .attr("class", "popup-artwork-desc")
+                .append(
+                  $("<span>")
+                    .attr("class", "popup-artist")
+                    .html(artwork3Artist)
+                )
                 .append(
                   $("<span>")
                     .attr("class", "popup-title")
@@ -1638,7 +1669,7 @@ function showPopup(d,cords) {
                             .attr("class", "popup-artwork")
                             .attr("src", artwork4Large)
                             .attr("alt", nodes[usePersonIndex].label)
-                            .attr("copy", "<div class=\"divider\"><img src=\"menu/dash.png\"/></div><h2>" + nodes[usePersonIndex].label + "</h2><h3>" + artwork4Title + "</h3><h4>" + artwork4Date + "</h4><p>" + artwork4Desc + "</p>" )
+                            .attr("copy", "<div class=\"divider\"><img src=\"menu/dash.png\"/></div><h2>" + nodes[usePersonIndex].label + "</h2><h4>" + artwork4Artist + "</h4><h3>" + artwork4Title + "</h3><h4>" + artwork4Date + "</h4><p>" + artwork4Desc + "</p>" )
                         )
                         .append(
                           $("<img>")
@@ -1651,6 +1682,11 @@ function showPopup(d,cords) {
             .append(
               $("<span>")
                 .attr("class", "popup-artwork-desc")
+                .append(
+                  $("<span>")
+                    .attr("class", "popup-artist")
+                    .html(artwork4Artist)
+                )
                 .append(
                   $("<span>")
                     .attr("class", "popup-title")

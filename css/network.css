@@ -479,6 +479,12 @@ text.circleText {
   transform: translateY(-50%) translateX(-50%);
 }
 
+.popup-artist {
+  font-family: caslon, serif;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
 .popup-title {
   font-family: caslonitalic, serif;
   font-size: 12px;
