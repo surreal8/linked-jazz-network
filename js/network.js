@@ -1061,20 +1061,21 @@ function restart() {
 		  .attr("y1", function(d) { return d.source.y; })
 		  .attr("x2", function(d) { return d.target.x; })
 		  .attr("y2", function(d) { return d.target.y; });
-	  
-	  
+		  
 	  if ($("#network svg").css("visibility") != "visible") {
 		  $("#network").css("visibility","visible");
 		  $("#network svg").css("visibility","visible");
-	    $("#zoomWidget").fadeIn(3000).css("visibility","visible");
-      if (visMode == 'person') {
-        $(".filter-button").css("visibility","visible");
-      }
-      else {
-		    $("#title").fadeIn(3000);
-		    $("#about").fadeIn(3000);
-		    $("#logo").fadeIn(3000);
-      }
+		  $("#zoomWidget").fadeIn(2000).css("visibility","visible");
+		  $("#network svg").fadeTo( 1000, 1, function() {
+			if (visMode != 'person') {
+				$("#title").fadeIn(2000);
+				$("#about").fadeIn(2000);
+				$("#logo").fadeIn(2000);
+			}
+		  });
+		  if (visMode == 'person') {
+			$(".filter-button").css("visibility","visible");
+		  }
 		}
 	 }
   });
