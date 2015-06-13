@@ -118,6 +118,7 @@ p.credits {
   color: #ffffff;
   display: block;
   background-color: #E9967A;
+  border: 1px #E9967A solid;
   border-radius: 0.7vw;
   padding: 0.78vw 1.56vw;
   font-size: 0.74vw;
@@ -127,6 +128,12 @@ p.credits {
 
 a.begin, a:visited.begin, a:hover.begin {
 	text-decoration: none;
+}
+
+#begin:hover {	
+  color: #000000;
+  background-color: #ffffff;
+  border: 1px #000000 solid;
 }
 
 h1 {
@@ -163,6 +170,12 @@ h1 {
   font-size: 15px;
   letter-spacing: 2px;
   font-family: akkuratreg, sans-serif;
+}
+
+#about:hover {
+  color: #ffffff;
+  background-color: #E9967A;
+  border: 1px #E9967A solid;
 }
 
 a {
@@ -224,6 +237,12 @@ svg {
   margin-top: 20px;
   margin-right: 20px;
   float: left;
+}
+
+.filter-button:not(.disabled):hover {
+  color: #ffffff;
+  background-color: #E9967A;
+  border: 1px #E9967A solid;
 }
 
 .filter-button.active{
@@ -510,6 +529,12 @@ text.circleText {
   letter-spacing: 3px;
   -moz-border-radius:10px;-ie-border-radius:10px;-webkit-border-radius:10px;-o-border-radius:10px;border-radius:10px;
   font-family: akkuratreg, sans-serif;
+}
+
+.popup-home:hover {
+  color: #ffffff;
+  background-color: #E9967A;
+  border: 1px #E9967A solid;
 }
 
 .popup-transcript-link-holder{
