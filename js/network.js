@@ -339,6 +339,7 @@ function initalizeNetwork() {
 	  .attr("width", visWidth - 10)
 	  .attr("height", visHeight - 130)
       .append('svg:g')
+      .attr("id", "networkCanvas")
       .call(zoom)//.call(d3.behavior.zoom().scaleExtent([0.25, 6]).on("zoom", redraw)) //.call(d3.behavior.zoom().on("zoom", redraw))
 	  .append('svg:g');
 
@@ -1937,12 +1938,17 @@ function redraw(useScale) {
   //store the last event data
   trans = d3.event.translate;
   scale = d3.event.scale;
-  
+  tx = trans[0];
+  ty = trans[1];
+  tx = Math.min(tx, d3.select("#networkCanvas").node().getBBox().width/2 + visWidth/2 - visWidth*.1);
+  tx = Math.max(tx, (d3.select("#networkCanvas").node().getBBox().width/2 + visWidth/2 - visWidth*.1)*-1);
+  ty = Math.min(ty, d3.select("#networkCanvas").node().getBBox().height/2 + visHeight/2 - visHeight*.3);
+  ty = Math.max(ty, (d3.select("#networkCanvas").node().getBBox().height/2 + visHeight/2 - visHeight*.3)*-1);
   console.log('trans', trans);
   console.log('scale', scale);
   
   //transform the vis
-  vis.attr("transform","translate(" + trans + ")" + " scale(" + scale + ")");
+  vis.attr("transform","translate(" + [tx, ty] + ")" + " scale(" + scale + ")");
   
   //we need to update the zoom slider, set the boolean to false so the slider change does not trigger a zoom change in the vis (from the slider callback function)
   zoomWidgetObjDoZoom = false;
