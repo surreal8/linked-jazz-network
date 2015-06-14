@@ -307,7 +307,6 @@ text.labelText {
 rect.circleTextRect {
 	stroke: black;
 	stroke-width: 10;
-	background-color: black;
 }
 
 rect.circleTextRectHighlight {
@@ -325,7 +324,6 @@ text.circleText {
 	stroke-width: 10;
 	opacity: 0;
 	visibility: visible;
-	fill: black;
 }
 
 .labelText {
