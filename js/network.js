@@ -1033,6 +1033,31 @@ function restart() {
       }
     }
   }
+  
+  //hover colors for nodes
+  d3.selectAll('.node').on({
+	  mouseenter: function(d) {
+		  if (d3.select("#circleTextRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')).classed( "circleTextRectHighlight" )) {
+		      d3.selectAll("#circleTextRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')).style("stroke", "#cc846b");
+			  d3.selectAll("#labelRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')).style("stroke", "#cc846b");
+		  } else {
+			  d3.selectAll("#circleTextRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')).style("stroke", "#E9967A");
+			  d3.selectAll("#labelRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')).style("stroke", "#E9967A");
+		  }
+	  }
+  });
+	  
+ d3.selectAll('.node').on({
+	  mouseleave: function(d) { 
+		  if (d3.select("#circleTextRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')).classed( "circleTextRectHighlight" )) {
+			  d3.selectAll("#circleTextRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')).style("stroke", "#E9967A");
+			  d3.selectAll("#labelRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')).style("stroke", "#E9967A");
+		  } else {
+			  d3.selectAll("#circleTextRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')).style("stroke", "#000000");
+			  d3.selectAll("#labelRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')).style("stroke", "#000000");
+		  }
+	  }
+  });
 
   force.start();
 
