@@ -1,0 +1,49 @@
+@charset "UTF-8";
+/* CSS Document */
+
+@font-face {
+    font-family: akkuratreg;
+    src: url(fonts/lineto-akkurat-regular.woff);
+}
+
+body {
+	background-color: #000000;
+	color: #ffffff;
+	font-family: akkuratreg, sans-serif;
+    font-size: 14px;
+    margin: 28px;
+    top: 100px;
+    left: 100px;
+
+}
+
+h1.about {
+  left: 100px;
+  position: relative;
+  color: #ffffff;
+  top: 100px;
+  font-family: akkuratreg, sans-serif;
+  line-height: 34px;
+  margin: 28px;
+  letter-spacing: 0.685em;
+  padding: 0px;
+}
+
+#cboxLogo {
+  position: absolute;
+  top: 35px;
+  left: 35px;
+  display: block;
+  width: 60px;
+  height: 60px;
+}
+
+table {
+  margin: 28px;
+  position: relative;
+  top: 100px;
+  left: 100px;
+  width: 80%;
+}
+	
+

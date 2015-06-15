@@ -755,6 +755,7 @@ function filter(clear) {
   //are we wiping the nodes out or just adding?
   if (clear) {
 	  $("#network svg").css("visibility","hidden");
+	  $("#networkCanvas").css("opacity", 0);
 	  $("#title").css("display","none");
 	  $("#about").css("display","none");
 	  $("#logo").css("display","none");
@@ -1093,7 +1094,7 @@ function restart() {
 		  $("#network").css("visibility","visible");
 		  $("#network svg").css("visibility","visible");
 		  $("#zoomWidget").fadeIn(2000).css("visibility","visible");
-		  $("#network svg").fadeTo( 1000, 1, function() {
+		  $("#networkCanvas").fadeTo( 1000, 1, function() {
 			if (visMode != 'person') {
 				$("#title").fadeIn(2000);
 				$("#about").fadeIn(2000);
