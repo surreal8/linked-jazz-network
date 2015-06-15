@@ -178,12 +178,17 @@ h1 {
   border: 1px #E9967A solid;
 }
 
-a {
+a, a.aaboutlink {
   text-decoration: none;
 }
 a:hover {
   text-decoration: underline;
 }
+
+a.aboutlink {
+  color: #E9967A
+}
+  
 
 svg {
 	position:absolute;
@@ -609,6 +614,22 @@ text.circleText {
   line-height: 34px;
   margin: 28px;
   color: #ffffff;
+  position: relative;
+  top: 100px;
+  left: 100px;
+  width: 80%;
+}
+
+h1.about {
+  left: 100px;
+  position: relative;
+  color: #ffffff;
+  top: 100px;
+  font-family: akkuratreg, sans-serif;
+  line-height: 34px;
+  margin: 28px;
+  letter-spacing: 0.685em;
+  padding: 0px;
 }
 
  #logo{
