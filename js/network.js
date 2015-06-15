@@ -1466,21 +1466,37 @@ function showPopup(d,cords) {
           )
       );
 
-    // Back
+    // Home
     jQuery('#popUp')
       .append(
         $('<a>')
           .attr("href", "network.php")
           .append(
             $("<div>")
-              .attr("class", "popup-home")
+              .attr("class", "popup-home popup-home-color-switch")
               .text("HOME")
           )
       );
 
+    jQuery('#popUp')
+      .append(
+        $("<div>")
+          .attr("class", "popup-home-banner")
+          .css('display', 'none')
+          .append(
+            $('<a>')
+              .attr("href", "network.php")
+              .append(
+                $("<div>")
+                  .attr("class", "popup-home")
+                  .text("HOME")
+              )
+          )
+      );
+
     if (headshotBannerButtonColor) {
-      $('.popup-home').css('color', headshotBannerButtonColor)
-      $('.popup-home').css('border-color', headshotBannerButtonColor)
+      $('.popup-home-color-switch').css('color', headshotBannerButtonColor)
+      $('.popup-home-color-switch').css('border-color', headshotBannerButtonColor)
     }
 
     // Name and dates
@@ -1808,6 +1824,15 @@ function showPopup(d,cords) {
 
     jQuery("#popUp").fadeIn(200);
 
+    jQuery("#popUp").scroll(function(){
+      if (!isScrolledIntoView('.popup-headshot-cont', 50)) {
+        jQuery(".popup-home-banner").fadeIn(200);
+      }
+      else {
+        jQuery(".popup-home-banner").fadeOut(200);
+      }
+    });
+
     //popupShown = true;
   }
 }
@@ -2051,4 +2076,21 @@ function windowResize() {
   d3.select("#network svg")
 	  .attr("width", visWidth - 10)
 	  .attr("height", visHeight - 130);
+}
+
+function isScrolledIntoView(elem, buffer) {
+  if (!buffer){
+    buffer = 0;
+  }
+
+  var $elem = $(elem);
+  var $window = $(window);
+
+  var docViewTop = $window.scrollTop() + buffer;
+  var docViewBottom = docViewTop + $window.height() - buffer;
+
+  var elemTop = $elem.position().top;
+  var elemBottom = elemTop + $elem.outerHeight(true);
+
+  return ((elemTop <= docViewBottom) && (elemBottom >= docViewTop));
 }

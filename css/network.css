@@ -530,7 +530,7 @@ text.circleText {
 }
 
 .popup-home {
-  position: absolute;
+  position: fixed;
   top: 20px;
   left: 20px;
   width: 78px;
@@ -542,6 +542,17 @@ text.circleText {
   letter-spacing: 3px;
   -moz-border-radius:10px;-ie-border-radius:10px;-webkit-border-radius:10px;-o-border-radius:10px;border-radius:10px;
   font-family: akkuratreg, sans-serif;
+}
+
+.popup-home-banner {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  height: 100px;
+	max-width:540px;
+	min-width:410px;
+  width: 40%;
+  background: #fff;
 }
 
 .popup-home:hover {
