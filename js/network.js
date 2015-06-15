@@ -73,20 +73,6 @@ var jsonNodes = "";
 var jsonLines = "";
 
 var nodeClickFunction = function(d) {
-  var data = '';
-  
-  var nodes = d3.selectAll("g.node");
-  var json_nodes = JSON.stringify(nodes.data());
-  jsonNodes = json_nodes;
-  data += 'var jsonNodes = '+json_nodes+';<br /><br />';
-  
-  var lines = d3.selectAll("line.link");
-  var json_lines = JSON.stringify(lines.data());
-  jsonLines = json_lines;
-  data += 'var jsonLines = '+json_lines+';';
-  
-  console.log(data);
-  
   if (d3.event.defaultPrevented) return;
   force.stop();
   //$("#network").fadeOut('fast',
@@ -316,18 +302,15 @@ function parseStateChangeVis() {
     changeVisMode("person");
     windowResize();
     
-  } else if (history.hash.search(/\?mode=/) > -1) {
-
-    var mode = history.hash.split('?mode=')[1];
-    //sometime this id gets append to the url
-    if (mode.search(/_suid=/)>-1) {
-      mode = mode.split('&_suid=')[0]
-    }
-    changeVisMode(mode);
-
   } else {
-    showSpinner("");
-    filter();
+	  console.log('jsonlnodes', jsonNodes);
+	if (jsonNodes == "") {
+		console.log('hiii');
+		changeVisMode("clique");
+	} else {
+		changeVisMode('home');	
+	}
+	windowResize();	
   }
 }
 
@@ -885,8 +868,10 @@ function filter(clear) {
 }
 
 function restart() {
-
-  if (visMode == "person" && nodes[usePersonIndex].connections > 15) {
+	console.log('nodes', nodes);
+	console.log('useperson', usePersonIndex);
+	console.log('vismde', visMode);
+  if (visMode == "clique" || visMode == "person" && nodes[usePersonIndex].connections > 15) {
     showSpinner("");
   }
   
@@ -905,7 +890,7 @@ function restart() {
 	  .attr("cx", "0")
 	  .attr("cy", "0")
 	  .attr("r", "4");
-
+console.log('links', links);
   if (jsonLines != "" && visMode != 'person') {
 	  console.log('jsonLines', jsonLines);
 	 links = jQuery.parseJSON(jsonLines);
@@ -1017,17 +1002,19 @@ console.log('nodes', nodes);
     nodes[aNode].y2 = nodes[aNode].y + nodes[aNode].height;
 
     if (visMode != 'person') {
-      if (nodes[aNode].id == 'http://data.artic.edu/whistler/person/James_McNeill_Whistler') {
-        nodes[aNode].x = visWidth/2 + 100;
-        nodes[aNode].y = visHeight/2;
-        //nodes[aNode].fixed = true;
-      }
-
-      if (nodes[aNode].id == 'http://data.artic.edu/whistler/person/Theodore_Roussel') {
-        nodes[aNode].x = visWidth/2 - 100;
-        nodes[aNode].y = visHeight/2;
-        //nodes[aNode].fixed = true;
-      }
+		if (visMode != 'home') {
+		  if (nodes[aNode].id == 'http://data.artic.edu/whistler/person/James_McNeill_Whistler') {
+			nodes[aNode].x = visWidth/2 + 100;
+			nodes[aNode].y = visHeight/2;
+			//nodes[aNode].fixed = true;
+		  }
+	
+		  if (nodes[aNode].id == 'http://data.artic.edu/whistler/person/Theodore_Roussel') {
+			nodes[aNode].x = visWidth/2 - 100;
+			nodes[aNode].y = visHeight/2;
+			//nodes[aNode].fixed = true;
+		  }
+		}
 
       // Highlight Whistler and Roussell
       vis.selectAll("#circleTextRect_James_McNeill_Whistler")
@@ -1109,7 +1096,7 @@ console.log('nodes', nodes);
 
   //controls the movement of the nodes
   force.on("tick", function(e){ 
-	if ((usePerson && nodes[usePersonIndex].connections < 15 && e.alpha <= 1) || e.alpha <= .02) {
+	if ((usePerson && nodes[usePersonIndex].connections < 15 && e.alpha <= 1) || e.alpha <= .02 || visMode == 'home') {
         hideSpinner();
     	// Collision detection stolen from: http://vallandingham.me/building_a_bubble_cloud.html
     	dampenedAlpha = e.alpha * .5;
@@ -1147,6 +1134,16 @@ console.log('nodes', nodes);
 			$(".filter-button").css("visibility","visible");
 		  }
 		}
+		
+		if (visMode != 'person' && visMode != 'home') {
+			  var nodesInit = d3.selectAll("g.node");
+			  var json_nodes = JSON.stringify(nodesInit.data());
+			  jsonNodes = json_nodes;
+			  
+			  var linesInit = d3.selectAll("line.link");
+			  var json_lines = JSON.stringify(linesInit.data());
+			  jsonLines = json_lines;
+		  }
 	 }
   });
 }
@@ -1517,7 +1514,17 @@ function showPopup(d,cords) {
             $("<div>")
               .attr("class", "popup-home popup-home-color-switch")
               .text("HOME")
-			  .on("click", function(){changeVisMode('home')})
+			  .on("click", function(){
+				  hideDetailElements(); 
+				  usePerson = null; 
+				  usePersonIndex = 0; 
+				  if (jsonNodes == "") {
+					  changeVisMode('clique');
+				  } else {
+					  changeVisMode('home'); 
+					  }
+				  windowResize();					  
+				  })
          // )
       );
 
@@ -1898,11 +1905,15 @@ function highlightText(text, uris) {
   return text;
 }
 
+function hideDetailElements() {
+	$('#popUp').hide();
+}
+
 function changeVisMode(changeTo) {
-console.log('changeVisMode');
+console.log('changeVisMode', changeTo);
   if (rendering)
     return false;
-
+console.log('rendering');
   rendering = true;
 
   if (changeTo == "person") {
@@ -1916,7 +1927,7 @@ console.log('changeVisMode');
 
     History.pushState({state:idLookup[usePerson]}, "Linked Visions: " + name, "?person=" + idLookup[usePerson]);
   } else {
-    History.pushState({state:changeTo}, changeTo +" Mode", "?mode=" + changeTo);
+    History.pushState({state:changeTo}, changeTo +" Mode", "/network.php");
   }
 
   visMode = changeTo;
