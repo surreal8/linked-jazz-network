@@ -1939,7 +1939,7 @@ console.log('rendering');
   vis.attr("transform", "translate(" + [0,0] + ")"  + " scale(" + 1 + ")");
 
   zoomWidgetObjDoZoom = false;
-  zoomWidgetObj.setValue(0,0.7);
+  zoomWidgetObj.setValue(0,0.8);
 
   filter();
 
