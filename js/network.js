@@ -68,7 +68,25 @@ var relFamily = [];
 var relColleagues = [];
 var relMentors = [];
 var relEmployers = [];
+
+var jsonNodes = "";
+var jsonLines = "";
+
 var nodeClickFunction = function(d) {
+  var data = '';
+  
+  var nodes = d3.selectAll("g.node");
+  var json_nodes = JSON.stringify(nodes.data());
+  jsonNodes = json_nodes;
+  data += 'var jsonNodes = '+json_nodes+';<br /><br />';
+  
+  var lines = d3.selectAll("line.link");
+  var json_lines = JSON.stringify(lines.data());
+  jsonLines = json_lines;
+  data += 'var jsonLines = '+json_lines+';';
+  
+  console.log(data);
+  
   if (d3.event.defaultPrevented) return;
   force.stop();
   //$("#network").fadeOut('fast',
@@ -78,6 +96,7 @@ var nodeClickFunction = function(d) {
   $("html, body").animate({ scrollTop: 0 }, "slow");
   //                  }
   //               );
+
 };
 
 jQuery(document).ready(function($) {
@@ -198,7 +217,7 @@ jQuery(document).ready(function($) {
 
   );
 
-  jQuery("#zoomWidget").mouseenter(function() {console.log('whhyyy'); zoomWidgetObjDoZoom = true; });
+  jQuery("#zoomWidget").mouseenter(function() { zoomWidgetObjDoZoom = true; });
 
   zoomWidgetObj = new Dragdealer('zoomWidget',
                   {
@@ -206,7 +225,6 @@ jQuery(document).ready(function($) {
                    vertical: true,
                    y: 0.8,
                    animationCallback: function(x, y) {
-					   console.log('y', y);
                        //if the value is the same as the intial value exit, to prevent a zoom even being called onload
                        if (y==0.8) {
 						   return false;
@@ -498,7 +516,6 @@ function dataAnalysis() {
   //find out the range of number of connections to color our edges
   edgesAvg = Math.floor(totalConnections/largestNodes.length);
   edgesInterval = (largestNodes[0].size - edgesAvg) / 3;
-  console.log("edgesInterval: " + edgesInterval);
 
   var flipFlop = 0;
   //for (largeNode in largestNodes) {
@@ -889,13 +906,23 @@ function restart() {
 	  .attr("cy", "0")
 	  .attr("r", "4");
 
+  if (jsonLines != "" && visMode != 'person') {
+	  console.log('jsonLines', jsonLines);
+	 links = jQuery.parseJSON(jsonLines);
+  }
   vis.selectAll("line.link")
     .data(links)
     .enter().insert("line", "circle.node")
     .attr("class", function(d) {return "link " + d.customClass});
+  
 
-  var node = vis.selectAll("g.node")
+console.log('nodes', nodes);
+  if (jsonNodes != "" && visMode != 'person') {
+	  nodes = jQuery.parseJSON(jsonNodes);
+  }
+  	  var node = vis.selectAll("g.node")
       .data(nodes);
+  
 
   var nodeEnter = node.enter().append("svg:g")
       .attr("class", "node")
@@ -1089,11 +1116,15 @@ function restart() {
     	jitter = 0.3;
     	ratio = 2.77; // xy ratio
 
-		vis.selectAll("g.node")
-		  .each(stickyPeople())
-			.each(gravity(dampenedAlpha))
-			  .each(collide(jitter))
-				.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
+		if (visMode != 'home') {
+			vis.selectAll("g.node")
+			  .each(stickyPeople())
+				.each(gravity(dampenedAlpha))
+				  .each(collide(jitter))
+					.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
+		} else {
+			vis.selectAll("g.node").attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
+		}
 
 		vis.selectAll("line.link")
 		  .attr("x1", function(d) { return d.source.x;})
@@ -1479,14 +1510,15 @@ function showPopup(d,cords) {
 
     // Home
     jQuery('#popUp')
-      .append(
-        $('<a>')
-          .attr("href", "network.php")
+      //.append(
+        //$('<a>')
+          //.attr("href", "network.php")
           .append(
             $("<div>")
               .attr("class", "popup-home popup-home-color-switch")
               .text("HOME")
-          )
+			  .on("click", function(){changeVisMode('home')})
+         // )
       );
 
     jQuery('#popUp')
@@ -1867,7 +1899,7 @@ function highlightText(text, uris) {
 }
 
 function changeVisMode(changeTo) {
-
+console.log('changeVisMode');
   if (rendering)
     return false;
 
@@ -1889,11 +1921,6 @@ function changeVisMode(changeTo) {
 
   visMode = changeTo;
 
-  //$("#network").fadeOut(function() {
-
-  //$("#network").css("visibility","hidden");
-
-  //showSpinner("Rendering<br>Network");
   initalizeNetwork();
 
   //we need to rest the zoom/pan
@@ -1906,7 +1933,7 @@ function changeVisMode(changeTo) {
   filter();
 
   rendering = false;
-  //});
+
 }
 
 function hideRelations() {
@@ -2026,8 +2053,6 @@ function redraw(useScale) {
   tx = Math.max(tx, (d3.select("#networkCanvas").node().getBBox().width/2 + visWidth/2 - visWidth*.1)*-1);
   ty = Math.min(ty, d3.select("#networkCanvas").node().getBBox().height/2 + visHeight/2 - visHeight*.3);
   ty = Math.max(ty, (d3.select("#networkCanvas").node().getBBox().height/2 + visHeight/2 - visHeight*.3)*-1);
-  console.log('trans', trans);
-  console.log('scale', scale);
   
   //transform the vis
   vis.attr("transform","translate(" + [tx, ty] + ")" + " scale(" + scale + ")");
