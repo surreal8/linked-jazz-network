@@ -68,6 +68,10 @@ var relFamily = [];
 var relColleagues = [];
 var relMentors = [];
 var relEmployers = [];
+
+var jsonNodes = "";
+var jsonLines = "";
+
 var nodeClickFunction = function(d) {
   if (d3.event.defaultPrevented) return;
   force.stop();
@@ -78,6 +82,7 @@ var nodeClickFunction = function(d) {
   $("html, body").animate({ scrollTop: 0 }, "slow");
   //                  }
   //               );
+
 };
 
 jQuery(document).ready(function($) {
@@ -198,7 +203,7 @@ jQuery(document).ready(function($) {
 
   );
 
-  jQuery("#zoomWidget").mouseenter(function() {console.log('whhyyy'); zoomWidgetObjDoZoom = true; });
+  jQuery("#zoomWidget").mouseenter(function() { zoomWidgetObjDoZoom = true; });
 
   zoomWidgetObj = new Dragdealer('zoomWidget',
                   {
@@ -206,7 +211,6 @@ jQuery(document).ready(function($) {
                    vertical: true,
                    y: 0.8,
                    animationCallback: function(x, y) {
-					   console.log('y', y);
                        //if the value is the same as the intial value exit, to prevent a zoom even being called onload
                        if (y==0.8) {
 						   return false;
@@ -298,18 +302,15 @@ function parseStateChangeVis() {
     changeVisMode("person");
     windowResize();
     
-  } else if (history.hash.search(/\?mode=/) > -1) {
-
-    var mode = history.hash.split('?mode=')[1];
-    //sometime this id gets append to the url
-    if (mode.search(/_suid=/)>-1) {
-      mode = mode.split('&_suid=')[0]
-    }
-    changeVisMode(mode);
-
   } else {
-    showSpinner("");
-    filter();
+	  console.log('jsonlnodes', jsonNodes);
+	if (jsonNodes == "") {
+		console.log('hiii');
+		changeVisMode("clique");
+	} else {
+		changeVisMode('home');	
+	}
+	windowResize();	
   }
 }
 
@@ -498,7 +499,6 @@ function dataAnalysis() {
   //find out the range of number of connections to color our edges
   edgesAvg = Math.floor(totalConnections/largestNodes.length);
   edgesInterval = (largestNodes[0].size - edgesAvg) / 3;
-  console.log("edgesInterval: " + edgesInterval);
 
   var flipFlop = 0;
   //for (largeNode in largestNodes) {
@@ -868,8 +868,10 @@ function filter(clear) {
 }
 
 function restart() {
-
-  if (visMode == "person" && nodes[usePersonIndex].connections > 15) {
+	console.log('nodes', nodes);
+	console.log('useperson', usePersonIndex);
+	console.log('vismde', visMode);
+  if (visMode == "clique" || visMode == "person" && nodes[usePersonIndex].connections > 15) {
     showSpinner("");
   }
   
@@ -888,14 +890,24 @@ function restart() {
 	  .attr("cx", "0")
 	  .attr("cy", "0")
 	  .attr("r", "4");
-
+console.log('links', links);
+  if (jsonLines != "" && visMode != 'person') {
+	  console.log('jsonLines', jsonLines);
+	 links = jQuery.parseJSON(jsonLines);
+  }
   vis.selectAll("line.link")
     .data(links)
     .enter().insert("line", "circle.node")
     .attr("class", function(d) {return "link " + d.customClass});
+  
 
-  var node = vis.selectAll("g.node")
+console.log('nodes', nodes);
+  if (jsonNodes != "" && visMode != 'person') {
+	  nodes = jQuery.parseJSON(jsonNodes);
+  }
+  	  var node = vis.selectAll("g.node")
       .data(nodes);
+  
 
   var nodeEnter = node.enter().append("svg:g")
       .attr("class", "node")
@@ -990,17 +1002,19 @@ function restart() {
     nodes[aNode].y2 = nodes[aNode].y + nodes[aNode].height;
 
     if (visMode != 'person') {
-      if (nodes[aNode].id == 'http://data.artic.edu/whistler/person/James_McNeill_Whistler') {
-        nodes[aNode].x = visWidth/2 + 100;
-        nodes[aNode].y = visHeight/2;
-        //nodes[aNode].fixed = true;
-      }
-
-      if (nodes[aNode].id == 'http://data.artic.edu/whistler/person/Theodore_Roussel') {
-        nodes[aNode].x = visWidth/2 - 100;
-        nodes[aNode].y = visHeight/2;
-        //nodes[aNode].fixed = true;
-      }
+		if (visMode != 'home') {
+		  if (nodes[aNode].id == 'http://data.artic.edu/whistler/person/James_McNeill_Whistler') {
+			nodes[aNode].x = visWidth/2 + 100;
+			nodes[aNode].y = visHeight/2;
+			//nodes[aNode].fixed = true;
+		  }
+	
+		  if (nodes[aNode].id == 'http://data.artic.edu/whistler/person/Theodore_Roussel') {
+			nodes[aNode].x = visWidth/2 - 100;
+			nodes[aNode].y = visHeight/2;
+			//nodes[aNode].fixed = true;
+		  }
+		}
 
       // Highlight Whistler and Roussell
       vis.selectAll("#circleTextRect_James_McNeill_Whistler")
@@ -1082,18 +1096,22 @@ function restart() {
 
   //controls the movement of the nodes
   force.on("tick", function(e){ 
-	if ((usePerson && nodes[usePersonIndex].connections < 15 && e.alpha <= 1) || e.alpha <= .02) {
+	if ((usePerson && nodes[usePersonIndex].connections < 15 && e.alpha <= 1) || e.alpha <= .02 || visMode == 'home') {
         hideSpinner();
     	// Collision detection stolen from: http://vallandingham.me/building_a_bubble_cloud.html
     	dampenedAlpha = e.alpha * .5;
     	jitter = 0.3;
     	ratio = 2.77; // xy ratio
 
-		vis.selectAll("g.node")
-		  .each(stickyPeople())
-			.each(gravity(dampenedAlpha))
-			  .each(collide(jitter))
-				.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
+		if (visMode != 'home') {
+			vis.selectAll("g.node")
+			  .each(stickyPeople())
+				.each(gravity(dampenedAlpha))
+				  .each(collide(jitter))
+					.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
+		} else {
+			vis.selectAll("g.node").attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
+		}
 
 		vis.selectAll("line.link")
 		  .attr("x1", function(d) { return d.source.x;})
@@ -1116,6 +1134,16 @@ function restart() {
 			$(".filter-button").css("visibility","visible");
 		  }
 		}
+		
+		if (visMode != 'person' && visMode != 'home') {
+			  var nodesInit = d3.selectAll("g.node");
+			  var json_nodes = JSON.stringify(nodesInit.data());
+			  jsonNodes = json_nodes;
+			  
+			  var linesInit = d3.selectAll("line.link");
+			  var json_lines = JSON.stringify(linesInit.data());
+			  jsonLines = json_lines;
+		  }
 	 }
   });
 }
@@ -1479,14 +1507,25 @@ function showPopup(d,cords) {
 
     // Home
     jQuery('#popUp')
-      .append(
-        $('<a>')
-          .attr("href", "network.php")
+      //.append(
+        //$('<a>')
+          //.attr("href", "network.php")
           .append(
             $("<div>")
               .attr("class", "popup-home popup-home-color-switch")
               .text("HOME")
-          )
+			  .on("click", function(){
+				  hideDetailElements(); 
+				  usePerson = null; 
+				  usePersonIndex = 0; 
+				  if (jsonNodes == "") {
+					  changeVisMode('clique');
+				  } else {
+					  changeVisMode('home'); 
+					  }
+				  windowResize();					  
+				  })
+         // )
       );
 
     jQuery('#popUp')
@@ -1866,11 +1905,15 @@ function highlightText(text, uris) {
   return text;
 }
 
-function changeVisMode(changeTo) {
+function hideDetailElements() {
+	$('#popUp').hide();
+}
 
+function changeVisMode(changeTo) {
+console.log('changeVisMode', changeTo);
   if (rendering)
     return false;
-
+console.log('rendering');
   rendering = true;
 
   if (changeTo == "person") {
@@ -1884,16 +1927,11 @@ function changeVisMode(changeTo) {
 
     History.pushState({state:idLookup[usePerson]}, "Linked Visions: " + name, "?person=" + idLookup[usePerson]);
   } else {
-    History.pushState({state:changeTo}, changeTo +" Mode", "?mode=" + changeTo);
+    History.pushState({state:changeTo}, changeTo +" Mode", "/network.php");
   }
 
   visMode = changeTo;
 
-  //$("#network").fadeOut(function() {
-
-  //$("#network").css("visibility","hidden");
-
-  //showSpinner("Rendering<br>Network");
   initalizeNetwork();
 
   //we need to rest the zoom/pan
@@ -1906,7 +1944,7 @@ function changeVisMode(changeTo) {
   filter();
 
   rendering = false;
-  //});
+
 }
 
 function hideRelations() {
@@ -2026,8 +2064,6 @@ function redraw(useScale) {
   tx = Math.max(tx, (d3.select("#networkCanvas").node().getBBox().width/2 + visWidth/2 - visWidth*.1)*-1);
   ty = Math.min(ty, d3.select("#networkCanvas").node().getBBox().height/2 + visHeight/2 - visHeight*.3);
   ty = Math.max(ty, (d3.select("#networkCanvas").node().getBBox().height/2 + visHeight/2 - visHeight*.3)*-1);
-  console.log('trans', trans);
-  console.log('scale', scale);
   
   //transform the vis
   vis.attr("transform","translate(" + [tx, ty] + ")" + " scale(" + scale + ")");
