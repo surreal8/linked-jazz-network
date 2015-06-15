@@ -232,11 +232,13 @@ jQuery(document).ready(function($) {
 					   .attr("clip-path","url(#myClip)");
 					 d3.selectAll(".labelText").transition(500).style("opacity",0).attr("visibility","hidden");
 					 d3.selectAll(".labelRect").transition(500).style("opacity",0).attr("visibility","hidden");
+					 d3.selectAll(".labelRectHighlight").transition(500).style("opacity",0).attr("visibility","hidden");	
 				   }
 				   if (y > 2) {
 					   if ($(".labelText").css("visibility") != "visible") {
 					   d3.selectAll(".labelText").transition(800).style("opacity",1).attr("visibility","visible");
 					   d3.selectAll(".labelRect").transition(800).style("opacity",1).attr("visibility","visible");
+					   d3.selectAll(".labelRectHighlight").transition(800).style("opacity",1).attr("visibility","visible");
 					 }
 				   }
 	
@@ -259,6 +261,8 @@ jQuery(document).ready(function($) {
 				   d3.selectAll(".circleTextRect").attr("y", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
 				   d3.selectAll(".circleTextRectHighlight").attr("y", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
 				   d3.selectAll(".labelRect").attr("y", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
+				   
+				   d3.selectAll(".labelRectHighlight").attr("y", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
 	
 				 //are we  zooming based on a call from interaction with the slider, or is this callback being triggerd by the mouse event updating the slider position.
 				   if (zoomWidgetObjDoZoom == true) {
@@ -1013,6 +1017,11 @@ function restart() {
         .attr("class", "backgroundCircleHighlight");
       vis.selectAll("#backgroundCircle_Theodore_Roussel")
         .attr("class", "backgroundCircleHighlight");
+		
+	  vis.selectAll("#labelRect_James_McNeill_Whistler")
+	    .attr("class", "labelRectHighlight");	
+	  vis.selectAll("#labelRect_Theodore_Roussel")
+	    .attr("class", "labelRectHighlight");	
     }
     else {
       if (nodes[aNode].id == usePerson) {
@@ -1031,6 +1040,8 @@ function restart() {
           .attr("class", "imageCircleHighlight");
         vis.selectAll("#backgroundCircle_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))
           .attr("class", "backgroundCircleHighlight");
+		vis.selectAll("#labelRect_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))
+	    .attr("class", "labelRectHighlight");	
       }
     }
   }
@@ -1888,6 +1899,7 @@ function hideRelations() {
   d3.selectAll(".circleTextRectHighlight").transition().attr("fill-opacity",1).attr("stroke-opacity",1);
   d3.selectAll(".labelText").transition().attr("fill-opacity",1).attr("stroke-opacity",1);
   d3.selectAll(".labelRect").transition().attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", "white").attr("stroke", black);
+  d3.selectAll(".labelRectHighlight").transition().attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", salmon).attr("stroke", salmon);
   d3.selectAll(".link").transition().attr("stroke-opacity",1).style("fill-opacity",1).style("stroke-width",0.3).style("fill", grey).style("stroke", grey);
 
   jQuery(".filter-button").removeClass("active");
@@ -1909,6 +1921,7 @@ function showRelations(rel) {
   d3.selectAll(".circleTextRectHighlight").transition().attr("fill-opacity",0.1).attr("stroke-opacity",0.1);
   d3.selectAll(".labelText").transition().attr("fill-opacity",0.03).attr("stroke-opacity",0.03);
   d3.selectAll(".labelRect").transition().attr("fill-opacity",0.03).attr("stroke-opacity",0.03).style("fill", fill).attr("stroke", fill);
+  d3.selectAll(".labelRectHighlight").transition().attr("fill-opacity",0.03).attr("stroke-opacity",0.03).style("fill", fill).attr("stroke", fill);
   d3.selectAll(".imageCircle").transition().attr("display","none");
   d3.selectAll(".imageCircleHighlight").transition().attr("display","none");
   d3.selectAll(".link").transition().attr("stroke-opacity",0.03).attr("fill-opacity",0.03).style("fill", fill).style("stroke", fill);
