@@ -331,6 +331,13 @@ text.circleText {
 	visibility: visible;
 }
 
+.labelRectHighlight {
+	stroke: #E9967A;
+	stroke-width: 10;
+	opacity: 0;
+	visibility: visible;
+}
+
 .labelText {
 	fill: #ffffff;
 }
