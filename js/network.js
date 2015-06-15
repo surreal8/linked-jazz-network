@@ -217,7 +217,7 @@ jQuery(document).ready(function($) {
                         y = (y * 2) + .4;
 
 				   // Implement various zoom levels
-				   if (y >= 1 && y < 2) {
+				   if (y > 1 && y <= 2) {
 					 d3.selectAll(".backgroundCircle").attr("r", "15");
 					 d3.selectAll(".backgroundCircle").style("fill", "#ffffff");
 					   if ($(".imageCircle").css("visibility") != "visible") {
@@ -233,7 +233,7 @@ jQuery(document).ready(function($) {
 					 d3.selectAll(".labelText").transition(500).style("opacity",0).attr("visibility","hidden");
 					 d3.selectAll(".labelRect").transition(500).style("opacity",0).attr("visibility","hidden");
 				   }
-				   if (y >= 2) {
+				   if (y > 2) {
 					   if ($(".labelText").css("visibility") != "visible") {
 					   d3.selectAll(".labelText").transition(800).style("opacity",1).attr("visibility","visible");
 					   d3.selectAll(".labelRect").transition(800).style("opacity",1).attr("visibility","visible");
@@ -241,7 +241,7 @@ jQuery(document).ready(function($) {
 				   }
 	
 				   // Default view
-				   if (y < 1) {
+				   if (y <= 1) {
 					 d3.selectAll(".backgroundCircle").transition(800).attr("r", function(d) { return  returnNodeSize(d); });
 					 d3.selectAll(".backgroundCircle").style("fill", "#E9967A");
 					 d3.selectAll(".imageCircle").transition(500).style("opacity",0).attr("visibility","hidden")
