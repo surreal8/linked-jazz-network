@@ -214,7 +214,7 @@ jQuery(document).ready(function($) {
               
 						//subtracting from 1 to flip axis
                         y = 1 - y;
-                        y = (y * 2) + .4;	 
+                        y = (y * 2) + .4;
 
 				   // Implement various zoom levels
 				   if (y >= 1 && y < 2) {
@@ -233,7 +233,7 @@ jQuery(document).ready(function($) {
 					 d3.selectAll(".labelText").transition(500).style("opacity",0).attr("visibility","hidden");
 					 d3.selectAll(".labelRect").transition(500).style("opacity",0).attr("visibility","hidden");
 				   }
-				   if (y > 2) {
+				   if (y >= 2) {
 					   if ($(".labelText").css("visibility") != "visible") {
 					   d3.selectAll(".labelText").transition(800).style("opacity",1).attr("visibility","visible");
 					   d3.selectAll(".labelRect").transition(800).style("opacity",1).attr("visibility","visible");
@@ -1848,7 +1848,7 @@ function changeVisMode(changeTo) {
   vis.attr("transform", "translate(" + [0,0] + ")"  + " scale(" + 1 + ")");
 
   zoomWidgetObjDoZoom = false;
-  zoomWidgetObj.setValue(0,0.255555555);
+  zoomWidgetObj.setValue(0,0.7);
 
   filter();
 
