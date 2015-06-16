@@ -33,6 +33,8 @@ var force = null;               //the d3 force object
 var vis = null                  //the visualization
 var visWidth = $(window).width(); //width and height of the network canvas, in px
 var visHeight = $(window).height();
+var largeNodeRadius = 20;
+var smallNodeRadius = 4;
 
 var connectionCounter = {};     //holds each id as a property name w/ the value = # of connections they have
 
@@ -218,17 +220,17 @@ jQuery(document).ready(function($) {
 
 				   // Implement various zoom levels
 				   if (y > 1 && y <= 2) {
-					 d3.selectAll(".backgroundCircle").attr("r", "15");
+					 d3.selectAll(".backgroundCircle").attr("r", largeNodeRadius);
 					 d3.selectAll(".backgroundCircle").style("fill", "#ffffff");
 					   if ($(".imageCircle").css("visibility") != "visible") {
 					   d3.selectAll(".imageCircle").transition(800).style("opacity",1).attr("visibility","visible");
 					 }
 					 d3.selectAll(".imageCircle")
 					   .attr("clip-path","url(#smallClip)")
-					   .attr("width", 15*2)
-					   .attr("height", 15*2)
-					   .attr("x", 15*-1)
-					   .attr("y", 15*-1)
+					   .attr("width", largeNodeRadius*2)
+					   .attr("height", largeNodeRadius*2)
+					   .attr("x", largeNodeRadius*-1)
+					   .attr("y", largeNodeRadius*-1)
 					   .attr("clip-path","url(#myClip)");
 					 d3.selectAll(".labelText").transition(500).style("opacity",0).attr("visibility","hidden");
 					 d3.selectAll(".labelRect").transition(500).style("opacity",0).attr("visibility","hidden");
@@ -252,10 +254,12 @@ jQuery(document).ready(function($) {
 					   .attr("x", function(d) { return  (returnNodeSize(d)*-1); })
 					   .attr("y", function(d) { return  (returnNodeSize(d)*-1); })
 					   .attr("clip-path","url(#smallClip)");
+					   d3.selectAll(".circleText").attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8; })
+					   d3.selectAll(".labelText").attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+18; } )
 				   }
 				   else {
-					 d3.selectAll(".circleText").attr("y", 29)
-					 d3.selectAll(".labelText").attr("y", 29+18 )
+					   d3.selectAll(".circleText").attr("y", function(d) { return largeNodeRadius+largeNodeRadius/1.8; })
+					   d3.selectAll(".labelText").attr("y", function(d) { return largeNodeRadius+largeNodeRadius/1.8+18; } )
 				   }
 				   
 				   d3.selectAll(".circleTextRect").attr("y", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
@@ -876,7 +880,7 @@ function restart() {
 	  .append('circle')
 	  .attr("cx", "0")
 	  .attr("cy", "0")
-	  .attr("r", "15");
+	  .attr("r",  largeNodeRadius);
 	  
 	  vis.append('defs')
 	  .append('clipPath')
@@ -1249,22 +1253,26 @@ function collide(jitter) {
 
 function returnNodeSize(d) {
   if (usePerson && d.id == usePerson) {
-    return 15;
+    return largeNodeRadius;
   }
   else if (!usePerson && (d.label == "James McNeill Whistler" || d.label == "Theodore Roussel")) {
-    return 15;
+    return largeNodeRadius;
   }
   else {
-    return 4;
+    return smallNodeRadius;
   }
 }
 
 //replacing returnNodeSize for testing 2.10.ts
 function returnTextLoc(d) {
-  if (d.label == "James McNeill Whistler" || d.label == "Theodore Roussel") {
-    return 20;
-  } else {
-    return 15;
+  if (usePerson && d.id == usePerson) {
+    return largeNodeRadius;
+  }
+  else if (!usePerson && (d.label == "James McNeill Whistler" || d.label == "Theodore Roussel")) {
+    return largeNodeRadius;
+  }
+  else {
+    return smallNodeRadius + 11;
   }
 }
 
