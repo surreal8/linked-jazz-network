@@ -1125,7 +1125,7 @@ function restart() {
       if ($("#network svg").css("visibility") != "visible") {
         $("#network").css("visibility","visible");
         $("#network svg").css("visibility","visible");
-        $("#zoomWidget").fadeIn(2000).css("visibility","visible");
+        jQuery("#zoomWidget").show( "bounce", {times:3, distance:-80}, 2000).css("visibility","visible");
         if (visMode != 'home') {
           $("#networkCanvas").fadeTo( 1000, 1, function() {
             if (visMode != 'person') {

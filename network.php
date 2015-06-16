@@ -5,6 +5,7 @@
 <title>Linked Visions</title>
 
 <script src="js/jquery.min.js"></script>
+<script src="js/jquery-ui.min.js"></script>
 <script src="js/jquery.history.js"></script>
 <script src="js/jquery.rdfquery.core.min-1.0.js"></script>
 <script src="js/jquery.colorbox-min.js"></script>
