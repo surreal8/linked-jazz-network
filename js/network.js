@@ -1935,7 +1935,7 @@ console.log('changeVisMode', changeTo);
 
     History.pushState({state:idLookup[usePerson]}, "Linked Visions: " + name, "?person=" + idLookup[usePerson]);
   } else {
-    History.pushState({state:changeTo}, "Linked Visions", "/network.php");
+    History.pushState({state:changeTo}, "Linked Visions", "network.php");
   }
 
   visMode = changeTo;
