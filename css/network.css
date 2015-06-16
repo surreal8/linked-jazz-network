@@ -305,7 +305,7 @@ circle {
 }
 
 text {
-	font-size: 7.5px;
+	font-size: 10px;
 	font-family: akkuratbold, sans-serif;
 	text-transform: uppercase;
 	letter-spacing: .25em;
@@ -327,6 +327,7 @@ rect.circleTextRectHighlight {
 	stroke: #E9967A;
 	stroke-width: 10;
 	background-color: #E9967A;
+  fill: #E9967A;
 }
 
 text.circleText {

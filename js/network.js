@@ -254,19 +254,25 @@ jQuery(document).ready(function($) {
 					   .attr("x", function(d) { return  (returnNodeSize(d)*-1); })
 					   .attr("y", function(d) { return  (returnNodeSize(d)*-1); })
 					   .attr("clip-path","url(#smallClip)");
-					   d3.selectAll(".circleText").attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8; })
-					   d3.selectAll(".labelText").attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+18; } )
+					   d3.selectAll(".circleText").attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+6; })
+					   d3.selectAll(".labelText").attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+36; } )
 				   }
 				   else {
-					   d3.selectAll(".circleText").attr("y", function(d) { return largeNodeRadius+largeNodeRadius/1.8; })
-					   d3.selectAll(".labelText").attr("y", function(d) { return largeNodeRadius+largeNodeRadius/1.8+18; } )
+					   d3.selectAll(".circleText").attr("y", function(d) { return largeNodeRadius+largeNodeRadius/1.8+6; })
+					   d3.selectAll(".labelText").attr("y", function(d) { return largeNodeRadius+largeNodeRadius/1.8+36; } )
 				   }
 				   
 				   d3.selectAll(".circleTextRect").attr("y", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
 				   d3.selectAll(".circleTextRectHighlight").attr("y", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
 				   d3.selectAll(".labelRect").attr("y", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
-				   
 				   d3.selectAll(".labelRectHighlight").attr("y", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
+				   if (y <= 1) {
+             d3.selectAll(".circleText").attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+12; });
+				   }
+				   else {
+             d3.selectAll(".circleText").attr("y", function(d) { return largeNodeRadius+largeNodeRadius/1.8+12; });
+				   }
+             
 	
 				 //are we  zooming based on a call from interaction with the slider, or is this callback being triggerd by the mouse event updating the slider position.
 				   if (zoomWidgetObjDoZoom == true) {
@@ -937,15 +943,15 @@ function restart() {
 	
 	nodeEnter.append("svg:rect")
     .attr("id", function(d) {  return "circleTextRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
-	  .attr("rx", 6)
-    .attr("ry", 6)
+	  .attr("rx", 12)
+    .attr("ry", 12)
     .attr("class",  "circleTextRect");
 	
 	nodeEnter.append("svg:text")
     .attr("id", function(d) {  return "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
     .attr("class",  "circleText")
     .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
-    .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8; })
+    .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+6; })
     .text(function(d) { return d.label; });
 
   nodeEnter.selectAll(".circleText")
@@ -954,12 +960,12 @@ function restart() {
   nodeEnter.selectAll(".circleTextRect")
     .attr("x", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().x; })
     .attr("y", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
-    .attr("width", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width; })
-    .attr("height", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height; });
+    .attr("width", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width + 6; })
+    .attr("height", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height + 12; });
 
   nodeEnter.append("svg:rect")
     .attr("id", function(d) {  return "labelRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
-	.attr("rx", 6)
+	  .attr("rx", 6)
     .attr("ry", 6)
 	.attr("class",  "labelRect");
 
@@ -967,7 +973,7 @@ function restart() {
     .attr("id", function(d) {  return "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
     .attr("class",  "labelText")
     .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
-    .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+18; })
+    .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+36; })
     .attr("visibility", "hidden")
     .text(function(d) {
       var occupation = "ARTIST";
@@ -1020,25 +1026,17 @@ function restart() {
 		}
 
       // Highlight Whistler and Roussell
-      vis.selectAll("#circleTextRect_James_McNeill_Whistler")
-        .attr("class", "circleTextRectHighlight");
-      vis.selectAll("#circleTextRect_Theodore_Roussel")
-        .attr("class", "circleTextRectHighlight");
+      vis.selectAll("#circleTextRect_James_McNeill_Whistler").attr("class", "circleTextRectHighlight");
+      vis.selectAll("#circleTextRect_Theodore_Roussel").attr("class", "circleTextRectHighlight");
 
-      vis.selectAll("#imageCircle_James_McNeill_Whistler")
-        .attr("class", "imageCircleHighlight");
-      vis.selectAll("#imageCircle_Theodore_Roussel")
-        .attr("class", "imageCircleHighlight");
+      vis.selectAll("#imageCircle_James_McNeill_Whistler").attr("class", "imageCircleHighlight");
+      vis.selectAll("#imageCircle_Theodore_Roussel").attr("class", "imageCircleHighlight");
 
-      vis.selectAll("#backgroundCircle_James_McNeill_Whistler")
-        .attr("class", "backgroundCircleHighlight");
-      vis.selectAll("#backgroundCircle_Theodore_Roussel")
-        .attr("class", "backgroundCircleHighlight");
+      vis.selectAll("#backgroundCircle_James_McNeill_Whistler").attr("class", "backgroundCircleHighlight");
+      vis.selectAll("#backgroundCircle_Theodore_Roussel").attr("class", "backgroundCircleHighlight");
 		
-	  vis.selectAll("#labelRect_James_McNeill_Whistler")
-	    .attr("class", "labelRectHighlight");	
-	  vis.selectAll("#labelRect_Theodore_Roussel")
-	    .attr("class", "labelRectHighlight");	
+	    vis.selectAll("#labelRect_James_McNeill_Whistler").attr("class", "labelRectHighlight");
+	    vis.selectAll("#labelRect_Theodore_Roussel").attr("class", "labelRectHighlight");
     }
     else {
       if (nodes[aNode].id == usePerson) {
@@ -1062,16 +1060,17 @@ function restart() {
       }
     }
   }
-  
+  d3.selectAll(".circleText").attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+12; })
+
   //hover colors for nodes
   d3.selectAll('.node').on({
 	  mouseenter: function(d) {
 		  if (d3.select("#circleTextRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')).classed( "circleTextRectHighlight" )) {
-		      d3.selectAll("#circleTextRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')).style("stroke", "#cc846b");
-			  d3.selectAll("#labelRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')).style("stroke", "#cc846b");
+		    d3.selectAll("#circleTextRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')).style("stroke", "#cc846b").style("fill", "#cc846b");
+			  d3.selectAll("#labelRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')).style("stroke", "#cc846b").style("fill", "#cc846b");
 		  } else {
-			  d3.selectAll("#circleTextRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')).style("stroke", "#E9967A");
-			  d3.selectAll("#labelRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')).style("stroke", "#E9967A");
+			  d3.selectAll("#circleTextRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')).style("stroke", "#E9967A").style("fill", "#E9967A");
+			  d3.selectAll("#labelRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')).style("stroke", "#E9967A").style("fill", "#E9967A");
 		  }
 	  }
   });
@@ -1079,11 +1078,11 @@ function restart() {
  d3.selectAll('.node').on({
 	  mouseleave: function(d) { 
 		  if (d3.select("#circleTextRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')).classed( "circleTextRectHighlight" )) {
-			  d3.selectAll("#circleTextRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')).style("stroke", "#E9967A");
-			  d3.selectAll("#labelRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')).style("stroke", "#E9967A");
+			  d3.selectAll("#circleTextRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')).style("stroke", "#E9967A").style("fill", "#E9967A");
+			  d3.selectAll("#labelRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')).style("stroke", "#E9967A").style("fill", "#E9967A");
 		  } else {
-			  d3.selectAll("#circleTextRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')).style("stroke", "#000000");
-			  d3.selectAll("#labelRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')).style("stroke", "#000000");
+			  d3.selectAll("#circleTextRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')).style("stroke", "#000000").style("fill", "#000000");
+			  d3.selectAll("#labelRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')).style("stroke", "#000000").style("fill", "#000000");
 		  }
 	  }
   });
