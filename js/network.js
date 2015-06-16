@@ -906,8 +906,7 @@ function restart() {
 
   var nodeEnter = node.enter().append("svg:g")
       .attr("class", "node")
-      .attr("id", function(d) {  return "node_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
-      .on("click", nodeClickFunction);
+      .attr("id", function(d) {  return "node_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')});
 
   if (networkNodeDrag) {
     nodeEnter.call(force.drag);
@@ -1098,63 +1097,69 @@ function restart() {
   });
 
   //controls the movement of the nodes
-  force.on("tick", function(e){ 
-	if ((usePerson && nodes[usePersonIndex].connections < 15 && e.alpha <= 1) || e.alpha <= .02 || visMode == 'home') {
-        hideSpinner();
-    	// Collision detection stolen from: http://vallandingham.me/building_a_bubble_cloud.html
-    	dampenedAlpha = e.alpha * .5;
-    	jitter = 0.3;
-    	ratio = 2.77; // xy ratio
+  force.on("tick", function(e){
+    if ((usePerson && nodes[usePersonIndex].connections < 15 && e.alpha <= 1) || e.alpha <= .02 || visMode == 'home') {
+      hideSpinner();
 
-		if (visMode != 'home') {
-			vis.selectAll("g.node")
-			  .each(stickyPeople())
-				.each(gravity(dampenedAlpha))
-				  .each(collide(jitter))
-					.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
-		} else {
-			vis.selectAll("g.node").attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
-		}
-		
-		vis.selectAll("line.link")
-		  .attr("x1", function(d) { return d.source.x;})
-		  .attr("y1", function(d) { return d.source.y; })
-		  .attr("x2", function(d) { return d.target.x; })
-		  .attr("y2", function(d) { return d.target.y; });
-	    
-	    if ($("#network svg").css("visibility") != "visible") {
-		   $("#network").css("visibility","visible");
-		   $("#network svg").css("visibility","visible");
-		   $("#zoomWidget").fadeIn(2000).css("visibility","visible");
-		   if (visMode != 'home') {
-			   $("#networkCanvas").fadeTo( 1000, 1, function() {
-			   if (visMode != 'person') {
-					$("#title").fadeIn(2000);
-					$("#about").fadeIn(2000);
-					$("#logo").fadeIn(2000);
-				}
-			   });
-		   } else {
-			   $("#networkCanvas").css("opacity", 1);
-			   $("#title").css("display","block");
-			   $("#about").css("display","block");
-	           $("#logo").css("display","block");
-		   }
-		   if (visMode == 'person') {
-			    $(".filter-button").css("visibility","visible");
-		   }
-		  }
-		
-		if (visMode != 'person' && visMode != 'home') {
-			  var nodesInit = d3.selectAll("g.node");
-			  var json_nodes = JSON.stringify(nodesInit.data());
-			  jsonNodes = json_nodes;
-			  
-			  var linesInit = d3.selectAll("line.link");
-			  var json_lines = JSON.stringify(linesInit.data());
-			  jsonLines = json_lines;
-		  }
-	 }
+      // Collision detection stolen from: http://vallandingham.me/building_a_bubble_cloud.html
+      dampenedAlpha = e.alpha * .5;
+      jitter = 0.3;
+      ratio = 2.77; // xy ratio
+
+      if (visMode != 'home') {
+        vis.selectAll("g.node")
+          .each(stickyPeople())
+            .each(gravity(dampenedAlpha))
+              .each(collide(jitter))
+                .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
+      } else {
+        vis.selectAll("g.node").attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
+      }
+
+      vis.selectAll("line.link")
+        .attr("x1", function(d) { return d.source.x;})
+        .attr("y1", function(d) { return d.source.y; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y; });
+
+      if ($("#network svg").css("visibility") != "visible") {
+        $("#network").css("visibility","visible");
+        $("#network svg").css("visibility","visible");
+        $("#zoomWidget").fadeIn(2000).css("visibility","visible");
+        if (visMode != 'home') {
+          $("#networkCanvas").fadeTo( 1000, 1, function() {
+            if (visMode != 'person') {
+              $("#title").fadeIn(2000);
+              $("#about").fadeIn(2000);
+              $("#logo").fadeIn(2000);
+            }
+          });
+        } else {
+          $("#networkCanvas").css("opacity", 1);
+          $("#title").css("display","block");
+          $("#about").css("display","block");
+          $("#logo").css("display","block");
+        }
+        if (visMode == 'person') {
+          $(".filter-button").css("visibility","visible");
+        }
+      }
+
+      if (visMode != 'person' && visMode != 'home') {
+        var nodesInit = d3.selectAll("g.node");
+        var json_nodes = JSON.stringify(nodesInit.data());
+        jsonNodes = json_nodes;
+
+        var linesInit = d3.selectAll("line.link");
+        var json_lines = JSON.stringify(linesInit.data());
+        jsonLines = json_lines;
+      }
+
+    }
+  });
+
+  force.on("end", function(e){
+    d3.selectAll(".node").on("click", nodeClickFunction);
   });
 }
 
