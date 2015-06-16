@@ -42,6 +42,10 @@ h1, h2, h3, h4, h5, h6, p, span {
   cursor: default;
 }
 
+*:focus {
+  outline: 0;
+}
+
 #landing {
   background-color: #000000;
   margin: 0 auto;

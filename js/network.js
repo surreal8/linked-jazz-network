@@ -1638,7 +1638,7 @@ function showPopup(d,cords) {
                     .append(
                       $("<a>")
                         .attr("href", artwork1Large)
-                        .attr("class", "cboxElement")
+                        .attr("class", "cboxElement artwork-group")
                         .append(
                           $("<img>")
                             .attr("class", "popup-artwork")
@@ -1689,7 +1689,7 @@ function showPopup(d,cords) {
                     .append(
                       $("<a>")
                         .attr("href", artwork2Large)
-                        .attr("class", "cboxElement")
+                        .attr("class", "cboxElement artwork-group")
                         .append(
                           $("<img>")
                             .attr("class", "popup-artwork")
@@ -1740,7 +1740,7 @@ function showPopup(d,cords) {
                     .append(
                       $("<a>")
                         .attr("href", artwork3Large)
-                        .attr("class", "cboxElement")
+                        .attr("class", "cboxElement artwork-group")
                         .append(
                           $("<img>")
                             .attr("class", "popup-artwork")
@@ -1791,7 +1791,7 @@ function showPopup(d,cords) {
                     .append(
                       $("<a>")
                         .attr("href", artwork4Large)
-                        .attr("class", "cboxElement")
+                        .attr("class", "cboxElement artwork-group")
                         .append(
                           $("<img>")
                             .attr("class", "popup-artwork")
@@ -1846,47 +1846,59 @@ function showPopup(d,cords) {
       .css("left", "0px")
       .css("top", "0px");
 
-    jQuery('.cboxElement').colorbox({transition:"fade", width:"100%", height:"100%", opacity: 0.92, scalePhotos: true, returnFocus: false, scrolling: false,
-                                     title: function(){ return jQuery(this).find('img').attr('copy');},
-                                     onComplete:function () {
-                                       jQuery('.cboxPhoto').attr('style','width: auto; height: 100%; margin-top:35px; margin-left: 35%; margin-right: 180px; float: none;');
-                                       jQuery('#cboxContent').prepend(
-                                         $("<img>")
-                                           .attr("src", "menu/logo-white.png")
-                                           .attr("id","cboxLogo")
-                                           .attr("alt", "Art Institute of Chicago")
-                                       );
-                                       var maxWidth = $('#cboxLoadedContent').width() * .55; // Max width for the image
-                                       var maxHeight = $('#cboxLoadedContent').height() * .92;    // Max height for the image
-                                       var ratio = 0;  // Used for aspect ratio
-                                       var width = $('.cboxPhoto').width();    // Current image width
-                                       var height = $('.cboxPhoto').height();  // Current image height
+    jQuery('.artwork-group').colorbox({rel:"artwork-group", transition:"fade", width:"100%", height:"100%", opacity: 0.92, scalePhotos: true, returnFocus: false, scrolling: false,
+                                       current: "Work {current} of {total}",
+                                       html: function(){
+                                         var html = $('<img src=\"' + $(this).attr('href') + '\" class=\"cboxPhoto\" />');
+                                         return html;
+                                       },
+                                       title: function(){ return jQuery(this).find('img').attr('copy');},
+                                       onComplete:function () {
+                                         jQuery('.cboxPhoto').attr('style','width: auto; height: 100%; margin-top:35px; margin-left: 35%; margin-right: 180px; float: none;');
+                                         jQuery('#cboxContent').prepend(
+                                           $("<img>")
+                                             .attr("src", "menu/logo-white.png")
+                                             .attr("id","cboxLogo")
+                                             .attr("alt", "Art Institute of Chicago")
+                                         );
+                                         // Fill the image to the window. Landscape and portrait images are treated differently:
+                                         var maxWidth = $('#cboxLoadedContent').width() * .55; // Max width for the image
+                                         var maxHeight = $('#cboxLoadedContent').height() * .92;    // Max height for the image
+                                         var ratio = 0;  // Used for aspect ratio
+                                         var width = $('.cboxPhoto').width();    // Current image width
+                                         var height = $('.cboxPhoto').height();  // Current image height
 
-                                       // Check if the current width is larger than the max
-                                       if(width > maxWidth){
-                                         ratio = maxWidth / width;   // get ratio for scaling image
-                                         $('.cboxPhoto').css("width", maxWidth); // Set new width
-                                         $('.cboxPhoto').css("height", height * ratio);  // Scale height based on ratio
-                                         $('.cboxPhoto').css("margin-top", (height - (height * ratio) - 70)/2 + 35);  // Scale height based on ratio
-                                         height = height * ratio;    // Reset height to match scaled image
-                                         width = width * ratio;    // Reset width to match scaled image
-                                       }
+                                         // Check if the current width is larger than the max
+                                         if(width > maxWidth){
+                                           ratio = maxWidth / width;   // get ratio for scaling image
+                                           $('.cboxPhoto').css("width", maxWidth); // Set new width
+                                           $('.cboxPhoto').css("height", height * ratio);  // Scale height based on ratio
+                                           $('.cboxPhoto').css("margin-top", (height - (height * ratio) - 70)/2 + 35);  // Scale height based on ratio
+                                           height = height * ratio;    // Reset height to match scaled image
+                                           width = width * ratio;    // Reset width to match scaled image
+                                         }
 
-                                       // Check if current height is larger than max
-                                       if(height > maxHeight){
-                                         ratio = maxHeight / height; // get ratio for scaling image
-                                         $('.cboxPhoto').css("height", maxHeight);   // Set new height
-                                         $('.cboxPhoto').css("width", width * ratio);    // Scale width based on ratio
-                                         width = width * ratio;    // Reset width to match scaled image
+                                         // Check if current height is larger than max
+                                         if(height > maxHeight){
+                                           ratio = maxHeight / height; // get ratio for scaling image
+                                           $('.cboxPhoto').css("height", maxHeight);   // Set new height
+                                           $('.cboxPhoto').css("width", width * ratio);    // Scale width based on ratio
+                                           width = width * ratio;    // Reset width to match scaled image
+                                         }
+                                         $('#cboxLoadedContent').click(function(e) {
+                                           $.colorbox.close();
+                                         });
+                                         $('.cboxPhoto').click(function(e) {
+                                           $.colorbox.next();
+                                         });
+                                       },
+                                       onLoad:function() {
+                                         $('html, body').css('overflow', 'hidden'); // page scrollbars off
+                                       },
+                                       onClosed:function() {
+                                         $('html, body').css('overflow', ''); // page scrollbars on
                                        }
-                                     },
-                                     onLoad:function() {
-                                       $('html, body').css('overflow', 'hidden'); // page scrollbars off
-                                     },
-                                     onClosed:function() {
-                                       $('html, body').css('overflow', ''); // page scrollbars on
-                                     }
-                                    });
+                                      });
 
     jQuery("#popUp").fadeIn(200);
 
