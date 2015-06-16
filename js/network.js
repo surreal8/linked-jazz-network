@@ -34,7 +34,7 @@ var vis = null                  //the visualization
 var visWidth = $(window).width(); //width and height of the network canvas, in px
 var visHeight = $(window).height();
 var largeNodeRadius = 20;
-var smallNodeRadius = 4;
+var smallNodeRadius = 5;
 
 var connectionCounter = {};     //holds each id as a property name w/ the value = # of connections they have
 
