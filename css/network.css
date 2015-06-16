@@ -38,7 +38,7 @@ body{
   user-select: none;
 }
 
-h1, h2, h3, h4, h5, h6, p, span {
+h1, h2, h3, h4, h5, h6, p {
   cursor: default;
 }
 
@@ -475,11 +475,10 @@ text.circleText {
   width: 90%;
 }
 
-.popup-artworks,
 .popup-row {
-  clear: both;
+  width: 100%;
+  overflow: auto;
 }
-
 
 .popup-artworks {
   margin-left: 20px;
@@ -505,9 +504,10 @@ text.circleText {
   float: left;
 }
 
-.popup-artwork-cont:hover .popup-artwork-plus {
+a .popup-row:hover .popup-artwork-plus {
     display: block;
     overflow: hidden;
+    cursor: pointer;
 }
 
 .popup-artwork-plus {

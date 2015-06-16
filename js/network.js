@@ -1685,18 +1685,18 @@ function showPopup(d,cords) {
       // Works
       if (artwork1Large) {
         popupWorks.append(
-          $("<span>")
-            .attr("class", "popup-row")
+          $("<a>")
+            .attr("href", artwork1Large)
+            .attr("class", "cboxElement artwork-group")
             .append(
-              $("<div>")
-                .attr("class","popup-artwork-cont")
+              $("<span>")
+                .attr("class", "popup-row")
                 .append(
                   $("<div>")
-                    .attr("class","popup-artwork-cont-wrapper")
+                    .attr("class","popup-artwork-cont")
                     .append(
-                      $("<a>")
-                        .attr("href", artwork1Large)
-                        .attr("class", "cboxElement artwork-group")
+                      $("<div>")
+                        .attr("class","popup-artwork-cont-wrapper")
                         .append(
                           $("<img>")
                             .attr("class", "popup-artwork")
@@ -1711,24 +1711,24 @@ function showPopup(d,cords) {
                         )
                     )
                 )
-            )
-            .append(
-              $("<span>")
-                .attr("class", "popup-artwork-desc")
                 .append(
                   $("<span>")
-                    .attr("class", "popup-artist")
-                    .html(artwork1Artist)
-                )
-                .append(
-                  $("<span>")
-                    .attr("class", "popup-title")
-                    .html(artwork1Title)
-                )
-                .append(
-                  $("<span>")
-                    .attr("class", "popup-date")
-                    .html(artwork1Date)
+                    .attr("class", "popup-artwork-desc")
+                    .append(
+                      $("<span>")
+                        .attr("class", "popup-artist")
+                        .html(artwork1Artist)
+                    )
+                    .append(
+                      $("<span>")
+                        .attr("class", "popup-title")
+                        .html(artwork1Title)
+                    )
+                    .append(
+                      $("<span>")
+                        .attr("class", "popup-date")
+                        .html(artwork1Date)
+                    )
                 )
             )
         );
@@ -1736,18 +1736,18 @@ function showPopup(d,cords) {
 
       if (artwork2Large) {
         popupWorks.append(
-          $("<span>")
-            .attr("class", "popup-row")
+          $("<a>")
+            .attr("href", artwork2Large)
+            .attr("class", "cboxElement artwork-group")
             .append(
-              $("<div>")
-                .attr("class","popup-artwork-cont")
+              $("<span>")
+                .attr("class", "popup-row")
                 .append(
                   $("<div>")
-                    .attr("class","popup-artwork-cont-wrapper")
+                    .attr("class","popup-artwork-cont")
                     .append(
-                      $("<a>")
-                        .attr("href", artwork2Large)
-                        .attr("class", "cboxElement artwork-group")
+                      $("<div>")
+                        .attr("class","popup-artwork-cont-wrapper")
                         .append(
                           $("<img>")
                             .attr("class", "popup-artwork")
@@ -1762,24 +1762,24 @@ function showPopup(d,cords) {
                         )
                     )
                 )
-            )
-            .append(
-              $("<span>")
-                .attr("class", "popup-artwork-desc")
                 .append(
                   $("<span>")
-                    .attr("class", "popup-artist")
-                    .html(artwork2Artist)
-                )
-                .append(
-                  $("<span>")
-                    .attr("class", "popup-title")
-                    .html(artwork2Title)
-                )
-                .append(
-                  $("<span>")
-                    .attr("class", "popup-date")
-                    .html(artwork2Date)
+                    .attr("class", "popup-artwork-desc")
+                    .append(
+                      $("<span>")
+                        .attr("class", "popup-artist")
+                        .html(artwork2Artist)
+                    )
+                    .append(
+                      $("<span>")
+                        .attr("class", "popup-title")
+                        .html(artwork2Title)
+                    )
+                    .append(
+                      $("<span>")
+                        .attr("class", "popup-date")
+                        .html(artwork2Date)
+                    )
                 )
             )
         );
@@ -1787,18 +1787,18 @@ function showPopup(d,cords) {
 
       if (artwork3Large) {
         popupWorks.append(
-          $("<span>")
-            .attr("class", "popup-row")
+          $("<a>")
+            .attr("href", artwork3Large)
+            .attr("class", "cboxElement artwork-group")
             .append(
-              $("<div>")
-                .attr("class","popup-artwork-cont")
+              $("<span>")
+                .attr("class", "popup-row")
                 .append(
                   $("<div>")
-                    .attr("class","popup-artwork-cont-wrapper")
+                    .attr("class","popup-artwork-cont")
                     .append(
-                      $("<a>")
-                        .attr("href", artwork3Large)
-                        .attr("class", "cboxElement artwork-group")
+                      $("<div>")
+                        .attr("class","popup-artwork-cont-wrapper")
                         .append(
                           $("<img>")
                             .attr("class", "popup-artwork")
@@ -1813,24 +1813,24 @@ function showPopup(d,cords) {
                         )
                     )
                 )
-            )
-            .append(
-              $("<span>")
-                .attr("class", "popup-artwork-desc")
                 .append(
                   $("<span>")
-                    .attr("class", "popup-artist")
-                    .html(artwork3Artist)
-                )
-                .append(
-                  $("<span>")
-                    .attr("class", "popup-title")
-                    .html(artwork3Title)
-                )
-                .append(
-                  $("<span>")
-                    .attr("class", "popup-date")
-                    .html(artwork3Date)
+                    .attr("class", "popup-artwork-desc")
+                    .append(
+                      $("<span>")
+                        .attr("class", "popup-artist")
+                        .html(artwork3Artist)
+                    )
+                    .append(
+                      $("<span>")
+                        .attr("class", "popup-title")
+                        .html(artwork3Title)
+                    )
+                    .append(
+                      $("<span>")
+                        .attr("class", "popup-date")
+                        .html(artwork3Date)
+                    )
                 )
             )
         );
@@ -1838,18 +1838,18 @@ function showPopup(d,cords) {
 
       if (artwork4Large) {
         popupWorks.append(
-          $("<span>")
-            .attr("class", "popup-row")
+          $("<a>")
+            .attr("href", artwork4Large)
+            .attr("class", "cboxElement artwork-group")
             .append(
-              $("<div>")
-                .attr("class","popup-artwork-cont")
+              $("<span>")
+                .attr("class", "popup-row")
                 .append(
                   $("<div>")
-                    .attr("class","popup-artwork-cont-wrapper")
+                    .attr("class","popup-artwork-cont")
                     .append(
-                      $("<a>")
-                        .attr("href", artwork4Large)
-                        .attr("class", "cboxElement artwork-group")
+                      $("<div>")
+                        .attr("class","popup-artwork-cont-wrapper")
                         .append(
                           $("<img>")
                             .attr("class", "popup-artwork")
@@ -1864,24 +1864,24 @@ function showPopup(d,cords) {
                         )
                     )
                 )
-            )
-            .append(
-              $("<span>")
-                .attr("class", "popup-artwork-desc")
                 .append(
                   $("<span>")
-                    .attr("class", "popup-artist")
-                    .html(artwork4Artist)
-                )
-                .append(
-                  $("<span>")
-                    .attr("class", "popup-title")
-                    .html(artwork4Title)
-                )
-                .append(
-                  $("<span>")
-                    .attr("class", "popup-date")
-                    .html(artwork4Date)
+                    .attr("class", "popup-artwork-desc")
+                    .append(
+                      $("<span>")
+                        .attr("class", "popup-artist")
+                        .html(artwork4Artist)
+                    )
+                    .append(
+                      $("<span>")
+                        .attr("class", "popup-title")
+                        .html(artwork4Title)
+                    )
+                    .append(
+                      $("<span>")
+                        .attr("class", "popup-date")
+                        .html(artwork4Date)
+                    )
                 )
             )
         );
