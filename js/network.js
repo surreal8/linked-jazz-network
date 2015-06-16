@@ -75,14 +75,10 @@ var jsonLines = "";
 var nodeClickFunction = function(d) {
   if (d3.event.defaultPrevented) return;
   force.stop();
-  //$("#network").fadeOut('fast',
-  //                    function() {
+  jQuery(".popup-home-banner").fadeOut(2);
+  $("html, body, #popUp").animate({ scrollTop: 0 }, "slow");
   usePerson = d.id;
   changeVisMode("person");
-  $("html, body").animate({ scrollTop: 0 }, "slow");
-  //                  }
-  //               );
-
 };
 
 jQuery(document).ready(function($) {
@@ -1154,12 +1150,10 @@ function restart() {
         var json_lines = JSON.stringify(linesInit.data());
         jsonLines = json_lines;
       }
-
     }
-  });
-
-  force.on("end", function(e){
-    d3.selectAll(".node").on("click", nodeClickFunction);
+    if (visMode == 'person' || visMode == 'home' || e.alpha < .007) {
+      d3.selectAll(".node").on("click", nodeClickFunction);
+    }
   });
 }
 
