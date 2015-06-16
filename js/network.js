@@ -255,11 +255,11 @@ jQuery(document).ready(function($) {
 					   .attr("y", function(d) { return  (returnNodeSize(d)*-1); })
 					   .attr("clip-path","url(#smallClip)");
 					   d3.selectAll(".circleText").attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+6; })
-					   d3.selectAll(".labelText").attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+36; } )
+					   d3.selectAll(".labelText").attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+27; } )
 				   }
 				   else {
 					   d3.selectAll(".circleText").attr("y", function(d) { return largeNodeRadius+largeNodeRadius/1.8+6; })
-					   d3.selectAll(".labelText").attr("y", function(d) { return largeNodeRadius+largeNodeRadius/1.8+36; } )
+					   d3.selectAll(".labelText").attr("y", function(d) { return largeNodeRadius+largeNodeRadius/1.8+27; } )
 				   }
 				   
 				   d3.selectAll(".circleTextRect").attr("y", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
@@ -267,10 +267,10 @@ jQuery(document).ready(function($) {
 				   d3.selectAll(".labelRect").attr("y", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
 				   d3.selectAll(".labelRectHighlight").attr("y", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
 				   if (y <= 1) {
-             d3.selectAll(".circleText").attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+12; });
+             d3.selectAll(".circleText").attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+7; });
 				   }
 				   else {
-             d3.selectAll(".circleText").attr("y", function(d) { return largeNodeRadius+largeNodeRadius/1.8+12; });
+             d3.selectAll(".circleText").attr("y", function(d) { return largeNodeRadius+largeNodeRadius/1.8+7; });
 				   }
              
 	
@@ -943,8 +943,8 @@ function restart() {
 	
 	nodeEnter.append("svg:rect")
     .attr("id", function(d) {  return "circleTextRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
-	  .attr("rx", 12)
-    .attr("ry", 12)
+	  .attr("rx", 8)
+    .attr("ry", 8)
     .attr("class",  "circleTextRect");
 	
 	nodeEnter.append("svg:text")
@@ -961,7 +961,7 @@ function restart() {
     .attr("x", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().x; })
     .attr("y", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
     .attr("width", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width + 6; })
-    .attr("height", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height + 12; });
+    .attr("height", function(d) { return $("#" + "circleText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height + 2; });
 
   nodeEnter.append("svg:rect")
     .attr("id", function(d) {  return "labelRect_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
@@ -973,7 +973,7 @@ function restart() {
     .attr("id", function(d) {  return "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
     .attr("class",  "labelText")
     .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
-    .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+36; })
+    .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+27; })
     .attr("visibility", "hidden")
     .text(function(d) {
       var occupation = "ARTIST";
@@ -1060,7 +1060,7 @@ function restart() {
       }
     }
   }
-  d3.selectAll(".circleText").attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+12; })
+  d3.selectAll(".circleText").attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+7; })
 
   //hover colors for nodes
   d3.selectAll('.node').on({
