@@ -83,6 +83,63 @@ var nodeClickFunction = function(d) {
   changeVisMode("person");
 };
 
+var cboxProps = {transition:"fade",
+                 width:"100%",
+                 height:"100%",
+                 opacity: 0.92,
+                 scalePhotos: true,
+                 returnFocus: false,
+                 scrolling: false,
+                 current: "Work {current} of {total}",
+                 title: function(){ return jQuery(this).find('img').attr('copy');},
+                 onComplete:function () {
+                   jQuery('.cboxPhoto').attr('style','width: auto; height: 100%; margin-top:35px; margin-left: 35%; margin-right: 180px; float: none;');
+                   jQuery('#cboxContent').prepend(
+                     $("<img>")
+                       .attr("src", "menu/logo-white.png")
+                       .attr("id","cboxLogo")
+                       .attr("alt", "Art Institute of Chicago")
+                   );
+
+                   // Fill the image to the window. Landscape and portrait images are treated differently:
+                   var maxWidth = $('#cboxLoadedContent').width() * .55; // Max width for the image
+                   var maxHeight = $('#cboxLoadedContent').height() * .92;    // Max height for the image
+                   var ratio = 0;  // Used for aspect ratio
+                   var width = $('.cboxPhoto').width();    // Current image width
+                   var height = $('.cboxPhoto').height();  // Current image height
+
+                   // Check if the current width is larger than the max
+                   if(width > maxWidth){
+                     ratio = maxWidth / width;   // get ratio for scaling image
+                     $('.cboxPhoto').css("width", maxWidth); // Set new width
+                     $('.cboxPhoto').css("height", height * ratio);  // Scale height based on ratio
+                     $('.cboxPhoto').css("margin-top", (height - (height * ratio) - 70)/2 + 35);  // Scale height based on ratio
+                     height = height * ratio;    // Reset height to match scaled image
+                     width = width * ratio;    // Reset width to match scaled image
+                   }
+
+                   // Check if current height is larger than max
+                   if(height > maxHeight){
+                     ratio = maxHeight / height; // get ratio for scaling image
+                     $('.cboxPhoto').css("height", maxHeight);   // Set new height
+                     $('.cboxPhoto').css("width", width * ratio);    // Scale width based on ratio
+                     width = width * ratio;    // Reset width to match scaled image
+                   }
+                   $('#cboxLoadedContent').click(function(e) {
+                     $.colorbox.close();
+                   });
+                   $('.cboxPhoto').click(function(e) {
+                     $.colorbox.next();
+                   });
+                 },
+                 onLoad:function() {
+                   $('html, body').css('overflow', 'hidden'); // page scrollbars off
+                 },
+                 onClosed:function() {
+                   $('html, body').css('overflow', ''); // page scrollbars on
+                 }
+                };
+
 jQuery(document).ready(function($) {
 
   // Bind to StateChange Event
@@ -1847,59 +1904,10 @@ function showPopup(d,cords) {
       .css("left", "0px")
       .css("top", "0px");
 
-    jQuery('.artwork-group').colorbox({rel:"artwork-group", transition:"fade", width:"100%", height:"100%", opacity: 0.92, scalePhotos: true, returnFocus: false, scrolling: false,
-                                       current: "Work {current} of {total}",
-                                       html: function(){
-                                         var html = $('<img src=\"' + $(this).attr('href') + '\" class=\"cboxPhoto\" />');
-                                         return html;
-                                       },
-                                       title: function(){ return jQuery(this).find('img').attr('copy');},
-                                       onComplete:function () {
-                                         jQuery('.cboxPhoto').attr('style','width: auto; height: 100%; margin-top:35px; margin-left: 35%; margin-right: 180px; float: none;');
-                                         jQuery('#cboxContent').prepend(
-                                           $("<img>")
-                                             .attr("src", "menu/logo-white.png")
-                                             .attr("id","cboxLogo")
-                                             .attr("alt", "Art Institute of Chicago")
-                                         );
-                                         // Fill the image to the window. Landscape and portrait images are treated differently:
-                                         var maxWidth = $('#cboxLoadedContent').width() * .55; // Max width for the image
-                                         var maxHeight = $('#cboxLoadedContent').height() * .92;    // Max height for the image
-                                         var ratio = 0;  // Used for aspect ratio
-                                         var width = $('.cboxPhoto').width();    // Current image width
-                                         var height = $('.cboxPhoto').height();  // Current image height
+    jQuery('.cboxElement').colorbox(cboxProps);
 
-                                         // Check if the current width is larger than the max
-                                         if(width > maxWidth){
-                                           ratio = maxWidth / width;   // get ratio for scaling image
-                                           $('.cboxPhoto').css("width", maxWidth); // Set new width
-                                           $('.cboxPhoto').css("height", height * ratio);  // Scale height based on ratio
-                                           $('.cboxPhoto').css("margin-top", (height - (height * ratio) - 70)/2 + 35);  // Scale height based on ratio
-                                           height = height * ratio;    // Reset height to match scaled image
-                                           width = width * ratio;    // Reset width to match scaled image
-                                         }
-
-                                         // Check if current height is larger than max
-                                         if(height > maxHeight){
-                                           ratio = maxHeight / height; // get ratio for scaling image
-                                           $('.cboxPhoto').css("height", maxHeight);   // Set new height
-                                           $('.cboxPhoto').css("width", width * ratio);    // Scale width based on ratio
-                                           width = width * ratio;    // Reset width to match scaled image
-                                         }
-                                         $('#cboxLoadedContent').click(function(e) {
-                                           $.colorbox.close();
-                                         });
-                                         $('.cboxPhoto').click(function(e) {
-                                           $.colorbox.next();
-                                         });
-                                       },
-                                       onLoad:function() {
-                                         $('html, body').css('overflow', 'hidden'); // page scrollbars off
-                                       },
-                                       onClosed:function() {
-                                         $('html, body').css('overflow', ''); // page scrollbars on
-                                       }
-                                      });
+    var groupCboxProps = jQuery.extend({rel: "artwork-group"}, cboxProps);
+    jQuery('.artwork-group').colorbox(groupCboxProps);
 
     jQuery("#popUp").fadeIn(200);
 
@@ -1986,10 +1994,10 @@ function hideRelations() {
   d3.selectAll(".imageCircle").transition().attr("display","block");
   d3.selectAll(".imageCircleHighlight").transition().attr("display","block");
   d3.selectAll(".circleText").transition().attr("fill-opacity",1).attr("stroke-opacity",1);
-  d3.selectAll(".circleTextRect").transition().attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", "white").attr("stroke", black);
-  d3.selectAll(".circleTextRectHighlight").transition().attr("fill-opacity",1).attr("stroke-opacity",1);
+  d3.selectAll(".circleTextRect").transition().attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", black).attr("stroke", black);
+  d3.selectAll(".circleTextRectHighlight").transition().attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", salmon).attr("stroke", salmon);
   d3.selectAll(".labelText").transition().attr("fill-opacity",1).attr("stroke-opacity",1);
-  d3.selectAll(".labelRect").transition().attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", "white").attr("stroke", black);
+  d3.selectAll(".labelRect").transition().attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", "black").attr("stroke", black);
   d3.selectAll(".labelRectHighlight").transition().attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", salmon).attr("stroke", salmon);
   d3.selectAll(".link").transition().attr("stroke-opacity",1).style("fill-opacity",1).style("stroke-width",0.3).style("fill", grey).style("stroke", grey);
 
@@ -2012,7 +2020,7 @@ function showRelations(rel) {
   d3.selectAll(".circleTextRectHighlight").transition().attr("fill-opacity",0.1).attr("stroke-opacity",0.1);
   d3.selectAll(".labelText").transition().attr("fill-opacity",0.03).attr("stroke-opacity",0.03);
   d3.selectAll(".labelRect").transition().attr("fill-opacity",0.03).attr("stroke-opacity",0.03).style("fill", fill).attr("stroke", fill);
-  d3.selectAll(".labelRectHighlight").transition().attr("fill-opacity",0.03).attr("stroke-opacity",0.03).style("fill", fill).attr("stroke", fill);
+  d3.selectAll(".labelRectHighlight").transition().attr("fill-opacity",0.03).attr("stroke-opacity",0.03);
   d3.selectAll(".imageCircle").transition().attr("display","none");
   d3.selectAll(".imageCircleHighlight").transition().attr("display","none");
   d3.selectAll(".link").transition().attr("stroke-opacity",0.03).attr("fill-opacity",0.03).style("fill", fill).style("stroke", fill);
@@ -2046,9 +2054,9 @@ function showRelations(rel) {
       d3.selectAll("#backgroundCircle_" + id).transition().attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", fill).style("stroke", fill);
       d3.selectAll("#imageCircle_"+ id).transition().attr("display","block").style("fill", fill).attr("stroke", fill);
       d3.selectAll("#circleText_"+ id).transition().attr("fill-opacity",1).attr("stroke-opacity",1);
-      d3.selectAll("#circleTextRect_"+ id).transition().attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", "white").attr("stroke", "black");
+      d3.selectAll("#circleTextRect_"+ id).transition().attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", "black").attr("stroke", "black");
       d3.selectAll("#labelText_"+ id).transition().attr("fill-opacity",1).attr("stroke-opacity",1);
-      d3.selectAll("#labelRect_"+ id).transition().attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", "white").attr("stroke", "black");
+      d3.selectAll("#labelRect_"+ id).transition().attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", "black").attr("stroke", "black");
       d3.selectAll(".marker path").transition().style("fill", fill);
       nodesShown.push(id);
     }
@@ -2057,9 +2065,9 @@ function showRelations(rel) {
   d3.selectAll("#backgroundCircle_" + id).transition().attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", fill).style("stroke", fill);
   d3.selectAll("#imageCircle_"+ id).transition().attr("display","block").style("fill", fill).attr("stroke", fill);
   d3.selectAll("#circleText_"+ id).transition().attr("fill-opacity",1).attr("stroke-opacity",1);
-  d3.selectAll("#circleTextRect_"+ id).transition().attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", "white").attr("stroke", "black");
+  d3.selectAll("#circleTextRect_"+ id).transition().attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", fill).attr("stroke", fill);
   d3.selectAll("#labelText_"+ id).transition().attr("fill-opacity",1).attr("stroke-opacity",1);
-  d3.selectAll("#labelRect_"+ id).transition().attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", "white").attr("stroke", "black");
+  d3.selectAll("#labelRect_"+ id).transition().attr("fill-opacity",1).attr("stroke-opacity",1).style("fill", fill).attr("stroke", fill);
   d3.selectAll(".marker path").transition().style("fill", fill);
   nodesShown.push(id);
   // Now show all the lines between all the nodes that we've shown
