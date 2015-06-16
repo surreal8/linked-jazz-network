@@ -907,7 +907,7 @@ function restart() {
   var nodeEnter = node.enter().append("svg:g")
       .attr("class", "node")
       .attr("id", function(d) {  return "node_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
-      .on("click",nodeClickFunction);
+      .on("click", nodeClickFunction);
 
   if (networkNodeDrag) {
     nodeEnter.call(force.drag);
@@ -978,6 +978,14 @@ function restart() {
       }
       return occupation;
     });
+
+  nodeEnter.append("svg:rect")
+    .attr("class",  "boundingRect")
+	.attr("x", function(d) {  return $("#" + "node_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().x; })
+    .attr("y", function(d) {  return $("#" + "node_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
+    .attr("width", function(d) {  return $("#" + "node_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width; })
+    .attr("height", function(d) {  return $("#" + "node_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height; })
+	.attr("opacity", 0);
 
     nodeEnter.selectAll(".labelText")
     .attr("textLength", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width * 1.1; });
