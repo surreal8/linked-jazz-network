@@ -553,6 +553,7 @@ text.circleText {
   letter-spacing: 3px;
   -moz-border-radius:10px;-ie-border-radius:10px;-webkit-border-radius:10px;-o-border-radius:10px;border-radius:10px;
   font-family: akkuratreg, sans-serif;
+  cursor: pointer;
 }
 
 .popup-home-banner {
