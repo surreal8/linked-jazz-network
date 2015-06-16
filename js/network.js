@@ -876,6 +876,7 @@ function restart() {
 	//console.log('useperson', usePersonIndex);
 	//console.log('vismde', visMode);
   if (visMode == "clique" || visMode == "person" && nodes[usePersonIndex].connections > 15) {
+    windowResize();
     showSpinner("");
     $('.filter-button').hide();
   }
