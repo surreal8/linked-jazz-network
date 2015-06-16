@@ -241,7 +241,6 @@ svg {
 }
 .filter-button {
   cursor: pointer; 
-  visibility:hidden;
   padding: 15px 30px;
   border: black solid 1px;
   border-radius: 10px;
@@ -560,6 +559,7 @@ text.circleText {
 	min-width:410px;
   width: 40%;
   background: #fff;
+  z-index: 999;
 }
 
 .popup-home:hover {

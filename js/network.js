@@ -112,7 +112,7 @@ jQuery(document).ready(function($) {
 	$("#about").css("display","none");
 	$("#logo").css("display","none");
 	$("#zoomWidget").css("display","none");
-  $(".filter-button").css("visibility","hidden");
+  $(".filter-button").hide();
 
   showSpinner("");
 
@@ -758,7 +758,6 @@ function filter(clear) {
 	  $("#about").css("display","none");
 	  $("#logo").css("display","none");
 	  $("#zoomWidget").css("display","none");
-    $(".filter-button").css("visibility","hidden");
     vis.selectAll("g.node").remove();
     vis.selectAll("line.link").remove();
 
@@ -778,6 +777,7 @@ function filter(clear) {
     }
     else {
       $("#network").attr("class", "");
+      $(".filter-button").hide();
     }
 
     nodes = [];
@@ -867,6 +867,7 @@ function restart() {
 	//console.log('vismde', visMode);
   if (visMode == "clique" || visMode == "person" && nodes[usePersonIndex].connections > 15) {
     showSpinner("");
+    $('.filter-button').hide();
   }
   
   vis.append('defs')
@@ -1137,7 +1138,7 @@ function restart() {
           $("#logo").css("display","block");
         }
         if (visMode == 'person') {
-          $(".filter-button").css("visibility","visible");
+          $(".filter-button:hidden").fadeIn(1000);
         }
       }
 
