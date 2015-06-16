@@ -19,6 +19,8 @@
 <link rel="stylesheet" href="css/vex.css">
 <link rel="stylesheet" href="css/vex-theme-os.css">
 <link rel="stylesheet" href="css/colorbox.css">
+
+<link rel="shortcut icon" href="menu/aictheme_favicon.png" type="image/x-icon">
 </head>
 
 <body>
