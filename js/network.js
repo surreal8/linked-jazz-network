@@ -1935,7 +1935,7 @@ console.log('changeVisMode', changeTo);
 
     History.pushState({state:idLookup[usePerson]}, "Linked Visions: " + name, "?person=" + idLookup[usePerson]);
   } else {
-    History.pushState({state:changeTo}, changeTo +" Mode", "/network.php");
+    History.pushState({state:changeTo}, "Linked Visions", "/network.php");
   }
 
   visMode = changeTo;
@@ -2119,7 +2119,7 @@ function hideSpinner() {
 
 function windowResize() {
   visWidth = $(window).width();
-  visHeight = $(window).height();
+  visHeight = $(window).height() - 120;
   if (visMode == "person") {
     visWidth -= $('#popUp').width();
     if (visWidth < 614) {
@@ -2132,7 +2132,7 @@ function windowResize() {
   $("#network").css('height',visHeight + 'px');
   d3.select("#network svg")
 	  .attr("width", visWidth - 10)
-	  .attr("height", visHeight - 130);
+	  .attr("height", visHeight - 10);
 }
 
 function isScrolledIntoView(elem, buffer) {
