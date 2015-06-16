@@ -56,7 +56,7 @@ h1, h2, h3, h4, h5, h6, p, span {
   width: 28.1vw;
   background-color: #ffffff;
   z-index: 50;
-  top: 3vw;
+  top: 4vw;
   left: 36vw;
   position: absolute;
   margin: 0 auto;
@@ -129,7 +129,7 @@ p.credits {
   display: block;
   background-color: #E9967A;
   border: 1px #E9967A solid;
-  border-radius: 0.7vw;
+  border-radius: 0.55vw;
   padding: 0.78vw 1.56vw;
   font-size: 0.74vw;
   letter-spacing: 0.43em;
