@@ -303,9 +303,7 @@ function parseStateChangeVis() {
     windowResize();
     
   } else {
-	  console.log('jsonlnodes', jsonNodes);
 	if (jsonNodes == "") {
-		console.log('hiii');
 		changeVisMode("clique");
 	} else {
 		changeVisMode('home');	
@@ -868,9 +866,9 @@ function filter(clear) {
 }
 
 function restart() {
-	console.log('nodes', nodes);
-	console.log('useperson', usePersonIndex);
-	console.log('vismde', visMode);
+	//console.log('nodes', nodes);
+	//console.log('useperson', usePersonIndex);
+	//console.log('vismde', visMode);
   if (visMode == "clique" || visMode == "person" && nodes[usePersonIndex].connections > 15) {
     showSpinner("");
   }
@@ -890,9 +888,8 @@ function restart() {
 	  .attr("cx", "0")
 	  .attr("cy", "0")
 	  .attr("r", "4");
-console.log('links', links);
+
   if (jsonLines != "" && visMode != 'person') {
-	  console.log('jsonLines', jsonLines);
 	 links = jQuery.parseJSON(jsonLines);
   }
   vis.selectAll("line.link")
@@ -900,8 +897,6 @@ console.log('links', links);
     .enter().insert("line", "circle.node")
     .attr("class", function(d) {return "link " + d.customClass});
   
-
-console.log('nodes', nodes);
   if (jsonNodes != "" && visMode != 'person') {
 	  nodes = jQuery.parseJSON(jsonNodes);
   }
@@ -912,7 +907,7 @@ console.log('nodes', nodes);
   var nodeEnter = node.enter().append("svg:g")
       .attr("class", "node")
       .attr("id", function(d) {  return "node_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
-      .on("click",nodeClickFunction);
+      .on("click", nodeClickFunction);
 
   if (networkNodeDrag) {
     nodeEnter.call(force.drag);
@@ -983,6 +978,14 @@ console.log('nodes', nodes);
       }
       return occupation;
     });
+
+  nodeEnter.append("svg:rect")
+    .attr("class",  "boundingRect")
+	.attr("x", function(d) {  return $("#" + "node_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().x; })
+    .attr("y", function(d) {  return $("#" + "node_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().y; })
+    .attr("width", function(d) {  return $("#" + "node_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width; })
+    .attr("height", function(d) {  return $("#" + "node_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height; })
+	.attr("opacity", 0);
 
     nodeEnter.selectAll(".labelText")
     .attr("textLength", function(d) { return $("#" + "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,''))[0].getBBox().width * 1.1; });
@@ -1112,28 +1115,35 @@ console.log('nodes', nodes);
 		} else {
 			vis.selectAll("g.node").attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";});
 		}
-
+		
 		vis.selectAll("line.link")
 		  .attr("x1", function(d) { return d.source.x;})
 		  .attr("y1", function(d) { return d.source.y; })
 		  .attr("x2", function(d) { return d.target.x; })
 		  .attr("y2", function(d) { return d.target.y; });
-		  
-	  if ($("#network svg").css("visibility") != "visible") {
-		  $("#network").css("visibility","visible");
-		  $("#network svg").css("visibility","visible");
-		  $("#zoomWidget").fadeIn(2000).css("visibility","visible");
-		  $("#networkCanvas").fadeTo( 1000, 1, function() {
-			if (visMode != 'person') {
-				$("#title").fadeIn(2000);
-				$("#about").fadeIn(2000);
-				$("#logo").fadeIn(2000);
-			}
-		  });
-		  if (visMode == 'person') {
-			$(".filter-button").css("visibility","visible");
+	    
+	    if ($("#network svg").css("visibility") != "visible") {
+		   $("#network").css("visibility","visible");
+		   $("#network svg").css("visibility","visible");
+		   $("#zoomWidget").fadeIn(2000).css("visibility","visible");
+		   if (visMode != 'home') {
+			   $("#networkCanvas").fadeTo( 1000, 1, function() {
+			   if (visMode != 'person') {
+					$("#title").fadeIn(2000);
+					$("#about").fadeIn(2000);
+					$("#logo").fadeIn(2000);
+				}
+			   });
+		   } else {
+			   $("#networkCanvas").css("opacity", 1);
+			   $("#title").css("display","block");
+			   $("#about").css("display","block");
+	           $("#logo").css("display","block");
+		   }
+		   if (visMode == 'person') {
+			    $(".filter-button").css("visibility","visible");
+		   }
 		  }
-		}
 		
 		if (visMode != 'person' && visMode != 'home') {
 			  var nodesInit = d3.selectAll("g.node");
@@ -1464,7 +1474,6 @@ function showPopup(d,cords) {
     }
 
     if (activeStartDate || activeEndDate) {
-        console.log(activeStartDate);
       dates = "Active: ";
       if (activeStartDate) {
         dates += activeStartDate;
@@ -1913,7 +1922,6 @@ function changeVisMode(changeTo) {
 console.log('changeVisMode', changeTo);
   if (rendering)
     return false;
-console.log('rendering');
   rendering = true;
 
   if (changeTo == "person") {
@@ -1939,7 +1947,7 @@ console.log('rendering');
   vis.attr("transform", "translate(" + [0,0] + ")"  + " scale(" + 1 + ")");
 
   zoomWidgetObjDoZoom = false;
-  zoomWidgetObj.setValue(0,0.7);
+  zoomWidgetObj.setValue(0,0.8);
 
   filter();
 
