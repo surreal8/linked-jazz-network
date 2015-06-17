@@ -2145,24 +2145,6 @@ function hideSpinner() {
   $("#spinner").css("display","none");
 }
 
-function windowResize() {
-  visWidth = $(window).width();
-  visHeight = $(window).height() - 120;
-  if (visMode == "person") {
-    visWidth -= $('#popUp').width();
-    if (visWidth < 614) {
-      visWidth = 614;
-    }
-	  //visHeight -= 500;
-    $("#network").css('float', 'right');
-  }
-  $("#network").css('width', visWidth + 'px');
-  $("#network").css('height',visHeight + 'px');
-  d3.select("#network svg")
-	  .attr("width", visWidth - 10)
-	  .attr("height", visHeight - 10);
-}
-
 function isScrolledIntoView(elem, buffer) {
   if (!buffer){
     buffer = 0;
@@ -2178,4 +2160,23 @@ function isScrolledIntoView(elem, buffer) {
   var elemBottom = elemTop + $elem.outerHeight(true);
 
   return ((elemTop <= docViewBottom) && (elemBottom >= docViewTop));
+}
+
+function windowResize() {
+  visWidth = $(window).width();
+  visHeight = $(window).height() - 120;
+  if (visMode == "person") {
+    visHeight += 120;
+    visWidth -= $('#popUp').width();
+    if (visWidth < 614) {
+      visWidth = 614;
+    }
+	  //visHeight -= 500;
+    $("#network").css('float', 'right');
+  }
+  $("#network").css('width', visWidth + 'px');
+  $("#network").css('height',visHeight + 'px');
+  d3.select("#network svg")
+	  .attr("width", visWidth - 10)
+	  .attr("height", visHeight - 10);
 }
