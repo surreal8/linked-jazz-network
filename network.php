@@ -29,7 +29,7 @@
 <a href="about.html" id="about">ABOUT</a>
 
 <script>
-jQuery('#about').colorbox({transition:"fade", width:"100%", height:"100%", opacity: 0.92, scalePhotos: true, returnFocus: false,
+jQuery('#about').colorbox({transition:"fade", width:"100%", height:"100%", opacity: 0.92, scalePhotos: true, returnFocus: false, title: false,
                                      
                                      onComplete:function () {
                                        jQuery('.cboxPhoto').attr('style','max-width:55%; max-height: 92%; height: 92%; margin-top:35px; margin-left: 35%; margin-right: 180px; float: none;');
