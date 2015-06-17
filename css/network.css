@@ -302,10 +302,6 @@ circle {
 	stroke-width: 1.5;
 }
 
-.backgroundCircleHighlight {
-	stroke-width: 5;
-}
-
 .imageCircle {
 	opacity: 0;
 }
