@@ -204,6 +204,10 @@ a:hover {
 a.aboutlink {
   color: #E9967A
 }
+
+#backtoabout {
+	float: right;		
+}
   
 
 svg {
@@ -296,10 +300,6 @@ circle {
 	fill: #E9967A;
 	stroke: #E9967A;
 	stroke-width: 1.5;
-}
-
-.backgroundCircleHighlight {
-	stroke-width: 5;
 }
 
 .imageCircle {

@@ -1,8 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Linked Visions | About</title>
 </head>
 <body>
 
@@ -24,8 +22,17 @@ Funding for this project—and for the related exhibition—was provided by the 
 </p>
 
 <p class="about">Image Credits:<br />
-Credits for works images are provided in the corresponding captions. Credits for icon images are given <a class="aboutlink" href="about_works.html" target="_blank">here</a>. 
+Credits for works images are provided in the corresponding captions. Credits for icon images are given <a class="aboutlink" id="aboutheadcreds">here</a>. 
 </p>
+
+<script>
+$('#aboutheadcreds').on('click', function(e) {
+	e.preventDefault();
+	jQuery('#cboxLoadedContent p.about').replaceWith($('<p>').attr("class", "about").load("about_works.html"));
+	jQuery('h1.about').replaceWith($('<h1>').attr("class", "about").html("ABOUT | HEADSHOT CREDITS"));
+	}
+);
+</script>
 
 </body>
 </html>
