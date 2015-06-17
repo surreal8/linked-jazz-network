@@ -1,15 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Linked Visions | About</title>
-<link rel="stylesheet" href="css/aboutworks.css">
 </head>
-<body class="aboutworks">
-
-<h1 class="about">HEADSHOT CREDITS</h1>
-<img src="menu/logo-white.png" id="cboxLogo" alt="Art Institute of Chicago">
-
+<body>
 <table border='0' cellspacing='5' cellpadding='5' width='80%'>
  <tr>
   <td width='30%'>
@@ -592,5 +585,16 @@
  </tr>
 </table>
 
+<script>
+$('#backtoabout').on('click', function(e) {
+	e.preventDefault();
+	$('h1.about').remove();
+	$('#cboxLoadedContent p.about').remove();
+	jQuery('#cboxLoadedContent').load("about.html");
+	}
+);
+</script>
+
+<a class="aboutlink" id="backtoabout">Back to About Main</a>
 </body>
 </html>

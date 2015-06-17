@@ -204,6 +204,10 @@ a:hover {
 a.aboutlink {
   color: #E9967A
 }
+
+#backtoabout {
+	float: right;		
+}
   
 
 svg {
