@@ -1579,27 +1579,25 @@ function showPopup(d,cords) {
           )
       );
 
+    homeClick = function(){
+			hideDetailElements(); 
+			usePerson = null; 
+			usePersonIndex = 0; 
+			if (jsonNodes == "") {
+				changeVisMode('clique');
+			} else {
+				changeVisMode('home'); 
+			}
+			windowResize();					  
+		};
+    
     // Home
     jQuery('#popUp')
-      //.append(
-        //$('<a>')
-          //.attr("href", "network.php")
-          .append(
-            $("<div>")
-              .attr("class", "popup-home popup-home-color-switch")
-              .text("HOME")
-			  .on("click", function(){
-				  hideDetailElements(); 
-				  usePerson = null; 
-				  usePersonIndex = 0; 
-				  if (jsonNodes == "") {
-					  changeVisMode('clique');
-				  } else {
-					  changeVisMode('home'); 
-					  }
-				  windowResize();					  
-				  })
-         // )
+      .append(
+        $("<div>")
+          .attr("class", "popup-home popup-home-color-switch")
+          .text("HOME")
+			    .on("click", homeClick)
       );
 
     jQuery('#popUp')
@@ -1608,13 +1606,10 @@ function showPopup(d,cords) {
           .attr("class", "popup-home-banner")
           .css('display', 'none')
           .append(
-            $('<a>')
-              .attr("href", "network.php")
-              .append(
-                $("<div>")
-                  .attr("class", "popup-home")
-                  .text("HOME")
-              )
+            $("<div>")
+              .attr("class", "popup-home")
+              .text("HOME")
+			        .on("click", homeClick)
           )
       );
 
@@ -1687,7 +1682,7 @@ function showPopup(d,cords) {
         popupWorks.append(
           $("<a>")
             .attr("href", artwork1Large)
-            .attr("class", "cboxElement artwork-group")
+            .attr("class", "artwork-group")
             .append(
               $("<span>")
                 .attr("class", "popup-row")
@@ -1738,7 +1733,7 @@ function showPopup(d,cords) {
         popupWorks.append(
           $("<a>")
             .attr("href", artwork2Large)
-            .attr("class", "cboxElement artwork-group")
+            .attr("class", "artwork-group")
             .append(
               $("<span>")
                 .attr("class", "popup-row")
@@ -1789,7 +1784,7 @@ function showPopup(d,cords) {
         popupWorks.append(
           $("<a>")
             .attr("href", artwork3Large)
-            .attr("class", "cboxElement artwork-group")
+            .attr("class", "artwork-group")
             .append(
               $("<span>")
                 .attr("class", "popup-row")
@@ -1840,7 +1835,7 @@ function showPopup(d,cords) {
         popupWorks.append(
           $("<a>")
             .attr("href", artwork4Large)
-            .attr("class", "cboxElement artwork-group")
+            .attr("class", "artwork-group")
             .append(
               $("<span>")
                 .attr("class", "popup-row")
