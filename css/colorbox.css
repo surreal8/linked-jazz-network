@@ -27,10 +27,10 @@
         #cboxError{padding:50px; border:1px solid #ccc;}
         #cboxLoadedContent{}
         #cboxTitle{position:relative; top:-75%; left:120px; color:#ccc; width:20%}
-        #cboxCurrent{position:absolute; top:50px; right:100px; color:#ccc;font-family: akkuratreg, sans-serif;
+        #cboxCurrent{position:absolute; bottom:50px; right:35px; color:#ccc;font-family: akkuratreg, sans-serif;
                      text-transform: uppercase;
-                     font-size: 12px;
-                     letter-spacing: 4px;}
+                     font-size: 10px;
+                     letter-spacing: 3px;}
         /*#cboxLoadingGraphic{background:url(../menu/preloader.gif) no-repeat center center;}*/
 
         /* these elements are buttons, and may need to have additional styles reset to avoid unwanted base styles */
@@ -40,9 +40,9 @@
         #cboxPrevious:active, #cboxNext:active, #cboxSlideshow:active, #cboxClose:active {outline:0;}
         
         #cboxSlideshow{position:absolute; top:-20px; right:90px; color:#fff;}
-        #cboxPrevious{position:absolute; top:50%; left:5px; margin-top:-32px; width:48px; height:94px; text-indent:-9999px;background:url(../menu/left-arrow.png) no-repeat;}
+        #cboxPrevious{position:absolute; top:50%; left:35px; margin-top:-32px; width:48px; height:94px; text-indent:-9999px;background:url(../menu/left-arrow.png) no-repeat;}
         #cboxPrevious:hover{background-position:bottom left;}
-        #cboxNext{position:absolute; top:50%; right:5px; margin-top:-32px; width:48px; height:94px; text-indent:-9999px;background:url(../menu/right-arrow.png) no-repeat;}
+        #cboxNext{position:absolute; top:50%; right:35px; margin-top:-32px; width:48px; height:94px; text-indent:-9999px;background:url(../menu/right-arrow.png) no-repeat;}
         #cboxNext:hover{background-position:bottom right;}
         #cboxClose{position:absolute; top:35px; right:35px; display:block; background:url(../menu/close.png); width:48px; height:48px; text-indent:-9999px;}
         #cboxClose:hover{background-position:bottom center;}
