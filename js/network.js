@@ -942,6 +942,11 @@ function restart() {
     showSpinner("");
     $('.filter-button').hide();
   }
+
+  if (visMode == "clique" || visMode == "home") {
+    var aboutCboxProps = jQuery.extend({}, cboxProps, {scrolling: true});
+    jQuery('#about').colorbox(aboutCboxProps);
+  }
   
   vis.append('defs')
 	  .append('clipPath')
