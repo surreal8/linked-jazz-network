@@ -1223,7 +1223,7 @@ function restart() {
         jsonLines = json_lines;
       }
     }
-    if (visMode == 'person' || visMode == 'home' || e.alpha < .007) {
+    if (visMode == 'home' || e.alpha < .007) {
       d3.selectAll(".node").on("click", nodeClickFunction);
     }
   });
