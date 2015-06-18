@@ -943,7 +943,7 @@ function restart() {
     $('.filter-button').hide();
   }
 
-  if (visMode == "clique" || visMode == "home") {
+  if (visMode != "person") {
     var aboutCboxProps = jQuery.extend({}, cboxProps, {scrolling: true});
     jQuery('#about').colorbox(aboutCboxProps);
   }
