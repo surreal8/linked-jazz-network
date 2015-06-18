@@ -103,10 +103,10 @@ var cboxProps = {transition:"fade",
                  opacity: 0.92,
                  scalePhotos: true,
                  returnFocus: false,
-                 scrolling: false,
                  current: "Work {current} of {total}",
                  title: function(){ if (jQuery('.cboxPhoto').length) { return jQuery(this).find('img').attr('copy'); } else { return "" } },
                  onComplete:function () {
+                   jQuery('#cboxLoadedContent').css('overflow', 'hidden');
                    jQuery('.cboxPhoto').attr('style','width: auto; height: 100%; margin-top:35px; margin-left: 35%; margin-right: 180px; float: none;');
                    jQuery('#cboxContent').prepend(
                      $("<img>")
@@ -173,8 +173,7 @@ jQuery(document).ready(function($) {
   /* Binds */
   $(window).resize(function() { windowResize();});
 
-  var aboutCboxProps = jQuery.extend({}, cboxProps, {scrolling: true});
-  jQuery('#about').colorbox(aboutCboxProps);
+  jQuery('#about').colorbox(cboxProps);
 
   resetFilters();
   
@@ -1207,8 +1206,7 @@ function restart() {
             if (visMode != 'person') {
               $("#title").fadeIn(2000);
               $("#about").fadeIn(2000);
-              var aboutCboxProps = jQuery.extend({}, cboxProps, {scrolling: true});
-              jQuery('#about').colorbox(aboutCboxProps);
+              jQuery('#about').colorbox(cboxProps);
               $("#logo").fadeIn(2000);
             }
           });
@@ -1216,8 +1214,7 @@ function restart() {
           $("#networkCanvas").css("opacity", 1);
           $("#title").css("display","block");
           $("#about").css("display","block");
-          var aboutCboxProps = jQuery.extend({}, cboxProps, {scrolling: true});
-          jQuery('#about').colorbox(aboutCboxProps);
+          jQuery('#about').colorbox(cboxProps);
           $("#logo").css("display","block");
         }
         if (visMode == 'person') {
