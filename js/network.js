@@ -84,6 +84,19 @@ var nodeClickFunction = function(d) {
   changeVisMode("person");
 };
 
+var homeClick = function(){
+	hideDetailElements(); 
+	usePerson = null; 
+	usePersonIndex = 0; 
+	if (jsonNodes == "") {
+		changeVisMode('clique');
+	} else {
+		changeVisMode('home'); 
+	}
+	windowResize();					  
+};
+
+
 var cboxProps = {transition:"fade",
                  width:"100%",
                  height:"100%",
@@ -942,11 +955,6 @@ function restart() {
     showSpinner("");
     $('.filter-button').hide();
   }
-
-  if (visMode != "person") {
-    var aboutCboxProps = jQuery.extend({}, cboxProps, {scrolling: true});
-    jQuery('#about').colorbox(aboutCboxProps);
-  }
   
   vis.append('defs')
 	  .append('clipPath')
@@ -1199,6 +1207,8 @@ function restart() {
             if (visMode != 'person') {
               $("#title").fadeIn(2000);
               $("#about").fadeIn(2000);
+              var aboutCboxProps = jQuery.extend({}, cboxProps, {scrolling: true});
+              jQuery('#about').colorbox(aboutCboxProps);
               $("#logo").fadeIn(2000);
             }
           });
@@ -1206,6 +1216,8 @@ function restart() {
           $("#networkCanvas").css("opacity", 1);
           $("#title").css("display","block");
           $("#about").css("display","block");
+          var aboutCboxProps = jQuery.extend({}, cboxProps, {scrolling: true});
+          jQuery('#about').colorbox(aboutCboxProps);
           $("#logo").css("display","block");
         }
         if (visMode == 'person') {
@@ -1225,6 +1237,7 @@ function restart() {
     }
     if (visMode == 'home' || e.alpha < .007) {
       d3.selectAll(".node").on("click", nodeClickFunction);
+      d3.selectAll(".popup-home").on("click", homeClick)
     }
   });
 }
@@ -1588,26 +1601,13 @@ function showPopup(d,cords) {
               )
           )
       );
-
-    homeClick = function(){
-			hideDetailElements(); 
-			usePerson = null; 
-			usePersonIndex = 0; 
-			if (jsonNodes == "") {
-				changeVisMode('clique');
-			} else {
-				changeVisMode('home'); 
-			}
-			windowResize();					  
-		};
-    
+ 
     // Home
     jQuery('#popUp')
       .append(
         $("<div>")
           .attr("class", "popup-home popup-home-color-switch")
           .text("HOME")
-			    .on("click", homeClick)
       );
 
     jQuery('#popUp')
@@ -1619,7 +1619,6 @@ function showPopup(d,cords) {
             $("<div>")
               .attr("class", "popup-home")
               .text("HOME")
-			        .on("click", homeClick)
           )
       );
 
