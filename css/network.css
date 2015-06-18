@@ -47,6 +47,16 @@ body{
   user-select: none;
 }
 
+body#landing {
+	background-image: url(../image/landing/landingpageimages.jpg); 
+	background-repeat: no-repeat; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+	
+}
+
 #landing {
   background-color: #000000;
   margin: 0 auto;
