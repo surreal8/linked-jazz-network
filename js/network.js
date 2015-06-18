@@ -106,7 +106,7 @@ var cboxProps = {transition:"fade",
                  current: "Work {current} of {total}",
                  title: function(){ if (jQuery('.cboxPhoto').length) { return jQuery(this).find('img').attr('copy'); } else { return "" } },
                  onComplete:function () {
-                   jQuery('#cboxLoadedContent').css('overflow', 'hidden');
+                   jQuery('#cboxLoadedContent').css('overflow-x', 'hidden');
                    jQuery('.cboxPhoto').attr('style','width: auto; height: 100%; margin-top:35px; margin-left: 35%; margin-right: 180px; float: none;');
                    jQuery('#cboxContent').prepend(
                      $("<img>")
