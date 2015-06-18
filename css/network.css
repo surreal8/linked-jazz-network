@@ -142,7 +142,7 @@ p.credits {
   font-family: akkuratreg, sans-serif;
 }
 
-a.begin, a:visited.begin, a:hover.begin {
+a#begin, a:visited#begin, a:hover#begin {
 	text-decoration: none;
 }
 
