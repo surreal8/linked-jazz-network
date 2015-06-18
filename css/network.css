@@ -135,7 +135,7 @@ p.credits {
   display: block;
   background-color: #E9967A;
   border: 1px #E9967A solid;
-  border-radius: 0.55vw;
+  border-radius: 10px;
   padding: 0.78vw 1.56vw;
   font-size: 0.74vw;
   letter-spacing: 0.43em;
