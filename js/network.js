@@ -2141,9 +2141,9 @@ function showSpinner(text) {
     $("#spinner").css("left",((visWidth/2) + 540) + "px");
   }
   else {
-    $("#spinner").css("left",(visWidth/2) + "px");
+    $("#spinner").css("left",(visWidth/2)-66 + "px");
   }
-  $("#spinner").css("top", ((visHeight/2) - 65) + "px");
+  $("#spinner").css("top", (visHeight/2) + "px");
   $("#spinner").css("display","block");
   $("#spinner span").html(text);
 }
