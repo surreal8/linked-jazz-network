@@ -1910,6 +1910,7 @@ function showPopup(d,cords) {
     jQuery('.artwork-group').colorbox(groupCboxProps);
 
     $("#popUp").animate({ scrollTop: 0 }, 1);
+    jQuery(".popup-home-banner").fadeOut(2);
     jQuery("#popUp").fadeIn(200);
 
     jQuery("#popUp").scroll(function(){
