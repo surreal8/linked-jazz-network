@@ -484,6 +484,8 @@ text.circleText {
 
 .popup-artworks {
   margin-left: 20px;
+  overflow: auto;
+  width: 100%;
 }
 
 .popup-artwork {
