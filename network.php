@@ -39,6 +39,7 @@ jQuery('#about').colorbox({transition:"fade", width:"100%", height:"100%", opaci
                                            .attr("id","cboxLogo")
                                            .attr("alt", "Art Institute of Chicago")
                                        );
+									   jQuery('#cboxTitle').replaceWith("");
 									   jQuery('#cboxContent').append(
 										$('<p>')
 										  .attr("class", "about")
