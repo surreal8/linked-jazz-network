@@ -57,6 +57,15 @@ body#landing {
 	
 }
 
+noscript {
+	background-color: #E9967A;
+	color: #ffffff;
+	padding: 20px;
+	top: 10px;
+	position: relative;
+	font-size: 20px;
+}
+
 #landing {
   background-color: #000000;
   margin: 0 auto;
