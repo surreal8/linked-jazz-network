@@ -1034,7 +1034,7 @@ function restart() {
   nodeEnter.append("svg:text")
     .attr("id", function(d) {  return "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
     .attr("class",  "labelText")
-    .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
+    .attr("x", 0)
     .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+27; })
     .attr("visibility", "hidden")
     .text(function(d) {
@@ -1224,7 +1224,7 @@ function restart() {
         jsonLines = json_lines;
       }
     }
-    if (visMode == 'home' || e.alpha < .007) {
+    if (visMode == 'home' || visMode == 'person' || e.alpha < .007) {
       d3.selectAll(".node").on("click", nodeClickFunction);
       d3.selectAll(".popup-home").on("click", homeClick)
     }
@@ -1236,7 +1236,7 @@ function stickyPeople() {
     if (visMode == "person") {
       if (d.id == usePerson) {
         d.x = visWidth/2;
-        d.y = visHeight/2 - 150;
+        d.y = visHeight/2 - 250;
       }
     }
     else {

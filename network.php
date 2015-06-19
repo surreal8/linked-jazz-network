@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Linked Visions</title>
-
+<script src="js/conf.js"></script> 
 <script src="js/jquery.min.js"></script>
 <script src="js/jquery-ui.min.js"></script>
 <script src="js/jquery.history.js"></script>
@@ -24,7 +24,7 @@
 </head>
 
 <body>
-<a href="/"><img src="menu/logo.png" id="logo"></a>
+<img src="menu/logo.png" id="logo">
 <div id="title">WHISTLER AND ROUSSEL <br /> <span class="subtitle">LINKED VISIONS</span></div>
 <a href="about.html" id="about">ABOUT</a>
 
@@ -48,24 +48,28 @@
     <span>LOADING</span>
 </div>
 <script>
+if (interactive == true) {
 //add timer for interactive
-/*
    (function($){
 	//3 minutes
 	var timeout = 60000;
-	
 	$(document).bind("idle.idleTimer", function(){
 		window.location.href = 'index.html';
 	});
-	
 	$(document).bind("active.idleTimer", function(){
 		//reset timer? listen for idleness?
 	});
-	
 	$.idleTimer(timeout);
+	})(jQuery);
+//logo function
+	$('#logo').dblclick(function() {location.reload();});
 
-})(jQuery);
-*/
+} else {
+	$('#logo').addClass('logopointer');
+	$('#logo').click(function() {
+	window.location.href ='http://www.artic.edu';
+	});
+}
 </script>
 </body>
 </html>

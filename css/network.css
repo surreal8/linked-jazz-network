@@ -687,7 +687,12 @@ h1.about {
 	 left:30px;
 	 width:60px;
 	 height:auto;
+	 z-index: 50;
  }
+ 
+.logopointer:hover {
+	cursor: pointer;
+}
 
  #playButton {
 	width: 0;
