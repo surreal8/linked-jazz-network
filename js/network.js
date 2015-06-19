@@ -1224,7 +1224,7 @@ function restart() {
         jsonLines = json_lines;
       }
     }
-    if (visMode == 'home' || e.alpha < .007) {
+    if (visMode == 'home' || visMode == 'person' || e.alpha < .007) {
       d3.selectAll(".node").on("click", nodeClickFunction);
       d3.selectAll(".popup-home").on("click", homeClick)
     }
