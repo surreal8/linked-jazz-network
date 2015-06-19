@@ -57,13 +57,27 @@ body#landing {
 	
 }
 
-noscript {
+.alert {
 	background-color: #E9967A;
 	color: #ffffff;
-	padding: 20px;
-	top: 10px;
+	padding: 1vw;
+	top: 0;
 	position: relative;
-	font-size: 20px;
+	font-family: akkuratreg, sans-serif;
+	font-size: 1vw;
+  border-bottom-right-radius:10px;
+  border-bottom-left-radius:10px;
+  display: inline;
+}
+
+#device-width-alert {
+  display: none;
+}
+
+@media all and (max-width: 1023px) {
+  #device-width-alert {
+    display: inline;
+  }
 }
 
 #landing {
