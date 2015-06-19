@@ -383,12 +383,15 @@ function parseStateChangeVis() {
     windowResize();
     
   } else {
-	if (jsonNodes == "") {
-		changeVisMode("clique");
-	} else {
-		changeVisMode('home');	
-	}
-	windowResize();	
+	  usePerson = null; 
+	  usePersonIndex = 0; 
+    $('#popUp').hide();
+	  if (jsonNodes == "") {
+		  changeVisMode("clique");
+	  } else {
+		  changeVisMode('home');	
+	  }
+	  windowResize();	
   }
 }
 
