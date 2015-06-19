@@ -907,19 +907,6 @@ function filter(clear) {
 
   //lock the large nodes to the pattern
   for (aNode in workingNodes) {
-    workingNodes[aNode].lock = false;
-    //workingNodes[aNode].y = visHeight / 2;
-    workingNodes[aNode].x = Math.floor((Math.random()*visWidth)+1);
-    if (visMode != "person") {
-      for (large in largestNodes) {
-        if (largestNodes[large].node == workingNodes[aNode].id) {
-          workingNodes[aNode].lockX = largestNodes[large].x;
-          workingNodes[aNode].lockY = largestNodes[large].y;
-          workingNodes[aNode].lock = true;
-
-        }
-      }
-    }
 
     if (visMode == "person" && workingNodes[aNode].id == usePerson) {
       usePersonIndex = aNode;
@@ -1081,6 +1068,11 @@ function restart() {
   for (aNode in nodes) {
     nodes[aNode].width = $("#" + "node_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))[0].	getBBox().width;
     nodes[aNode].height = $("#" + "node_" + nodes[aNode].id.split("/")[nodes[aNode].id.split("/").length-1].replace(cssSafe,''))[0].getBBox().height;
+	
+	if (visMode != 'home') {
+		nodes[aNode].x = visWidth/2;
+		nodes[aNode].y = visHeight/2;
+	}
 
     nodes[aNode].x2 = nodes[aNode].x + nodes[aNode].width;
     nodes[aNode].y2 = nodes[aNode].y + nodes[aNode].height;
@@ -1950,7 +1942,7 @@ function hideDetailElements() {
 }
 
 function changeVisMode(changeTo) {
-console.log('changeVisMode', changeTo);
+
   if (rendering)
     return false;
   rendering = true;
