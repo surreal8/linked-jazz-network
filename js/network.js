@@ -1236,7 +1236,7 @@ function stickyPeople() {
     if (visMode == "person") {
       if (d.id == usePerson) {
         d.x = visWidth/2;
-        d.y = visHeight/2 - 150;
+        d.y = visHeight/2 - 250;
       }
     }
     else {
