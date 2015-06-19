@@ -1034,7 +1034,7 @@ function restart() {
   nodeEnter.append("svg:text")
     .attr("id", function(d) {  return "labelText_" + d.id.split("/")[d.id.split("/").length-1].replace(cssSafe,'')})
     .attr("class",  "labelText")
-    .attr("x", function(d) { return  (returnTextLoc(d)*-0.1); })
+    .attr("x", 0)
     .attr("y", function(d) { return returnTextLoc(d)+returnTextLoc(d)/1.8+27; })
     .attr("visibility", "hidden")
     .text(function(d) {
