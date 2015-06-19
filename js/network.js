@@ -77,7 +77,7 @@ var jsonLines = "";
 var nodeClickFunction = function(d) {
   if (d3.event.defaultPrevented) return;
   force.stop();
-  jQuery(".popup-home-banner").fadeOut(2);
+  jQuery(".popup-home-banner").hide();
   $("html, body").animate({ scrollTop: 0 }, "slow");
   $("#popUp").animate({ scrollTop: 0 }, 1);
   usePerson = d.id;
@@ -1367,6 +1367,7 @@ function showPopup(d,cords) {
   if (!popupShown) {
 
     // Clear the popup
+    jQuery("#popUp").off( "scroll" );
     jQuery('#popUp').empty();
 
     // Headshot
@@ -1906,17 +1907,19 @@ function showPopup(d,cords) {
     jQuery('.artwork-group').colorbox(groupCboxProps);
 
     $("#popUp").animate({ scrollTop: 0 }, 1);
-    jQuery(".popup-home-banner").fadeOut(2);
+    jQuery(".popup-home-banner").hide();
     jQuery("#popUp").fadeIn(200);
 
-    jQuery("#popUp").scroll(function(){
-      if (!isScrolledIntoView('.popup-headshot-cont', 50)) {
-        jQuery(".popup-home-banner").fadeIn(200);
-      }
-      else {
-        jQuery(".popup-home-banner").fadeOut(200);
-      }
-    });
+    setTimeout(function() {
+      jQuery("#popUp").scroll(function(){
+        if (!isScrolledIntoView('.popup-headshot-cont', 50)) {
+          jQuery(".popup-home-banner").fadeIn(200);
+        }
+        else {
+          jQuery(".popup-home-banner").fadeOut(200);
+        }
+      });
+    }, 100, []);
 
     //popupShown = true;
   }
