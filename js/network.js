@@ -1919,7 +1919,7 @@ function showPopup(d,cords) {
           jQuery(".popup-home-banner").fadeOut(200);
         }
       });
-    }, 100, []);
+    }, 1000, []);
 
     //popupShown = true;
   }
