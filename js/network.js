@@ -1213,7 +1213,7 @@ function restart() {
           $("#logo").css("display","block");
         }
         if (visMode == 'person') {
-          $(".filter-button:hidden").fadeIn(1000);
+			$(".filter-button:hidden").show( "drop", {direction: 'right'}, 1000, 'linear').css("visibility","visible");
         }
       }
 
