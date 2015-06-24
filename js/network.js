@@ -4,8 +4,8 @@ if (!document.createElementNS || !document.createElementNS('http://www.w3.org/20
 
 vex.defaultOptions.className = 'vex-theme-os';
 
-
-var visMode = 'clique';           //the type of network to render, each has it own settings
+var isInitialPageLoad = true;   //distinguish initial render cycle from subsequent renders
+var visMode = 'clique';         //the type of network to render, each has it own settings
 
 var tripleStore = null;         //holds the triple data bank created by the rdfquery plugin
 var tripleObject = null;        //holds the javascript seralized object of the triple store
@@ -1948,23 +1948,20 @@ function hideDetailElements() {
 }
 
 function changeVisMode(changeTo) {
-
   if (rendering)
     return false;
   rendering = true;
 
   if (changeTo == "person") {
-    var name = "";
-
     if (nameObject.hasOwnProperty(usePerson)) {
       if (nameObject[usePerson]['http://xmlns.com/foaf/0.1/name']) {
-        name = nameObject[usePerson]['http://xmlns.com/foaf/0.1/name'][0].value;
+        var name = nameObject[usePerson]['http://xmlns.com/foaf/0.1/name'][0].value;
       }
     }
 
-    History.pushState({state:idLookup[usePerson]}, "Linked Visions: " + name, "?person=" + idLookup[usePerson]);
+    updateHistory(idLookup[usePerson], "Linked Visions: " + name, "?person=" + idLookup[usePerson]);
   } else {
-    History.pushState({state:changeTo}, "Linked Visions", "network.php");
+    updateHistory(changeTo, "Linked Visions", "network.php");
   }
 
   visMode = changeTo;
@@ -1982,6 +1979,18 @@ function changeVisMode(changeTo) {
 
   rendering = false;
 
+}
+
+function updateHistory(state, title, url) {
+  History.pushState({state: state}, title, url);
+  // cause pushState doesn't work on initial load for some reason
+  document.title = title; 
+  // let default pageview fire on first render
+  if(isInitialPageLoad === false) {
+    dataLayer.push({event: 'vpv'});
+  } else {
+    isInitialPageLoad = false;
+  }
 }
 
 function hideRelations() {
