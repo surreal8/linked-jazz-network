@@ -284,9 +284,9 @@ svg {
 }
 .filter-button {
   cursor: pointer; 
-  padding: 15px 30px;
+  padding: 12px 30px;
   border: black solid 1px;
-  border-radius: 10px;
+  border-radius: 20px;
   font-family: akkuratreg, sans-serif;
   font-size: 12px;
   text-transform: uppercase;
