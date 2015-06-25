@@ -11,6 +11,26 @@ The data directory contains the triple files that populate the graph via RDF plu
 
 ---
 
+Analytics
+====
+
+To set analytics, replace the analytics.php file in the root of the project. This file should contain your analytics embed (with default pageviews disabled) and a JavaScript block which listens for 'vpv' events and manually triggers pageviews for your analytics system.
+
+
+```
+<?php // analytics.php ?>
+
+<script>
+  $('body').on('vpv', function() {
+    // manually fire a pageview
+  });
+</script>
+```
+
+
+
+---
+
 License
 ====
 The MIT License (MIT)
