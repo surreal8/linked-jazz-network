@@ -1469,6 +1469,14 @@ function showPopup(d,cords) {
               )
           )
       );
+	  
+    $('.popup-headshot-cont')
+		.mouseenter(function () {
+	      $('.popup-headshot-plus').fadeIn(300);
+	     })
+		 .mouseleave(function () {
+	      $('.popup-headshot-plus').fadeOut(100);
+	     })
  
     // Home
     $('#popUp')

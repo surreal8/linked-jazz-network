@@ -456,10 +456,10 @@ text.circleText {
   position: relative;
 }
 
-.popup-headshot-cont:hover .popup-headshot-plus {
+/*.popup-headshot-cont:hover .popup-headshot-plus {
     display: block;
     overflow: hidden;
-}
+}*/
 
 .popup-headshot-plus {
   left: 50%;
