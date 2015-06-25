@@ -1493,6 +1493,13 @@ function showPopup(d,cords) {
     if (headshotBannerButtonColor) {
       $('.popup-home-color-switch').css('color', headshotBannerButtonColor)
       $('.popup-home-color-switch').css('border-color', headshotBannerButtonColor)
+      $('.popup-home')
+	    .mouseenter(function () {
+	      $('.popup-home').css('border-color', '#E9967A')  
+	     })
+		.mouseleave(function () {
+	      $('.popup-home').css('border-color', headshotBannerButtonColor)  
+	     });
     }
 
     // Name and dates
