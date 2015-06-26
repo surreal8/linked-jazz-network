@@ -1,5 +1,6 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="description" content="James McNeill Whistler (1834–1903) and Theodore Roussel (1847–1903) lived and worked among a vibrant community of artists, models, printers, and literary figures, some of whom were members of their own families. This interactive program allows the user to explore the social and professional networks of these artists.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Linked Visions</title>
 
