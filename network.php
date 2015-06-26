@@ -57,7 +57,7 @@ if (interactive == true) {
 	
 	$('#title').addClass('headerpointer');
 	$('#title').click(function() {
-	window.location.href ='index.html';
+	window.location.href ='/';
 	});
 }
 </script>
