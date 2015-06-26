@@ -4,7 +4,7 @@ if (!document.createElementNS || !document.createElementNS('http://www.w3.org/20
 
 vex.defaultOptions.className = 'vex-theme-os';
 
-var isInitialPageLoad = true;   //distinguish initial render cycle from subsequent renders
+var lastLocation = '';          //the previous window.location, for debouncing pageviews
 var visMode = 'clique';         //the type of network to render, each has it own settings
 
 var tripleStore = null;         //holds the triple data bank created by the rdfquery plugin
@@ -1873,13 +1873,14 @@ function changeVisMode(changeTo) {
 
 function updateHistory(state, title, url) {
   History.pushState({state: state}, title, url);
-  // cause pushState doesn't work on initial load for some reason
+  // pushState doesn't set title on initial load, so do it manually 
   document.title = title; 
-  // let default pageview fire on first render
-  if(isInitialPageLoad === false) {
-    dataLayer.push({event: 'vpv'});
-  } else {
-    isInitialPageLoad = false;
+  // fire custom vpv event
+  // debounce pageviews by comparing to previous location
+  if(lastLocation !== window.location.toString()) {
+    lastLocation = window.location.toString();
+    // listen to this event to trigger virtual pageviews for analytics
+    $('body').trigger('vpv');
   }
 }
 
