@@ -1851,7 +1851,7 @@ function changeVisMode(changeTo) {
 
     updateHistory(idLookup[usePerson], "Linked Visions: " + name, "?person=" + idLookup[usePerson]);
   } else {
-    updateHistory(changeTo, "Linked Visions", "network.php" + window.location.search);
+    updateHistory(changeTo, "Linked Visions", "network.php");
   }
 
   visMode = changeTo;

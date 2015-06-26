@@ -17,16 +17,19 @@
   $('body').on('vpv', sendVirtualPageview);
 
   // fire virtual pageview on homepage,
-  // but exclude inGallery due to idleTimer
-  if(window.location.pathname.search(/^\/(\?|$)/) !== -1 && 
-     !window.location.search.match(/utm_source=inGallery/)) {
-    sendVirtualPageview();
+  // but exclude inGallery due to idleTimer,
+  // instead firing a pageview on begin button click
+  if(window.location.pathname === '/') {
+    if(!window.location.search.match(/utm_source=inGallery/)) {
+      sendVirtualPageview();
+    } else {
+      $(document).ready(function() {
+        $('#begin').on('click', function() {
+          $('body').trigger('vpv');
+        });
+      });
+    }
   }
-
-  $(document).ready(function() {
-    // add any existing query string to the Begin button
-    $('#begin').attr('href', $('#begin').attr('href') + window.location.search);
-  });
 </script>
 
 <!-- Google Tag Manager -->
