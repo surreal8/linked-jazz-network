@@ -76,9 +76,14 @@ if (interactive == true) {
 	$('#logo').dblclick(function() {location.reload();});
 
 } else {
-	$('#logo').addClass('logopointer');
+	$('#logo').addClass('headerpointer');
 	$('#logo').click(function() {
 	window.location.href ='http://www.artic.edu';
+	});
+	
+	$('#title').addClass('headerpointer');
+	$('#title').click(function() {
+	window.location.href ='index.html';
 	});
 }
 </script>
