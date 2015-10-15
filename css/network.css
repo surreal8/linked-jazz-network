@@ -696,7 +696,7 @@ h1.about {
 	 z-index: 50;
  }
  
-.logopointer:hover {
+.headerpointer:hover {
 	cursor: pointer;
 }
 
