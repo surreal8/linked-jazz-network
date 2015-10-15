@@ -23,10 +23,6 @@
     src: url(fonts/2E1150_0_0.woff);
 }
 
-h1, h2, h3, h4, h5, h6, p {
-  cursor: default;
-}
-
 *:focus {
   outline: 0;
 }
@@ -40,11 +36,6 @@ body{
   width: auto;
   overflow: hidden;
   -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
 }
 
 body#landing {
@@ -267,11 +258,6 @@ svg {
 #network{
 	background-color:#fff;
 	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
 }
 
 #network rect {
