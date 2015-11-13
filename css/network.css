@@ -401,7 +401,7 @@ text.circleText {
 }
 
 #popUp h2 {
-  margin: 60px 0px 10px 20px;
+  margin: 60px 0px 10px 5%;
   font-family: akkuratreg, sans-serif;
   text-transform: uppercase;
   font-size: 36px;
@@ -410,7 +410,7 @@ text.circleText {
 }
 
 #popUp h3 {
-  margin-left: 20px;
+  margin-left: 5%;
   font-family: caslon, serif;
   font-size: 18px;
 }
@@ -463,7 +463,7 @@ text.circleText {
 }
 
 .popup-metadata {
-  margin: 50px 20px 0 20px;
+  margin: 50px 20px 0 5%;
   width: 35%;
   float: left;
 }
@@ -500,14 +500,14 @@ text.circleText {
 }
 
 .popup-artworks {
-  margin-left: 20px;
+  margin-left: 5%;
   overflow: auto;
   width: 90%;
 }
 
 .popup-artwork {
   float: left;
-  width: 90%;
+  width: 100%;
 }
 
 .popup-artwork-desc {
@@ -518,9 +518,9 @@ text.circleText {
 
 .popup-artwork-cont-wrapper {
   overflow:hidden;
-  width: 35%;
+  width: 31%;
   position: relative;
-  margin-right: 30px;
+  margin-right: 16%;
   margin-top: 30px;
   float: left;
 }
