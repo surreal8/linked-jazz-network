@@ -378,7 +378,7 @@ text.circleText {
 #popUp{
 	background-color:#fff;
 	height:auto;
-	max-width:540px;
+	max-width:720px;
 	min-width:410px;
   width: 40%;
 	min-height:100%;
@@ -436,7 +436,7 @@ text.circleText {
 .popup-headshot-cont-wrapper {
   overflow:hidden;
   width: 100%;
-  max-height: 300px;
+  max-height: 380px;
   position: relative;
 }
 
@@ -582,7 +582,7 @@ a .popup-row:hover .popup-artwork-plus {
   top: 0px;
   left: 0px;
   height: 100px;
-	max-width:540px;
+	max-width:720px;
 	min-width:410px;
   width: 40%;
   background: #fff;
