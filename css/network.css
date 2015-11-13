@@ -447,7 +447,7 @@ text.circleText {
 
 .popup-headshot-plus {
   left: 50%;
-  top: 60%;
+  top: 50%;
   opacity: 0.8;
   display: none;
   position: absolute;
@@ -533,7 +533,7 @@ a .popup-row:hover .popup-artwork-plus {
 
 .popup-artwork-plus {
   left: 50%;
-  top: 60%;
+  top: 50%;
   opacity: 0.8;
   display: none;
   position: absolute;
