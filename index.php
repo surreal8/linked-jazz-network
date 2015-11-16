@@ -11,7 +11,7 @@
 <div class="alert" id="device-width-alert">For the best experience, please use a browser or device larger than 1024 pixels.</div>
 <noscript class="alert">This website uses JavaScript. Please use a JavaScript-enabled browser to access the digital experience.</noscript>
     <div id="landingimages">
-        <img src="image/landing/logo.png" class="landinglogo" />
+        <a href="http://www.artic.edu"><img src="image/landing/logo.png" class="landinglogo" /></a>
     </div>
     
     <div id="welcome">
